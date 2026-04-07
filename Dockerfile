@@ -3,7 +3,8 @@ FROM node:20-alpine AS build
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci
+# Force install ALL deps (including devDeps) even if NODE_ENV=production is injected
+RUN npm ci --include=dev
 
 # Build-time env vars (embedded in JS bundle at build time)
 ARG VITE_WP_URL=https://www.oradesibiu.ro
