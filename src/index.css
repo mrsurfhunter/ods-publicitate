@@ -1,0 +1,124 @@
+/* ─── Global resets & polish ─── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
+}
+
+/* ─── Button transitions & hover lift ─── */
+button {
+  transition: all 0.18s ease;
+}
+
+button:not(:disabled):hover {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18) !important;
+}
+
+button:not(:disabled):active {
+  transform: translateY(0px) !important;
+  filter: brightness(0.96) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12) !important;
+}
+
+button:disabled {
+  cursor: not-allowed !important;
+}
+
+/* ─── Input / textarea / select focus rings ─── */
+input:not([type="checkbox"]):not([type="radio"]):focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: #3B82F6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.14) !important;
+}
+
+/* ─── Package card hover ─── */
+.pkg-card {
+  transition: box-shadow 0.22s ease, transform 0.22s ease;
+}
+
+.pkg-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.11) !important;
+}
+
+/* ─── Nav tab hover ─── */
+.nav-tab {
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.nav-tab:hover {
+  background: #F1F5F9 !important;
+}
+
+/* ─── Ad category card hover ─── */
+.ad-cat-btn {
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+}
+
+.ad-cat-btn:hover {
+  border-color: #F59E0B !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+}
+
+/* ─── Duration button hover ─── */
+.dur-btn {
+  transition: all 0.15s ease;
+}
+
+.dur-btn:hover {
+  border-color: #0A1628 !important;
+  color: #0A1628 !important;
+  background: #F8FAFC !important;
+}
+
+/* ─── Image drop zone hover ─── */
+.img-dropzone {
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+.img-dropzone:hover {
+  border-color: #3B82F6 !important;
+  background: #EFF6FF !important;
+}
+
+/* ─── Anchor link reset ─── */
+a {
+  text-decoration: none;
+}
+
+/* ─── Scrollbar polish ─── */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* ─── Print ─── */
+@media print {
+  .noprint {
+    display: none !important;
+  }
+}

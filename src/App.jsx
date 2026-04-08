@@ -8,7 +8,7 @@ const WP = {
   user: import.meta.env.VITE_WP_USER || "",
   pass: import.meta.env.VITE_WP_PASS || "",
 };
-const C = { navy:"#0B1D32", navy2:"#132D4A", amber:"#F59E0B", green:"#10B981", greenBg:"#D1FAE5", red:"#EF4444", blue:"#3B82F6", white:"#FFF", g50:"#F8FAFC", g100:"#F1F5F9", g200:"#E2E8F0", g400:"#94A3B8", g600:"#475569" };
+const C = { navy:"#0A1628", navy2:"#0F2040", amber:"#F59E0B", amberDeep:"#D97706", green:"#059669", greenBg:"#D1FAE5", red:"#EF4444", blue:"#3B82F6", white:"#FFF", g50:"#F8FAFC", g100:"#F1F5F9", g200:"#E2E8F0", g300:"#CBD5E1", g400:"#94A3B8", g600:"#475569", g700:"#334155" };
 
 /* ═══ PACKAGES ═══ */
 const PKG = [
@@ -113,10 +113,10 @@ async function wpCreateDraft(data){
 }
 
 /* ═══ STYLES ═══ */
-const inp={width:"100%",padding:"11px 14px",border:"1.5px solid "+C.g200,borderRadius:10,fontSize:14,boxSizing:"border-box",fontFamily:"'Source Sans 3',sans-serif",background:C.white};
-const lab={fontSize:11,fontWeight:700,color:C.g600,marginBottom:3,display:"block",textTransform:"uppercase",letterSpacing:.8};
-const btn={padding:"12px 28px",background:C.amber,color:C.navy,border:"none",borderRadius:10,cursor:"pointer",fontWeight:800,fontSize:14,fontFamily:"'Source Sans 3',sans-serif"};
-const btn2={...btn,background:C.g100,color:C.g600,fontWeight:600};
+const inp={width:"100%",padding:"13px 16px",border:"2px solid "+C.g200,borderRadius:10,fontSize:15,boxSizing:"border-box",fontFamily:"'Source Sans 3',sans-serif",background:C.white,color:C.navy,lineHeight:1.5};
+const lab={fontSize:11.5,fontWeight:700,color:C.g600,marginBottom:5,display:"block",textTransform:"uppercase",letterSpacing:1};
+const btn={padding:"14px 30px",background:C.amber,color:C.navy,border:"none",borderRadius:12,cursor:"pointer",fontWeight:800,fontSize:15,fontFamily:"'Source Sans 3',sans-serif",letterSpacing:.2};
+const btn2={...btn,background:C.g100,color:C.g700,fontWeight:600,fontSize:14};
 
 /* ═══ CUI ═══ */
 function CUI({value,onChange,onData}){
@@ -145,7 +145,7 @@ function ImageUp({label,images,onChange,multi}){
   return(
     <div>
       <label style={lab}>{label}</label>
-      <div onClick={()=>ref.current?.click()} style={{border:"2px dashed "+C.g200,borderRadius:12,padding:images.length>0?12:28,cursor:"pointer",textAlign:"center",background:C.g50,transition:"border-color .2s",minHeight:60}}>
+      <div onClick={()=>ref.current?.click()} className="img-dropzone" style={{border:"2px dashed "+C.g200,borderRadius:14,padding:images.length>0?14:32,cursor:"pointer",textAlign:"center",background:C.g50,minHeight:64}}>
         {images.length===0&&<div><div style={{fontSize:24,color:C.g400}}>📷</div><div style={{fontSize:12,color:C.g400,marginTop:4}}>Click pentru a adauga {multi?"fotografii":"fotografia principala"}</div></div>}
         {images.length>0&&(
           <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
@@ -177,35 +177,35 @@ function QuickBuy({pkg,onClose,onDone}){
       stats:{views:0,clicks:0,shares:0,fbReach:0,igReach:0}};
     const ex=await sld("ods-orders",[]);await ssv("ods-orders",[order,...ex]);onDone(order)};
 
-  return(<div style={{position:"fixed",inset:0,background:"rgba(11,29,50,.7)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:1000,padding:12,backdropFilter:"blur(4px)"}} onClick={onClose}>
-    <div style={{background:C.white,borderRadius:20,width:"100%",maxWidth:460,maxHeight:"92vh",overflowY:"auto"}} onClick={e=>e.stopPropagation()}>
-      <div style={{padding:24}}>
-        <div style={{background:pkg.color+"14",borderRadius:14,padding:16,marginBottom:18,borderLeft:"4px solid "+pkg.color}}>
-          <h3 style={{margin:"0 0 2px",fontFamily:"'Playfair Display',Georgia,serif",fontSize:18,color:C.navy}}>{pkg.name}</h3>
-          <div style={{display:"flex",alignItems:"baseline",gap:4}}><span style={{fontSize:28,fontWeight:800,color:C.navy}}>{price.toLocaleString("ro")}</span><span style={{fontSize:13,color:C.g400}}>lei+TVA{pkg.cat!=="oneTime"?" /luna":""}</span></div>
-          {pkg.sub&&<div style={{fontSize:12,color:C.green,fontWeight:700,marginTop:4,cursor:"pointer"}} onClick={()=>set("sub",!f.sub)}>{f.sub?"✓ Abonament: "+pkg.sub.toLocaleString("ro")+" lei/luna":"→ Economisesti "+((pkg.price-pkg.sub)*3).toLocaleString("ro")+" lei la abonament"}</div>}
+  return(<div style={{position:"fixed",inset:0,background:"rgba(10,22,40,.78)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:1000,padding:16,backdropFilter:"blur(6px)"}} onClick={onClose}>
+    <div style={{background:C.white,borderRadius:24,width:"100%",maxWidth:480,maxHeight:"92vh",overflowY:"auto",boxShadow:"0 24px 64px rgba(0,0,0,.28)"}} onClick={e=>e.stopPropagation()}>
+      <div style={{padding:28}}>
+        <div style={{background:"linear-gradient(135deg,"+pkg.color+"18,"+pkg.color+"08)",borderRadius:16,padding:20,marginBottom:22,borderLeft:"5px solid "+pkg.color}}>
+          <h3 style={{margin:"0 0 6px",fontFamily:"'Playfair Display',Georgia,serif",fontSize:21,color:C.navy,fontWeight:900}}>{pkg.name}</h3>
+          <div style={{display:"flex",alignItems:"baseline",gap:6}}><span style={{fontSize:36,fontWeight:900,color:C.navy,fontFamily:"'Playfair Display',Georgia,serif"}}>{price.toLocaleString("ro")}</span><span style={{fontSize:14,color:C.g400}}>lei + TVA{pkg.cat!=="oneTime"?" / lună":""}</span></div>
+          {pkg.sub&&<div style={{fontSize:13,color:C.green,fontWeight:700,marginTop:8,cursor:"pointer",display:"inline-flex",alignItems:"center",gap:6,background:C.greenBg,padding:"5px 12px",borderRadius:8,border:"1px solid #A7F3D0"}} onClick={()=>set("sub",!f.sub)}>{f.sub?"✓ Abonament: "+pkg.sub.toLocaleString("ro")+" lei/lună":"💡 Economisești "+((pkg.price-pkg.sub)*3).toLocaleString("ro")+" lei la abonament"}</div>}
         </div>
-        <div style={{display:"flex",flexDirection:"column",gap:8}}>
+        <div style={{display:"flex",flexDirection:"column",gap:12}}>
           <CUI value={f.cui} onChange={v=>set("cui",v)} onData={hCUI}/>
           <div><label style={lab}>Companie</label><input style={inp} value={f.company} onChange={e=>set("company",e.target.value)}/></div>
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
             <div><label style={lab}>Nume *</label><input style={inp} value={f.name} onChange={e=>set("name",e.target.value)}/></div>
             <div><label style={lab}>Telefon *</label><input style={inp} value={f.phone} onChange={e=>set("phone",e.target.value)}/></div>
           </div>
-          <div><label style={lab}>Email * (primesti accesul la dashboard)</label><input style={inp} value={f.email} onChange={e=>set("email",e.target.value)}/></div>
-          <div style={{marginTop:8}}>
-            {[{id:"proforma",l:"🏦 Transfer bancar (proforma)"},{id:"card",l:"💳 Plata cu cardul"}].map(m=>(
-              <label key={m.id} style={{display:"flex",alignItems:"center",gap:10,padding:10,marginBottom:4,background:pay===m.id?"#EFF6FF":C.g50,border:"2px solid "+(pay===m.id?C.blue:"transparent"),borderRadius:10,cursor:"pointer"}}>
-                <input type="radio" name="p" checked={pay===m.id} onChange={()=>setPay(m.id)} style={{accentColor:C.blue}}/><span style={{fontWeight:600,fontSize:13,color:C.navy}}>{m.l}</span>
+          <div><label style={lab}>Email * <span style={{fontWeight:400,textTransform:"none",letterSpacing:0,color:C.g400,fontSize:11}}>(primești accesul la dashboard)</span></label><input style={inp} value={f.email} onChange={e=>set("email",e.target.value)}/></div>
+          <div style={{marginTop:4}}>
+            {[{id:"proforma",l:"🏦 Transfer bancar (proforma)"},{id:"card",l:"💳 Plată cu cardul"}].map(m=>(
+              <label key={m.id} style={{display:"flex",alignItems:"center",gap:12,padding:"12px 14px",marginBottom:6,background:pay===m.id?"#EFF6FF":C.g50,border:"2px solid "+(pay===m.id?C.blue:C.g200),borderRadius:12,cursor:"pointer",transition:"all .15s ease"}}>
+                <input type="radio" name="p" checked={pay===m.id} onChange={()=>setPay(m.id)} style={{accentColor:C.blue,width:16,height:16}}/><span style={{fontWeight:700,fontSize:14,color:C.navy}}>{m.l}</span>
               </label>))}
           </div>
-          <div style={{background:C.navy,borderRadius:14,padding:16,display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:4}}>
-            <div><div style={{fontSize:11,color:C.g400}}>Total:</div><div style={{fontSize:22,fontWeight:800,color:C.amber}}>{total.toLocaleString("ro")} lei</div></div>
-            <button onClick={submit} disabled={!f.name||!f.phone||!f.email} style={{...btn,padding:"13px 24px",fontSize:15,opacity:(!f.name||!f.phone||!f.email)?0.4:1}}>{pay==="card"?"Plateste":"Cumpara"}</button>
+          <div style={{background:"linear-gradient(135deg,"+C.navy+","+C.navy2+")",borderRadius:16,padding:"18px 22px",display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:4}}>
+            <div><div style={{fontSize:12,color:C.g400,marginBottom:2}}>Total de plată:</div><div style={{fontSize:28,fontWeight:900,color:C.amber,fontFamily:"'Playfair Display',Georgia,serif"}}>{total.toLocaleString("ro")} lei</div></div>
+            <button onClick={submit} disabled={!f.name||!f.phone||!f.email} style={{...btn,padding:"15px 28px",fontSize:16,fontWeight:900,opacity:(!f.name||!f.phone||!f.email)?0.4:1}}>{pay==="card"?"Plătește":"Cumpără"}</button>
           </div>
-          <div style={{fontSize:11,color:C.g400,textAlign:"center"}}>Dupa plata primesti dashboard-ul cu urmatorii pasi.</div>
+          <div style={{fontSize:12,color:C.g400,textAlign:"center",lineHeight:1.6}}>După plată primești dashboard-ul cu toți pașii următori.</div>
         </div>
-        <button onClick={onClose} style={{...btn2,width:"100%",marginTop:8,padding:8,fontSize:12}}>Anuleaza</button>
+        <button onClick={onClose} style={{...btn2,width:"100%",marginTop:10,padding:"11px 0",fontSize:13}}>Anulează</button>
       </div>
     </div>
   </div>);
@@ -247,31 +247,31 @@ function Dashboard({initOrder,onBack}){
 
   return(
     <div style={{maxWidth:900,margin:"0 auto"}}>
-      <div style={{background:C.navy,borderRadius:20,padding:"24px 28px",color:C.white,marginBottom:20}}>
+      <div style={{background:"linear-gradient(135deg,"+C.navy+","+C.navy2+")",borderRadius:22,padding:"28px 32px",color:C.white,marginBottom:20,boxShadow:"0 8px 32px rgba(10,22,40,.2)"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",flexWrap:"wrap",gap:12}}>
           <div>
-            <div style={{fontSize:11,color:C.amber,fontWeight:700,textTransform:"uppercase",letterSpacing:1,marginBottom:4}}>Dashboard</div>
-            <h2 style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:22,margin:"0 0 4px"}}>{order.company||order.name}</h2>
-            <div style={{fontSize:12,color:C.g400}}>Pachet: <strong style={{color:C.white}}>{pkg?.name}</strong></div>
+            <div style={{fontSize:11,color:C.amber,fontWeight:800,textTransform:"uppercase",letterSpacing:1.5,marginBottom:6}}>Dashboard Client</div>
+            <h2 style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:26,margin:"0 0 6px",fontWeight:900}}>{order.company||order.name}</h2>
+            <div style={{fontSize:14,color:C.g400}}>Pachet: <strong style={{color:C.white}}>{pkg?.name}</strong></div>
           </div>
-          <button onClick={onBack} style={{...btn2,background:"rgba(255,255,255,.1)",color:C.g400,padding:"8px 14px",fontSize:11}}>Inapoi</button>
+          <button onClick={onBack} style={{...btn2,background:"rgba(255,255,255,.1)",color:"#CBD5E1",padding:"10px 18px",fontSize:13,border:"1px solid rgba(255,255,255,.12)",transform:"none",boxShadow:"none",filter:"none"}}>← Înapoi</button>
         </div>
       </div>
 
-      <div style={{background:C.white,borderRadius:16,padding:20,marginBottom:16}}>
+      <div style={{background:C.white,borderRadius:18,padding:"24px 28px",marginBottom:16,boxShadow:"0 2px 12px rgba(0,0,0,.06)"}}>
         <div style={{display:"flex",gap:0}}>
           {STEPS.map((s,i)=>(
             <div key={i} style={{flex:1,textAlign:"center",position:"relative"}}>
-              <div style={{width:30,height:30,borderRadius:"50%",background:s.done?C.green:C.g200,color:s.done?C.white:C.g400,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 4px",fontSize:13,fontWeight:700}}>{s.done?"✓":(i+1)}</div>
-              <div style={{fontSize:10,fontWeight:600,color:s.done?C.green:C.g400}}>{s.l}</div>
-              {i<STEPS.length-1&&<div style={{position:"absolute",top:15,left:"50%",width:"100%",height:2,background:STEPS[i+1]?.done?C.green:C.g200,zIndex:0}}/>}
+              <div style={{width:36,height:36,borderRadius:"50%",background:s.done?"linear-gradient(135deg,"+C.green+",#059669)":C.g100,color:s.done?C.white:C.g400,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 6px",fontSize:14,fontWeight:800,boxShadow:s.done?"0 4px 12px rgba(5,150,105,.3)":"none"}}>{s.done?"✓":(i+1)}</div>
+              <div style={{fontSize:11,fontWeight:700,color:s.done?C.green:C.g400,letterSpacing:.3}}>{s.l}</div>
+              {i<STEPS.length-1&&<div style={{position:"absolute",top:18,left:"50%",width:"100%",height:2,background:STEPS[i+1]?.done?C.green:C.g200,zIndex:0,borderRadius:2}}/>}
             </div>))}
         </div>
       </div>
 
       {pkg?.hasArticle&&(
         <div style={{background:C.white,borderRadius:16,padding:24,marginBottom:16}}>
-          <h3 style={{margin:"0 0 12px",fontSize:15,fontWeight:700,color:C.navy}}>Continutul articolului</h3>
+          <h3 style={{margin:"0 0 16px",fontSize:18,fontWeight:800,color:C.navy}}>Conținutul articolului</h3>
           {!order.contentChoice?(
             <div style={{display:"flex",gap:12,flexWrap:"wrap"}}>
               <button onClick={()=>upd({contentChoice:"redactor",status:"review"})} style={{...btn,flex:1,minWidth:200,padding:18,background:C.amber,textAlign:"left",borderRadius:14}}>
@@ -317,8 +317,8 @@ function Dashboard({initOrder,onBack}){
       )}
 
       <div style={{background:C.white,borderRadius:16,padding:24,marginBottom:16}}>
-        <h3 style={{margin:"0 0 10px",fontSize:15,fontWeight:700,color:C.navy}}>Calendar postari sociale</h3>
-        <p style={{margin:"0 0 12px",fontSize:12,color:C.g400}}>Alege zilele si ora la care vrei sa fie publicate postarile pe Facebook si Instagram:</p>
+        <h3 style={{margin:"0 0 10px",fontSize:18,fontWeight:800,color:C.navy}}>Calendar postări sociale</h3>
+        <p style={{margin:"0 0 14px",fontSize:13,color:C.g400,lineHeight:1.5}}>Alege zilele și ora la care vrei să fie publicate postările pe Facebook și Instagram:</p>
         <div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:12}}>
           {(order.reposts||[]).map((entry,i)=>{
             const parts=entry.split("|");const dateStr=parts[0];const timeStr=parts[1]||"orice";
@@ -351,7 +351,7 @@ function Dashboard({initOrder,onBack}){
       </div>
 
       <div style={{background:C.white,borderRadius:16,padding:24,marginBottom:16}}>
-        <h3 style={{margin:"0 0 14px",fontSize:15,fontWeight:700,color:C.navy}}>Statistici</h3>
+        <h3 style={{margin:"0 0 14px",fontSize:18,fontWeight:800,color:C.navy}}>Statistici</h3>
         {order.status!=="published"?(
           <div style={{textAlign:"center",padding:20,color:C.g400}}><div style={{fontSize:32,marginBottom:8}}>📊</div><div style={{fontSize:13}}>Statisticile apar dupa publicare</div></div>
         ):(
@@ -364,9 +364,12 @@ function Dashboard({initOrder,onBack}){
           </div>)}
       </div>
 
-      <div style={{background:C.g50,borderRadius:12,padding:16,display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:10}}>
-        <div style={{fontSize:12,color:C.g400}}>Ai intrebari? Contact: <strong style={{color:C.navy}}>{ODS.phone}</strong> (WhatsApp)</div>
-        <a href={"https://wa.me/40746752240?text=Salut,+comanda+"+order.id.toUpperCase()} target="_blank" rel="noopener" style={{...btn,padding:"8px 16px",background:C.green,color:C.white,textDecoration:"none",fontSize:12}}>WhatsApp</a>
+      <div style={{background:C.white,borderRadius:16,padding:"18px 24px",display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:12,border:"1.5px solid "+C.g100,boxShadow:"0 2px 10px rgba(0,0,0,.05)"}}>
+        <div>
+          <div style={{fontSize:13,fontWeight:700,color:C.navy,marginBottom:2}}>Ai întrebări?</div>
+          <div style={{fontSize:13,color:C.g600}}>Contactează-ne la <strong style={{color:C.navy}}>{ODS.phone}</strong> prin WhatsApp</div>
+        </div>
+        <a href={"https://wa.me/40746752240?text=Salut,+comanda+"+order.id.toUpperCase()} target="_blank" rel="noopener" style={{...btn,padding:"11px 22px",background:C.green,color:C.white,textDecoration:"none",fontSize:14,fontWeight:800}}>💬 WhatsApp</a>
       </div>
     </div>
   );
@@ -384,12 +387,12 @@ function AnunturiView({onBuyAd}){
 
   return(
     <div style={{display:"flex",flexDirection:"column",gap:16}}>
-      <div><label style={{...lab,fontSize:12}}>1. Tipul anuntului</label>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(155px,1fr))",gap:10,marginTop:6}}>
+      <div><label style={{...lab,fontSize:12}}>1. Tipul anunțului</label>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(160px,1fr))",gap:12,marginTop:8}}>
           {AD_CAT.map(c=>(
-            <button key={c.id} onClick={()=>setCat(c.id)} style={{padding:14,borderRadius:12,border:cat===c.id?"2px solid "+C.amber:"2px solid "+C.g200,background:cat===c.id?"#FFFBEB":C.white,cursor:"pointer",textAlign:"left",fontFamily:"'Source Sans 3',sans-serif"}}>
-              <div style={{fontSize:22,marginBottom:4}}>{c.icon}</div>
-              <div style={{fontSize:13,fontWeight:700,color:cat===c.id?C.navy:C.g600}}>{c.label}</div>
+            <button key={c.id} onClick={()=>setCat(c.id)} className="ad-cat-btn" style={{padding:"16px 14px",borderRadius:14,border:cat===c.id?"2px solid "+C.amber:"2px solid "+C.g200,background:cat===c.id?"#FFFBEB":C.white,cursor:"pointer",textAlign:"left",fontFamily:"'Source Sans 3',sans-serif",boxShadow:cat===c.id?"0 4px 14px rgba(245,158,11,.2)":"none"}}>
+              <div style={{fontSize:26,marginBottom:6}}>{c.icon}</div>
+              <div style={{fontSize:14,fontWeight:700,color:cat===c.id?C.navy:C.g600,lineHeight:1.3}}>{c.label}</div>
             </button>))}
         </div>
       </div>
@@ -405,21 +408,23 @@ function AnunturiView({onBuyAd}){
       </div>
 
       <div><label style={{...lab,fontSize:12}}>3. Durata</label>
-        <div style={{display:"flex",gap:8,flexWrap:"wrap",marginTop:6}}>
+        <div style={{display:"flex",gap:8,flexWrap:"wrap",marginTop:8}}>
           {[1,3,5,7,14,30].map(d=>(
-            <button key={d} onClick={()=>setDays(d)} style={{padding:"10px 18px",borderRadius:10,border:days===d?"2px solid "+C.navy:"2px solid "+C.g200,background:days===d?C.navy:C.white,fontWeight:700,fontSize:14,color:days===d?C.white:C.g600,cursor:"pointer",fontFamily:"'Source Sans 3',sans-serif"}}>{d} {d===1?"zi":"zile"}</button>))}
-          <input type="number" min={1} max={90} value={days} onChange={e=>setDays(Math.max(1,Math.min(90,Number(e.target.value))))} style={{...inp,width:70,textAlign:"center"}}/>
+            <button key={d} onClick={()=>setDays(d)} className="dur-btn" style={{padding:"11px 20px",borderRadius:10,border:days===d?"2px solid "+C.navy:"2px solid "+C.g200,background:days===d?C.navy:C.white,fontWeight:800,fontSize:14,color:days===d?C.white:C.g600,cursor:"pointer",fontFamily:"'Source Sans 3',sans-serif"}}>{d} {d===1?"zi":"zile"}</button>))}
+          <input type="number" min={1} max={90} value={days} onChange={e=>setDays(Math.max(1,Math.min(90,Number(e.target.value))))} style={{...inp,width:80,textAlign:"center"}}/>
         </div>
-        {pr.disc>0&&<div style={{fontSize:12,color:C.green,fontWeight:600,marginTop:4}}>Discount {Math.round(pr.disc*100)}%</div>}
+        {pr.disc>0&&<div style={{fontSize:13,color:C.green,fontWeight:700,marginTop:6,display:"inline-flex",alignItems:"center",gap:4,background:C.greenBg,padding:"4px 10px",borderRadius:8}}>🎁 Discount {Math.round(pr.disc*100)}%</div>}
       </div>
 
-      <div style={{background:C.white,borderRadius:16,padding:20,border:"1px solid "+C.g200}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:12}}>
-          <span style={{fontSize:14,fontWeight:700,color:C.navy}}>Total de plata:</span>
-          <div style={{textAlign:"right"}}><div style={{fontSize:28,fontWeight:800,color:C.amber,fontFamily:"'Playfair Display',Georgia,serif"}}>{pr.total.toLocaleString("ro")} lei</div>
-            <div style={{fontSize:11,color:C.g400}}>+ TVA = {Math.round(pr.total*1.19).toLocaleString("ro")} lei | {pr.a} lei/zi x {days} zile</div></div>
+      <div style={{background:C.white,borderRadius:18,padding:"22px 24px",border:"1.5px solid "+C.g200,boxShadow:"0 4px 16px rgba(0,0,0,.06)"}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
+          <span style={{fontSize:15,fontWeight:700,color:C.navy}}>Total de plată:</span>
+          <div style={{textAlign:"right"}}>
+            <div style={{fontSize:34,fontWeight:900,color:C.amber,fontFamily:"'Playfair Display',Georgia,serif",lineHeight:1}}>{pr.total.toLocaleString("ro")} lei</div>
+            <div style={{fontSize:12,color:C.g400,marginTop:3}}>+ TVA = {Math.round(pr.total*1.19).toLocaleString("ro")} lei &nbsp;·&nbsp; {pr.a} lei/zi × {days} zile</div>
+          </div>
         </div>
-        <button onClick={()=>onBuyAd({cat:AD_CAT.find(c=>c.id===cat),text,words,days,pr})} disabled={!canOrd} style={{...btn,width:"100%",padding:14,fontSize:15,opacity:canOrd?1:0.4}}>Plaseaza anuntul</button>
+        <button onClick={()=>onBuyAd({cat:AD_CAT.find(c=>c.id===cat),text,words,days,pr})} disabled={!canOrd} style={{...btn,width:"100%",padding:"15px 0",fontSize:16,fontWeight:900,opacity:canOrd?1:0.4}}>Plasează anunțul</button>
       </div>
     </div>
   );
@@ -439,48 +444,51 @@ function AdCheckout({ad,onClose}){
     const order={id:gid(),...f,packageId:"anunt-"+ad.cat.id,packageName:"Anunt: "+ad.cat.label+" ("+ad.days+"z)",price:ad.pr.total,payMethod:pay,date:new Date().toISOString(),isAnunt:true,anuntText:ad.text,anuntDays:ad.days,anuntWords:ad.words,verified:true,converted:false};
     const ex=await sld("ods-orders",[]);await ssv("ods-orders",[order,...ex]);setStep(3)};
 
-  return(<div style={{position:"fixed",inset:0,background:"rgba(11,29,50,.7)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:1000,padding:12,backdropFilter:"blur(4px)"}} onClick={onClose}>
-    <div style={{background:C.white,borderRadius:20,width:"100%",maxWidth:500,maxHeight:"92vh",overflowY:"auto"}} onClick={e=>e.stopPropagation()}>
+  return(<div style={{position:"fixed",inset:0,background:"rgba(10,22,40,.78)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:1000,padding:16,backdropFilter:"blur(6px)"}} onClick={onClose}>
+    <div style={{background:C.white,borderRadius:24,width:"100%",maxWidth:500,maxHeight:"92vh",overflowY:"auto",boxShadow:"0 24px 64px rgba(0,0,0,.28)"}} onClick={e=>e.stopPropagation()}>
       {step===3?(
-        <div style={{padding:32,textAlign:"center"}}>
-          <div style={{width:56,height:56,background:C.greenBg,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 14px",fontSize:28,color:C.green}}>✓</div>
-          <h3 style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:20,margin:"0 0 8px",color:C.navy}}>Anunt verificat si inregistrat!</h3>
-          <p style={{color:C.g400,fontSize:13}}>Va fi publicat in max 24h de la confirmarea platii.</p>
-          <button onClick={onClose} style={{...btn,marginTop:16,fontSize:13}}>Inchide</button>
+        <div style={{padding:40,textAlign:"center"}}>
+          <div style={{width:64,height:64,background:"linear-gradient(135deg,"+C.green+",#059669)",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 18px",fontSize:30,color:C.white,boxShadow:"0 8px 24px rgba(5,150,105,.3)"}}>✓</div>
+          <h3 style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:22,margin:"0 0 10px",color:C.navy,fontWeight:900}}>Anunț verificat și înregistrat!</h3>
+          <p style={{color:C.g400,fontSize:15,lineHeight:1.6}}>Va fi publicat în max 24h de la confirmarea plății.</p>
+          <button onClick={onClose} style={{...btn,marginTop:20,fontSize:15,padding:"14px 32px"}}>Închide</button>
         </div>
-      ):(<div style={{padding:24}}>
-        <h3 style={{margin:"0 0 14px",fontFamily:"'Playfair Display',Georgia,serif",fontSize:18,color:C.navy}}>{ad.cat.icon} {ad.cat.label}</h3>
-        {step===1&&(<div style={{display:"flex",flexDirection:"column",gap:8}}>
+      ):(<div style={{padding:28}}>
+        <h3 style={{margin:"0 0 18px",fontFamily:"'Playfair Display',Georgia,serif",fontSize:20,color:C.navy,fontWeight:900}}>{ad.cat.icon} {ad.cat.label}</h3>
+        {step===1&&(<div style={{display:"flex",flexDirection:"column",gap:12}}>
           <CUI value={f.cui} onChange={val=>set("cui",val)} onData={hCUI}/>
-          <div><label style={lab}>Companie / Persoana</label><input style={inp} value={f.company} onChange={e=>set("company",e.target.value)}/></div>
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+          <div><label style={lab}>Companie / Persoană</label><input style={inp} value={f.company} onChange={e=>set("company",e.target.value)}/></div>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
             <div><label style={lab}>Nume *</label><input style={inp} value={f.name} onChange={e=>set("name",e.target.value)}/></div>
             <div><label style={lab}>Telefon *</label><input style={inp} value={f.phone} onChange={e=>set("phone",e.target.value)}/></div>
           </div>
-          <div style={{background:"#FEF3C7",borderRadius:12,padding:14,border:"1px solid #FDE68A"}}>
-            <div style={{fontSize:12,fontWeight:800,color:"#92400E",marginBottom:8}}>Verificare identitate</div>
-            <label style={{display:"flex",gap:8,marginBottom:6,cursor:"pointer",fontSize:12,color:"#78350F"}}><input type="checkbox" checked={v.accurate} onChange={e=>sV(x=>({...x,accurate:e.target.checked}))} style={{accentColor:C.navy,marginTop:2}}/>Declar ca informatiile sunt reale si corecte.</label>
-            <label style={{display:"flex",gap:8,marginBottom:8,cursor:"pointer",fontSize:12,color:"#78350F"}}><input type="checkbox" checked={v.terms} onChange={e=>sV(x=>({...x,terms:e.target.checked}))} style={{accentColor:C.navy,marginTop:2}}/>Accept termenii si conditiile ODS SRL.</label>
-            <div style={{borderTop:"1px solid #FDE68A",paddingTop:8}}>
-              <div style={{fontSize:11,fontWeight:700,color:"#92400E",marginBottom:4}}>Verificare telefon (SMS)</div>
-              {!v.ok?(<div style={{display:"flex",gap:6}}>
-                {!v.sent?<button onClick={sendCode} disabled={!f.phone||f.phone.replace(/\D/g,"").length<10} style={{...btn,padding:"7px 14px",fontSize:12,background:C.navy,color:C.white,opacity:(!f.phone||f.phone.replace(/\D/g,"").length<10)?0.4:1}}>Trimite cod</button>
-                :<><input value={v.code} onChange={e=>sV(x=>({...x,code:e.target.value}))} maxLength={4} placeholder="Cod" style={{...inp,width:100,textAlign:"center",fontSize:16,fontWeight:700,letterSpacing:4}}/>
-                  <button onClick={()=>sV(x=>({...x,ok:x.code===x.real}))} style={{...btn,padding:"7px 14px",fontSize:12,background:C.navy,color:C.white}}>OK</button></>}
-              </div>):<div style={{fontSize:12,color:C.green,fontWeight:700}}>✓ Verificat</div>}
+          <div style={{background:"#FFFBEB",borderRadius:14,padding:16,border:"1px solid #FDE68A"}}>
+            <div style={{fontSize:13,fontWeight:800,color:"#92400E",marginBottom:10}}>Verificare identitate</div>
+            <label style={{display:"flex",gap:10,marginBottom:8,cursor:"pointer",fontSize:13,color:"#78350F",alignItems:"flex-start"}}><input type="checkbox" checked={v.accurate} onChange={e=>sV(x=>({...x,accurate:e.target.checked}))} style={{accentColor:C.navy,marginTop:2,width:15,height:15}}/>Declar că informațiile sunt reale și corecte.</label>
+            <label style={{display:"flex",gap:10,marginBottom:10,cursor:"pointer",fontSize:13,color:"#78350F",alignItems:"flex-start"}}><input type="checkbox" checked={v.terms} onChange={e=>sV(x=>({...x,terms:e.target.checked}))} style={{accentColor:C.navy,marginTop:2,width:15,height:15}}/>Accept termenii și condițiile ODS SRL.</label>
+            <div style={{borderTop:"1px solid #FDE68A",paddingTop:10}}>
+              <div style={{fontSize:12,fontWeight:800,color:"#92400E",marginBottom:6}}>Verificare telefon (SMS)</div>
+              {!v.ok?(<div style={{display:"flex",gap:8}}>
+                {!v.sent?<button onClick={sendCode} disabled={!f.phone||f.phone.replace(/\D/g,"").length<10} style={{...btn,padding:"9px 16px",fontSize:13,background:C.navy,color:C.white,opacity:(!f.phone||f.phone.replace(/\D/g,"").length<10)?0.4:1}}>Trimite cod SMS</button>
+                :<><input value={v.code} onChange={e=>sV(x=>({...x,code:e.target.value}))} maxLength={4} placeholder="Cod" style={{...inp,width:110,textAlign:"center",fontSize:18,fontWeight:800,letterSpacing:6}}/>
+                  <button onClick={()=>sV(x=>({...x,ok:x.code===x.real}))} style={{...btn,padding:"9px 18px",fontSize:13,background:C.navy,color:C.white}}>Verifică</button></>}
+              </div>):<div style={{fontSize:13,color:C.green,fontWeight:800,display:"flex",alignItems:"center",gap:6}}>✓ Telefon verificat</div>}
             </div>
           </div>
-          <button onClick={()=>{if(canGo)setStep(2)}} disabled={!canGo} style={{...btn,width:"100%",padding:13,opacity:canGo?1:0.4}}>Continua</button>
+          <button onClick={()=>{if(canGo)setStep(2)}} disabled={!canGo} style={{...btn,width:"100%",padding:"14px 0",fontSize:16,fontWeight:900,opacity:canGo?1:0.4}}>Continuă →</button>
         </div>)}
-        {step===2&&(<div style={{display:"flex",flexDirection:"column",gap:10}}>
-          <div style={{background:C.g50,borderRadius:10,padding:12}}>
-            <div style={{fontSize:11,color:C.g400,fontStyle:"italic",maxHeight:50,overflowY:"auto"}}>{ad.text.substring(0,200)}{ad.text.length>200?"...":""}</div>
-            <div style={{display:"flex",justifyContent:"space-between",marginTop:6}}><span style={{fontSize:12,color:C.g400}}>{ad.words} cuv x {ad.days} zile</span><span style={{fontSize:18,fontWeight:800,color:C.amber}}>{total.toLocaleString("ro")} lei</span></div>
+        {step===2&&(<div style={{display:"flex",flexDirection:"column",gap:12}}>
+          <div style={{background:C.g50,borderRadius:12,padding:16,border:"1px solid "+C.g200}}>
+            <div style={{fontSize:13,color:C.g600,fontStyle:"italic",maxHeight:56,overflowY:"auto",lineHeight:1.6}}>{ad.text.substring(0,200)}{ad.text.length>200?"...":""}</div>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:10}}>
+              <span style={{fontSize:13,color:C.g400}}>{ad.words} cuv × {ad.days} zile</span>
+              <span style={{fontSize:22,fontWeight:900,color:C.amber,fontFamily:"'Playfair Display',Georgia,serif"}}>{total.toLocaleString("ro")} lei</span>
+            </div>
           </div>
-          {[{id:"proforma",l:"Transfer bancar"},{id:"card",l:"Plata cu cardul"}].map(m=>(
-            <label key={m.id} style={{display:"flex",alignItems:"center",gap:10,padding:10,background:pay===m.id?"#EFF6FF":C.g50,border:"2px solid "+(pay===m.id?C.blue:"transparent"),borderRadius:10,cursor:"pointer"}}>
-              <input type="radio" name="p" checked={pay===m.id} onChange={()=>setPay(m.id)}/><span style={{fontWeight:600,fontSize:13,color:C.navy}}>{m.l}</span></label>))}
-          <div style={{display:"flex",gap:8}}><button onClick={()=>setStep(1)} style={{...btn2,flex:1}}>Inapoi</button><button onClick={submit} style={{...btn,flex:2,padding:13}}>Confirma</button></div>
+          {[{id:"proforma",l:"🏦 Transfer bancar"},{id:"card",l:"💳 Plată cu cardul"}].map(m=>(
+            <label key={m.id} style={{display:"flex",alignItems:"center",gap:12,padding:"12px 14px",background:pay===m.id?"#EFF6FF":C.g50,border:"2px solid "+(pay===m.id?C.blue:C.g200),borderRadius:12,cursor:"pointer",transition:"all .15s ease"}}>
+              <input type="radio" name="p" checked={pay===m.id} onChange={()=>setPay(m.id)} style={{width:16,height:16}}/><span style={{fontWeight:700,fontSize:14,color:C.navy}}>{m.l}</span></label>))}
+          <div style={{display:"flex",gap:10,marginTop:4}}><button onClick={()=>setStep(1)} style={{...btn2,flex:1,padding:"13px 0"}}>← Înapoi</button><button onClick={submit} style={{...btn,flex:2,padding:"13px 0",fontSize:15,fontWeight:900}}>Confirmă comanda</button></div>
         </div>)}
       </div>)}
     </div>
@@ -500,32 +508,34 @@ export default function App(){
   const onPurchased=(order)=>{setSelPkg(null);setDashOrder(order);setView("dashboard");sld("ods-orders",[]).then(setMyOrders)};
 
   return(
-    <div style={{minHeight:"100vh",background:C.g50,fontFamily:"'Source Sans 3',-apple-system,sans-serif"}}>
+    <div style={{minHeight:"100vh",background:"#F0F4F8",fontFamily:"'Source Sans 3',-apple-system,sans-serif"}}>
 
       {/* TOP BAR */}
-      <div className="noprint" style={{background:C.navy,padding:"10px 20px"}}>
+      <div className="noprint" style={{background:C.navy,padding:"13px 24px",borderBottom:"1px solid rgba(255,255,255,.06)"}}>
         <div style={{maxWidth:1100,margin:"0 auto",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-          <div style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:18,color:C.white,fontWeight:900,cursor:"pointer"}} onClick={()=>{setView("pachete");setDashOrder(null)}}>Ora de Sibiu</div>
-          <div style={{display:"flex",alignItems:"center",gap:10}}>
+          <div style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:22,color:C.white,fontWeight:900,cursor:"pointer",letterSpacing:-.3}} onClick={()=>{setView("pachete");setDashOrder(null)}}>Ora de Sibiu</div>
+          <div style={{display:"flex",alignItems:"center",gap:14}}>
             {myOrders.length>0&&(
-              <select onChange={e=>{if(e.target.value){const o=myOrders.find(x=>x.id===e.target.value);if(o){setDashOrder(o);setView("dashboard")}}}} value="" style={{padding:"5px 10px",fontSize:11,borderRadius:6,border:"1px solid rgba(255,255,255,.2)",background:"rgba(255,255,255,.08)",color:C.white,fontFamily:"'Source Sans 3',sans-serif"}}>
+              <select onChange={e=>{if(e.target.value){const o=myOrders.find(x=>x.id===e.target.value);if(o){setDashOrder(o);setView("dashboard")}}}} value="" style={{padding:"7px 12px",fontSize:12,borderRadius:8,border:"1px solid rgba(255,255,255,.18)",background:"rgba(255,255,255,.09)",color:C.white,fontFamily:"'Source Sans 3',sans-serif",cursor:"pointer"}}>
                 <option value="" style={{color:C.navy}}>Comenzile mele ({myOrders.length})</option>
                 {myOrders.map(o=><option key={o.id} value={o.id} style={{color:C.navy}}>{o.packageName} — {new Date(o.date).toLocaleDateString("ro-RO")}</option>)}
               </select>
             )}
-            <a href="https://wa.me/40746752240" target="_blank" rel="noopener" style={{fontSize:11,color:C.amber,textDecoration:"none",fontWeight:700,display:"flex",alignItems:"center",gap:4}}>WhatsApp</a>
+            <a href="https://wa.me/40746752240" target="_blank" rel="noopener" style={{fontSize:13,color:C.amber,fontWeight:700,display:"flex",alignItems:"center",gap:6,padding:"7px 14px",background:"rgba(245,158,11,.12)",borderRadius:8,border:"1px solid rgba(245,158,11,.25)",transition:"background .15s ease"}}>
+              💬 WhatsApp
+            </a>
           </div>
         </div>
       </div>
 
       {/* NAV TABS */}
       {view!=="dashboard"&&(
-        <div className="noprint" style={{background:C.white,borderBottom:"2px solid "+C.g200,position:"sticky",top:0,zIndex:100}}>
+        <div className="noprint" style={{background:C.white,borderBottom:"1px solid "+C.g200,position:"sticky",top:0,zIndex:100,boxShadow:"0 2px 12px rgba(0,0,0,.06)"}}>
           <div style={{maxWidth:1100,margin:"0 auto",display:"flex"}}>
             {[{id:"pachete",label:"Pachete de Promovare",sub:"Advertoriale, bannere, social media"},{id:"anunturi",label:"Mica Publicitate",sub:"Anunturi, avize, decese, autorizatii"}].map(t=>(
-              <button key={t.id} onClick={()=>setView(t.id)} style={{flex:1,padding:"16px 20px",border:"none",background:view===t.id?C.g50:C.white,cursor:"pointer",textAlign:"left",fontFamily:"'Source Sans 3',sans-serif",borderBottom:view===t.id?"3px solid "+C.amber:"3px solid transparent"}}>
-                <div style={{fontSize:15,fontWeight:800,color:view===t.id?C.navy:C.g400}}>{t.label}</div>
-                <div style={{fontSize:11,color:C.g400,marginTop:2}}>{t.sub}</div>
+              <button key={t.id} onClick={()=>setView(t.id)} className="nav-tab" style={{flex:1,padding:"18px 24px",border:"none",background:view===t.id?"#FFFBF0":C.white,cursor:"pointer",textAlign:"left",fontFamily:"'Source Sans 3',sans-serif",borderBottom:view===t.id?"3px solid "+C.amber:"3px solid transparent",transform:"none",boxShadow:"none",filter:"none",borderRadius:0}}>
+                <div style={{fontSize:16,fontWeight:800,color:view===t.id?C.navy:C.g400,letterSpacing:-.1}}>{t.label}</div>
+                <div style={{fontSize:12,color:view===t.id?C.g600:C.g400,marginTop:3}}>{t.sub}</div>
               </button>))}
           </div>
         </div>
@@ -533,21 +543,27 @@ export default function App(){
 
       {/* HERO */}
       {view!=="dashboard"&&(
-        <div className="noprint" style={{background:"linear-gradient(135deg,"+C.navy+","+C.navy2+")",padding:"32px 20px",color:C.white}}>
+        <div className="noprint" style={{background:"linear-gradient(145deg,"+C.navy+" 0%,"+C.navy2+" 60%,#162B50 100%)",padding:"52px 24px 44px",color:C.white}}>
           <div style={{maxWidth:1100,margin:"0 auto",textAlign:"center"}}>
             {view==="pachete"?(<>
-              <h1 style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:30,margin:"0 0 8px",fontWeight:900}}>Promoveaza-ti afacerea in Sibiu</h1>
-              <p style={{color:C.g400,fontSize:14,maxWidth:500,margin:"0 auto 20px"}}>Alege pachetul. Plateste. Primesti dashboard cu statistici si control total.</p>
-              <div style={{display:"flex",justifyContent:"center",gap:20,flexWrap:"wrap"}}>
-                {[{v:"400k+",l:"vizitatori/luna"},{v:"1.8M",l:"afisari/luna"},{v:"218k",l:"Facebook"},{v:"18k",l:"Instagram"},{v:"24k",l:"TikTok"}].map((s,i)=>
-                  <div key={i}><div style={{fontSize:22,fontWeight:800,color:C.amber,fontFamily:"'Playfair Display',Georgia,serif"}}>{s.v}</div><div style={{fontSize:10,color:"#64748B"}}>{s.l}</div></div>)}
+              <div style={{display:"inline-block",background:"rgba(245,158,11,.15)",border:"1px solid rgba(245,158,11,.3)",borderRadius:20,padding:"4px 16px",fontSize:12,fontWeight:700,color:C.amber,letterSpacing:1.2,textTransform:"uppercase",marginBottom:14}}>Publicitate Locala Sibiu</div>
+              <h1 style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:46,margin:"0 0 14px",fontWeight:900,lineHeight:1.1,letterSpacing:-.5}}>Promoveaza-ti afacerea în Sibiu</h1>
+              <p style={{color:"#94A3B8",fontSize:17,maxWidth:520,margin:"0 auto 32px",lineHeight:1.6}}>Alege pachetul. Platesti. Primesti dashboard cu statistici si control total.</p>
+              <div style={{display:"flex",justifyContent:"center",gap:6,flexWrap:"wrap"}}>
+                {[{v:"400k+",l:"vizitatori/luna"},{v:"1.8M",l:"afisari/luna"},{v:"218k",l:"Facebook"},{v:"18k",l:"Instagram"},{v:"24k",l:"TikTok"}].map((s,i)=>(
+                  <div key={i} style={{background:"rgba(255,255,255,.06)",border:"1px solid rgba(255,255,255,.1)",borderRadius:12,padding:"12px 22px",minWidth:90}}>
+                    <div style={{fontSize:26,fontWeight:800,color:C.amber,fontFamily:"'Playfair Display',Georgia,serif",lineHeight:1}}>{s.v}</div>
+                    <div style={{fontSize:11,color:"#64748B",marginTop:4,letterSpacing:.5}}>{s.l}</div>
+                  </div>))}
               </div>
             </>):(<>
-              <h1 style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:30,margin:"0 0 8px",fontWeight:900}}>Mica Publicitate si Anunturi</h1>
-              <p style={{color:C.g400,fontSize:14,maxWidth:500,margin:"0 auto 10px"}}>Publica anunturi pe oradesibiu.ro — avize, pierderi, decese, autorizatii</p>
-              <div style={{display:"inline-flex",gap:10,background:"rgba(255,255,255,.08)",borderRadius:10,padding:"8px 20px",alignItems:"center"}}>
-                <span style={{fontSize:16,fontWeight:800,color:C.amber}}>de la 50 lei / zi</span>
-                <span style={{fontSize:12,color:C.g400}}>pana la 250 cuvinte | doar text | verificat</span>
+              <div style={{display:"inline-block",background:"rgba(245,158,11,.15)",border:"1px solid rgba(245,158,11,.3)",borderRadius:20,padding:"4px 16px",fontSize:12,fontWeight:700,color:C.amber,letterSpacing:1.2,textTransform:"uppercase",marginBottom:14}}>Anunturi & Avize</div>
+              <h1 style={{fontFamily:"'Playfair Display',Georgia,serif",fontSize:46,margin:"0 0 14px",fontWeight:900,lineHeight:1.1,letterSpacing:-.5}}>Mica Publicitate si Anunturi</h1>
+              <p style={{color:"#94A3B8",fontSize:17,maxWidth:520,margin:"0 auto 20px",lineHeight:1.6}}>Publica anunturi pe oradesibiu.ro — avize, pierderi, decese, autorizatii</p>
+              <div style={{display:"inline-flex",gap:14,background:"rgba(255,255,255,.07)",border:"1px solid rgba(255,255,255,.1)",borderRadius:14,padding:"14px 28px",alignItems:"center"}}>
+                <span style={{fontSize:22,fontWeight:800,color:C.amber,fontFamily:"'Playfair Display',Georgia,serif"}}>de la 50 lei / zi</span>
+                <span style={{width:1,height:28,background:"rgba(255,255,255,.15)"}}/>
+                <span style={{fontSize:13,color:"#64748B",lineHeight:1.4}}>pana la 250 cuvinte<br/>doar text · verificat</span>
               </div>
             </>)}
           </div>
@@ -555,34 +571,36 @@ export default function App(){
       )}
 
       {/* CONTENT */}
-      <div style={{maxWidth:1100,margin:"0 auto",padding:"24px 16px"}}>
+      <div style={{maxWidth:1100,margin:"0 auto",padding:"32px 20px"}}>
 
         {view==="pachete"&&(
-          <div style={{display:"flex",flexDirection:"column",gap:18}}>
+          <div style={{display:"flex",flexDirection:"column",gap:20}}>
             {PKG.map(p=>(
-              <div key={p.id} style={{background:C.white,borderRadius:20,overflow:"hidden",boxShadow:p.pop?"0 8px 32px rgba(245,158,11,.15)":"0 2px 8px rgba(0,0,0,.04)",border:p.pop?"2px solid "+C.amber:"1px solid "+C.g200}}>
-                {p.pop&&<div style={{background:C.amber,color:C.navy,fontSize:11,fontWeight:800,textAlign:"center",padding:"5px 0",letterSpacing:1.5,textTransform:"uppercase"}}>RECOMANDAT</div>}
-                <div style={{padding:"22px 26px",display:"flex",gap:24,flexWrap:"wrap",alignItems:"flex-start"}}>
+              <div key={p.id} className="pkg-card" style={{background:C.white,borderRadius:22,overflow:"hidden",boxShadow:p.pop?"0 8px 36px rgba(245,158,11,.18)":"0 2px 12px rgba(0,0,0,.06)",border:p.pop?"2px solid "+C.amber:"1.5px solid "+C.g200}}>
+                {p.pop&&<div style={{background:"linear-gradient(90deg,"+C.amber+","+C.amberDeep+")",color:C.navy,fontSize:11,fontWeight:900,textAlign:"center",padding:"7px 0",letterSpacing:2,textTransform:"uppercase"}}>⭐ RECOMANDAT</div>}
+                <div style={{padding:"28px 32px",display:"flex",gap:28,flexWrap:"wrap",alignItems:"flex-start"}}>
                   <div style={{flex:"1 1 360px"}}>
-                    <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
-                      <div style={{width:5,height:36,background:p.color,borderRadius:3}}/>
-                      <div><h3 style={{margin:0,fontFamily:"'Playfair Display',Georgia,serif",fontSize:20,color:C.navy}}>{p.name}</h3>
-                        <div style={{fontSize:12,color:C.g400,marginTop:2}}>{p.headline}</div></div>
+                    <div style={{display:"flex",alignItems:"flex-start",gap:14,marginBottom:14}}>
+                      <div style={{width:6,height:48,background:p.color,borderRadius:4,flexShrink:0,marginTop:2}}/>
+                      <div>
+                        <h3 style={{margin:"0 0 4px",fontFamily:"'Playfair Display',Georgia,serif",fontSize:24,color:C.navy,fontWeight:900,lineHeight:1.2}}>{p.name}</h3>
+                        <div style={{fontSize:14,color:C.g600,lineHeight:1.4}}>{p.headline}</div>
+                      </div>
                     </div>
-                    <div style={{fontSize:11,fontWeight:700,color:C.g400,textTransform:"uppercase",letterSpacing:1,marginBottom:6}}>Ce primesti:</div>
+                    <div style={{fontSize:11,fontWeight:700,color:C.g400,textTransform:"uppercase",letterSpacing:1.2,marginBottom:10}}>Ce primesti:</div>
                     {p.inc.map((x,i)=>(
-                      <div key={i} style={{display:"flex",gap:8,padding:"6px 0",borderBottom:"1px solid "+C.g100}}>
-                        <span style={{color:p.color,fontWeight:800,flexShrink:0}}>✓</span>
-                        <div><span style={{fontSize:13,fontWeight:700,color:C.navy}}>{x.w}</span>{x.d&&<span style={{fontSize:12,color:C.g400}}> — {x.d}</span>}</div>
+                      <div key={i} style={{display:"flex",gap:10,padding:"8px 0",borderBottom:"1px solid "+C.g100}}>
+                        <span style={{color:p.color,fontWeight:900,flexShrink:0,fontSize:15}}>✓</span>
+                        <div><span style={{fontSize:14,fontWeight:700,color:C.navy}}>{x.w}</span>{x.d&&<span style={{fontSize:13,color:C.g400}}> — {x.d}</span>}</div>
                       </div>))}
-                    <div style={{marginTop:8,padding:"6px 10px",background:C.g50,borderRadius:8,fontSize:12,color:C.g600}}>📅 {p.delivery}</div>
+                    <div style={{marginTop:12,padding:"8px 12px",background:C.g50,borderRadius:8,fontSize:13,color:C.g600,border:"1px solid "+C.g100}}>📅 {p.delivery}</div>
                   </div>
-                  <div style={{flex:"0 0 200px",background:C.g50,borderRadius:14,padding:18,textAlign:"center"}}>
-                    <div style={{fontSize:34,fontWeight:800,color:C.navy,fontFamily:"'Playfair Display',Georgia,serif"}}>{p.price.toLocaleString("ro")}</div>
-                    <div style={{fontSize:13,color:C.g400}}>lei + TVA{p.cat!=="oneTime"?" /luna":""}</div>
-                    {p.sub&&<div style={{fontSize:12,color:C.green,fontWeight:700,marginTop:6,background:C.greenBg,borderRadius:8,padding:"4px 8px",display:"inline-block"}}>{p.sub.toLocaleString("ro")} lei la abonament</div>}
-                    <button onClick={()=>setSelPkg(p)} style={{...btn,width:"100%",padding:"13px 0",fontSize:15,marginTop:14,borderRadius:12}}>Cumpara acum</button>
-                    <div style={{fontSize:10,color:C.g400,marginTop:6}}>Completezi detaliile dupa plata</div>
+                  <div style={{flex:"0 0 210px",background:"linear-gradient(160deg,"+C.g50+","+C.white+")",borderRadius:16,padding:"22px 20px",textAlign:"center",border:"1.5px solid "+C.g100,boxShadow:"inset 0 1px 3px rgba(0,0,0,.04)"}}>
+                    <div style={{fontSize:42,fontWeight:900,color:C.navy,fontFamily:"'Playfair Display',Georgia,serif",lineHeight:1}}>{p.price.toLocaleString("ro")}</div>
+                    <div style={{fontSize:14,color:C.g400,marginTop:4}}>lei + TVA{p.cat!=="oneTime"?" /lună":""}</div>
+                    {p.sub&&<div style={{fontSize:13,color:C.green,fontWeight:700,marginTop:10,background:C.greenBg,borderRadius:8,padding:"5px 10px",display:"inline-block",border:"1px solid #A7F3D0"}}>{p.sub.toLocaleString("ro")} lei la abonament</div>}
+                    <button onClick={()=>setSelPkg(p)} style={{...btn,width:"100%",padding:"15px 0",fontSize:16,marginTop:16,borderRadius:12,background:p.pop?C.amber:C.navy,color:p.pop?C.navy:C.white,fontWeight:900}}>Cumpara acum</button>
+                    <div style={{fontSize:11,color:C.g400,marginTop:8}}>Completezi detaliile după plată</div>
                   </div>
                 </div>
               </div>))}
@@ -594,11 +612,14 @@ export default function App(){
         {view==="dashboard"&&dashOrder&&<Dashboard initOrder={dashOrder} onBack={()=>{setView("pachete");setDashOrder(null)}}/>}
 
         {/* Footer */}
-        <div style={{marginTop:36,background:C.white,borderRadius:16,padding:20,textAlign:"center"}}>
-          <div style={{display:"flex",justifyContent:"center",gap:16,flexWrap:"wrap",fontSize:12,color:C.g400,fontWeight:600,marginBottom:10}}>
-            <span>17 ani experienta</span><span style={{color:C.g200}}>|</span><span>Trafic auditat BRAT</span><span style={{color:C.g200}}>|</span><span>Dashboard cu statistici</span></div>
-          <a href="https://www.brat.ro/sati/site/oradesibiu-ro/trafic-total/trafic-total" target="_blank" rel="noopener" style={{display:"inline-block",padding:"8px 20px",background:C.navy,color:C.white,borderRadius:8,textDecoration:"none",fontWeight:700,fontSize:12}}>Trafic auditat BRAT</a>
-          <div style={{marginTop:12,fontSize:11,color:C.g400}}>{ODS.company} | CIF {ODS.cif} | {ODS.reg} | {ODS.phone}</div>
+        <div style={{marginTop:40,background:C.white,borderRadius:20,padding:"28px 24px",textAlign:"center",border:"1.5px solid "+C.g100,boxShadow:"0 2px 12px rgba(0,0,0,.05)"}}>
+          <div style={{display:"flex",justifyContent:"center",gap:6,flexWrap:"wrap",marginBottom:16}}>
+            {["17 ani experiență","Trafic auditat BRAT","Dashboard cu statistici","400k+ vizitatori/lună"].map((t,i)=>(
+              <span key={i} style={{fontSize:12,color:C.g600,fontWeight:700,background:C.g50,padding:"5px 14px",borderRadius:20,border:"1px solid "+C.g200}}>{t}</span>
+            ))}
+          </div>
+          <a href="https://www.brat.ro/sati/site/oradesibiu-ro/trafic-total/trafic-total" target="_blank" rel="noopener" style={{display:"inline-block",padding:"10px 24px",background:C.navy,color:C.white,borderRadius:10,fontWeight:700,fontSize:13,letterSpacing:.2}}>Verifică audit BRAT →</a>
+          <div style={{marginTop:14,fontSize:12,color:C.g400,lineHeight:1.8}}>{ODS.company} &nbsp;·&nbsp; CIF {ODS.cif} &nbsp;·&nbsp; {ODS.reg} &nbsp;·&nbsp; {ODS.phone}</div>
         </div>
       </div>
 
