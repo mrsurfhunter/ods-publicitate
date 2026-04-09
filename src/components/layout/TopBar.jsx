@@ -15,7 +15,10 @@ export default function TopBar({ myOrders, onHome, onOpenOrder, onLogin, onConsu
   return (
     <div className="topbar noprint">
       <div className="topbar-inner">
-        <div className="topbar-logo" onClick={onHome}>Ora de Sibiu</div>
+        <div className="topbar-logo" onClick={onHome}>
+          <img src="https://cdn.oradesibiu.ro/wp-content/uploads/2023/01/odsalbAsset-1.png" alt="Ora de Sibiu" className="topbar-logo-img" />
+          <span className="topbar-logo-pub">PUBLICITATE</span>
+        </div>
         <div className="topbar-actions">
           {isAuthenticated ? (
             <div ref={dropRef} style={{ position: "relative" }}>
