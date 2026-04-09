@@ -1,12 +1,32 @@
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 
+const COPY = {
+  consult: {
+    title: "Ca sa-ti cream recomandarea personalizata",
+    sub: "Spune-ne cum te gasim si primesti instant pachetul potrivit pentru afacerea ta",
+    btn: "Continua",
+  },
+  catalog: {
+    title: "Creeaza cont gratuit",
+    sub: "Completeaza datele pentru a vedea preturile si a comanda direct",
+    btn: "Vezi pachetele",
+  },
+  default: {
+    title: "Creeaza cont gratuit",
+    sub: "Completeaza datele de contact pentru a continua",
+    btn: "Continua",
+  },
+};
+
 export default function LeadCaptureStep({ onDone, source }) {
   const { register, isAuthenticated, user } = useAuth();
   const [f, sF] = useState({ name: "", email: "", phone: "", company: "" });
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
   const set = (k, v) => sF(s => ({ ...s, [k]: v }));
+
+  const copy = COPY[source] || COPY.default;
 
   // Skip if already authenticated
   if (isAuthenticated && user) {
@@ -29,8 +49,8 @@ export default function LeadCaptureStep({ onDone, source }) {
 
   return (
     <div className="lead-capture fade-up">
-      <div className="lead-capture-title">Ca sa-ti cream recomandarea personalizata</div>
-      <div className="lead-capture-sub">Spune-ne cum te gasim si primesti instant analiza completa</div>
+      <div className="lead-capture-title">{copy.title}</div>
+      <div className="lead-capture-sub">{copy.sub}</div>
 
       <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
         <div className="form-row" style={{ margin: 0 }}>
@@ -53,7 +73,7 @@ export default function LeadCaptureStep({ onDone, source }) {
         {err && <div style={{ fontSize: 12, color: "var(--c-red)", fontWeight: 600 }}>{err}</div>}
 
         <button className="btn btn-primary btn-block" type="submit" disabled={!canSubmit || loading} style={{ marginTop: 4 }}>
-          {loading ? "Se salveaza..." : "Continua"}
+          {loading ? "Se salveaza..." : copy.btn}
         </button>
       </form>
 
