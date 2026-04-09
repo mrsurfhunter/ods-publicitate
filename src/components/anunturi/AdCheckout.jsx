@@ -1,0 +1,108 @@
+import { useState } from "react";
+import { gid, sld, ssv } from "../../utils/storage";
+import CUILookup from "../purchase/CUILookup";
+
+export default function AdCheckout({ ad, onClose }) {
+  const [step, setStep] = useState(1);
+  const [pay, setPay] = useState("proforma");
+  const [f, sF] = useState({ name: "", company: "", cui: "", phone: "", email: "" });
+  const [v, sV] = useState({ terms: false, accurate: false, sent: false, code: "", real: "", ok: false });
+  const set = (k, val) => sF(s => ({ ...s, [k]: val }));
+  const tva = Math.round(ad.pr.total * 0.19), total = ad.pr.total + tva;
+  const hCUI = d => sF(s => ({ ...s, company: d.company || s.company }));
+  const sendCode = () => { const c = String(Math.floor(1000 + Math.random() * 9000)); sV(x => ({ ...x, sent: true, real: c })); alert("DEMO: Codul SMS este " + c); };
+  const canGo = v.terms && v.accurate && v.ok && f.name && f.phone;
+
+  const submit = async () => {
+    if (!canGo) return;
+    const order = {
+      id: gid(), ...f, packageId: "anunt-" + ad.cat.id,
+      packageName: "Anunt: " + ad.cat.label + " (" + ad.days + "z)",
+      price: ad.pr.total, payMethod: pay, date: new Date().toISOString(),
+      isAnunt: true, anuntText: ad.text, anuntDays: ad.days, anuntWords: ad.words,
+      verified: true, converted: false,
+    };
+    const ex = await sld("ods-orders", []); await ssv("ods-orders", [order, ...ex]);
+    setStep(3);
+  };
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(11,29,50,.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 12, backdropFilter: 'blur(4px)' }} onClick={onClose}>
+      <div className="card" style={{ width: '100%', maxWidth: 500, maxHeight: '92vh', overflowY: 'auto' }} onClick={e => e.stopPropagation()}>
+        {step === 3 ? (
+          <div style={{ padding: 32, textAlign: 'center' }}>
+            <div style={{ width: 56, height: 56, background: 'var(--c-success-bg)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px', fontSize: 28, color: 'var(--c-success)' }}>✓</div>
+            <h3 className="heading-md" style={{ color: 'var(--c-navy)', marginBottom: 8 }}>Anunt verificat si inregistrat!</h3>
+            <p className="text-sm text-muted">Va fi publicat in max 24h de la confirmarea platii.</p>
+            <button className="btn btn-primary" style={{ marginTop: 16 }} onClick={onClose}>Inchide</button>
+          </div>
+        ) : (
+          <div className="card-padding">
+            <h3 className="heading-md" style={{ color: 'var(--c-navy)', marginBottom: 14 }}>{ad.cat.icon} {ad.cat.label}</h3>
+
+            {step === 1 && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <CUILookup value={f.cui} onChange={val => set("cui", val)} onData={hCUI} />
+                <div className="form-row"><label className="label">Companie / Persoana</label><input className="input" value={f.company} onChange={e => set("company", e.target.value)} /></div>
+                <div className="form-grid">
+                  <div className="form-row"><label className="label">Nume *</label><input className="input" value={f.name} onChange={e => set("name", e.target.value)} /></div>
+                  <div className="form-row"><label className="label">Telefon *</label><input className="input" value={f.phone} onChange={e => set("phone", e.target.value)} /></div>
+                </div>
+
+                <div style={{ background: '#FEF3C7', borderRadius: 'var(--radius-sm)', padding: 14, border: '1px solid #FDE68A' }}>
+                  <div style={{ fontSize: 12, fontWeight: 800, color: '#92400E', marginBottom: 8 }}>Verificare identitate</div>
+                  <label style={{ display: 'flex', gap: 8, marginBottom: 6, cursor: 'pointer', fontSize: 12, color: '#78350F' }}>
+                    <input type="checkbox" checked={v.accurate} onChange={e => sV(x => ({ ...x, accurate: e.target.checked }))} style={{ accentColor: 'var(--c-navy)', marginTop: 2 }} />
+                    Declar ca informatiile sunt reale si corecte.
+                  </label>
+                  <label style={{ display: 'flex', gap: 8, marginBottom: 8, cursor: 'pointer', fontSize: 12, color: '#78350F' }}>
+                    <input type="checkbox" checked={v.terms} onChange={e => sV(x => ({ ...x, terms: e.target.checked }))} style={{ accentColor: 'var(--c-navy)', marginTop: 2 }} />
+                    Accept termenii si conditiile ODS SRL.
+                  </label>
+                  <div style={{ borderTop: '1px solid #FDE68A', paddingTop: 8 }}>
+                    <div className="text-xs" style={{ fontWeight: 700, color: '#92400E', marginBottom: 4 }}>Verificare telefon (SMS)</div>
+                    {!v.ok ? (
+                      <div style={{ display: 'flex', gap: 6 }}>
+                        {!v.sent
+                          ? <button className="btn btn-dark btn-sm" onClick={sendCode} disabled={!f.phone || f.phone.replace(/\D/g, "").length < 10}>Trimite cod</button>
+                          : <>
+                            <input className="input" value={v.code} onChange={e => sV(x => ({ ...x, code: e.target.value }))} maxLength={4} placeholder="Cod" style={{ width: 100, textAlign: 'center', fontSize: 16, fontWeight: 700, letterSpacing: 4 }} />
+                            <button className="btn btn-dark btn-sm" onClick={() => sV(x => ({ ...x, ok: x.code === x.real }))}>OK</button>
+                          </>
+                        }
+                      </div>
+                    ) : <div className="text-xs" style={{ color: 'var(--c-success)', fontWeight: 700 }}>✓ Verificat</div>}
+                  </div>
+                </div>
+
+                <button className="btn btn-primary btn-block" onClick={() => { if (canGo) setStep(2); }} disabled={!canGo}>Continua</button>
+              </div>
+            )}
+
+            {step === 2 && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <div style={{ background: 'var(--c-bg)', borderRadius: 'var(--radius-sm)', padding: 12 }}>
+                  <div className="text-xs text-muted" style={{ fontStyle: 'italic', maxHeight: 50, overflowY: 'auto' }}>{ad.text.substring(0, 200)}{ad.text.length > 200 ? "..." : ""}</div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 6 }}>
+                    <span className="text-xs text-muted">{ad.words} cuv x {ad.days} zile</span>
+                    <span style={{ fontSize: 18, fontWeight: 800, color: 'var(--c-amber)' }}>{total.toLocaleString("ro")} lei</span>
+                  </div>
+                </div>
+                {[{ id: "proforma", l: "Transfer bancar" }, { id: "card", l: "Plata cu cardul" }].map(m => (
+                  <label key={m.id} className={`payment-option ${pay === m.id ? 'active' : ''}`}>
+                    <input type="radio" name="p" checked={pay === m.id} onChange={() => setPay(m.id)} />
+                    <span style={{ fontWeight: 600, fontSize: 13, color: 'var(--c-navy)' }}>{m.l}</span>
+                  </label>
+                ))}
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => setStep(1)}>Inapoi</button>
+                  <button className="btn btn-primary" style={{ flex: 2 }} onClick={submit}>Confirma</button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

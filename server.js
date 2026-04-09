@@ -11,7 +11,7 @@ app.use(express.json({ limit: '2mb' }));
 // Serve Vite build in production
 app.use(express.static(path.join(__dirname, 'dist')));
 
-// ── /api/ai — proxy Anthropic (keeps API key server-side) ──
+// ── /api/ai — generic AI proxy (text enhancement) ──
 app.post('/api/ai', async (req, res) => {
   const { system, user } = req.body || {};
   if (!system || !user) {
@@ -34,6 +34,118 @@ app.post('/api/ai', async (req, res) => {
   } catch (e) {
     console.error('AI error:', e.message);
     res.status(500).json({ error: e.message });
+  }
+});
+
+// ── /api/consult — AI package recommendation ──
+const CONSULT_SYSTEM = `Esti consultant de publicitate pentru Ora de Sibiu (oradesibiu.ro), cea mai citita publicatie online din Sibiu cu 400.000+ vizitatori/luna, 218.000 urmaritori Facebook, 18.000 Instagram, 24.000 TikTok. Traficul este auditat BRAT.
+
+Pachete disponibile:
+1. social-single: 1 postare FB+IG, 500 lei (o singura data). Ideal pentru promovari punctuale.
+2. social-pack: 4 postari/luna FB+IG + 2 stories + raport, 700 lei/luna (600 lei la abonament). Ideal pentru prezenta constanta pe social media.
+3. mini-business: 1 articol pe site (prima pagina 7 zile) + 4 postari/luna + 2 stories, 1200 lei/luna (1000 lei la abonament). Ideal pentru afaceri mici care vor si articol.
+4. advertorial: 1 articol profesional (prima pagina 30 zile) + 4 postari/luna + 2 stories + programare + aprobare, 1800 lei/luna (1500 la abonament). CEL MAI POPULAR. Ideal pentru vizibilitate maxima cu articol de calitate.
+5. banner: banner 300x250 pe site, ~1.5M afisari/luna, 1800 lei/luna (1500 la abonament). Ideal pentru brand awareness continuu.
+6. premium: TOT (banner + articol + 8 postari/luna + 4 stories + push 15k + newsletter 600 + TikTok + raport), 3000 lei/luna (2500 la abonament). Ideal pentru campanii complete.
+
+Raspunde EXCLUSIV in format JSON valid, fara markdown, fara backticks:
+{
+  "primary": "id-pachet",
+  "secondary": "id-pachet-sau-null",
+  "reasoning": "2-3 propozitii in romana, la persoana a 2-a singular (tu), explicand DE CE aceste pachete sunt potrivite pentru afacerea clientului. Fii specific — mentioneaza tipul afacerii si obiectivul.",
+  "primaryBenefits": ["beneficiu1 relevant pentru client", "beneficiu2", "beneficiu3"],
+  "secondaryBenefits": ["beneficiu1", "beneficiu2"]
+}
+
+Reguli:
+- Recomanda MAXIM 2 pachete (un primar si optional un secundar).
+- Pachetul primar trebuie sa fie cel mai potrivit, nu cel mai scump.
+- Respecta bugetul clientului. Daca bugetul e "sub-700", NU recomanda advertorial.
+- Daca clientul vrea "once", recomanda social-single, NU abonamente.
+- Daca clientul vrea "ongoing", mentioneaza pretul de abonament.
+- Beneficiile trebuie sa fie personalizate pentru tipul afacerii.
+- Tonul: profesional dar prietenos, fara exagerari.
+- NU inventa pachete. NU modifica preturile.`;
+
+const VALID_PKG_IDS = ['social-single', 'social-pack', 'mini-business', 'advertorial', 'banner', 'premium'];
+
+function fallbackRecommendation({ budget, timeline }) {
+  const isOnce = timeline === 'once';
+  let primary, secondary;
+
+  if (budget === 'sub-700') {
+    primary = isOnce ? 'social-single' : 'social-pack';
+    secondary = isOnce ? null : 'social-single';
+  } else if (budget === '700-1500') {
+    primary = 'mini-business';
+    secondary = 'social-pack';
+  } else if (budget === '1500-2000') {
+    primary = 'advertorial';
+    secondary = 'banner';
+  } else if (budget === 'peste-2000') {
+    primary = 'premium';
+    secondary = 'advertorial';
+  } else {
+    primary = 'advertorial';
+    secondary = 'mini-business';
+  }
+
+  return {
+    primary,
+    secondary,
+    reasoning: 'Pe baza preferintelor tale, aceste pachete ofera cel mai bun raport calitate-pret pentru promovarea afacerii tale in Sibiu.',
+    primaryBenefits: ['Vizibilitate pe cea mai citita publicatie din Sibiu', 'Reach garantat pe Facebook si Instagram', 'Publicare rapida'],
+    secondaryBenefits: secondary ? ['Alternativa mai accesibila', 'Promovare eficienta'] : [],
+  };
+}
+
+app.post('/api/consult', async (req, res) => {
+  const { businessType, goal, budget, timeline } = req.body || {};
+  if (!businessType || !goal || !budget || !timeline) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) {
+    return res.json(fallbackRecommendation({ budget, timeline }));
+  }
+
+  const userMsg = `Tipul afacerii: ${businessType}\nObiectiv: ${goal}\nBuget: ${budget}\nFrecventa: ${timeline}`;
+
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const client = new Anthropic({ apiKey });
+      const message = await client.messages.create({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 500,
+        temperature: 0.3,
+        system: CONSULT_SYSTEM,
+        messages: [{ role: 'user', content: userMsg }],
+      });
+
+      let raw = message.content.map(b => b.text || '').join('\n').trim();
+      // Strip markdown backticks if present
+      raw = raw.replace(/^```json?\s*/i, '').replace(/\s*```$/i, '');
+
+      const data = JSON.parse(raw);
+
+      // Validate package IDs
+      if (!VALID_PKG_IDS.includes(data.primary)) throw new Error('Invalid primary package');
+      if (data.secondary && !VALID_PKG_IDS.includes(data.secondary)) data.secondary = null;
+
+      return res.json({
+        primary: data.primary,
+        secondary: data.secondary || null,
+        reasoning: data.reasoning || '',
+        primaryBenefits: Array.isArray(data.primaryBenefits) ? data.primaryBenefits.slice(0, 4) : [],
+        secondaryBenefits: Array.isArray(data.secondaryBenefits) ? data.secondaryBenefits.slice(0, 3) : [],
+      });
+    } catch (e) {
+      console.error(`Consult attempt ${attempt + 1} failed:`, e.message);
+      if (attempt === 1) {
+        return res.json(fallbackRecommendation({ budget, timeline }));
+      }
+    }
   }
 });
 
