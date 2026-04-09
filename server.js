@@ -1,6 +1,7 @@
 import express from 'express';
 import Anthropic from '@anthropic-ai/sdk';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -179,6 +180,49 @@ app.get('/api/cui/:cui', async (req, res) => {
     console.error('CUI lookup error:', e.message);
     res.status(500).json({ error: 'Lookup failed' });
   }
+});
+
+// ── /api/leads — save lead data ──
+const LEADS_FILE = path.join(__dirname, 'data', 'leads.json');
+
+function readLeads() {
+  try {
+    if (fs.existsSync(LEADS_FILE)) return JSON.parse(fs.readFileSync(LEADS_FILE, 'utf8'));
+  } catch { /* ignore */ }
+  return [];
+}
+
+function writeLeads(leads) {
+  const dir = path.dirname(LEADS_FILE);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(LEADS_FILE, JSON.stringify(leads, null, 2));
+}
+
+app.post('/api/leads', (req, res) => {
+  const { id, name, email, phone, company, source, createdAt, consultAnswers } = req.body || {};
+  if (!email || !name) return res.status(400).json({ error: 'Missing name or email' });
+  const leads = readLeads();
+  const existing = leads.findIndex(l => l.id === id);
+  const entry = {
+    id: id || Date.now().toString(36),
+    name, email, phone: phone || '', company: company || '',
+    source: source || 'unknown', createdAt: createdAt || new Date().toISOString(),
+    consultAnswers: consultAnswers || null,
+    ip: req.ip, ua: req.get('user-agent') || '',
+    updatedAt: new Date().toISOString(),
+  };
+  if (existing >= 0) leads[existing] = { ...leads[existing], ...entry };
+  else leads.unshift(entry);
+  writeLeads(leads);
+  res.json({ ok: true });
+});
+
+app.get('/api/leads/check', (req, res) => {
+  const email = (req.query.email || '').trim().toLowerCase();
+  if (!email) return res.status(400).json({ error: 'Missing email' });
+  const leads = readLeads();
+  const found = leads.find(l => l.email?.toLowerCase() === email);
+  res.json({ exists: !!found, name: found?.name || null });
 });
 
 // ── Health check ──

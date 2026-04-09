@@ -1,11 +1,20 @@
 import { useState } from "react";
 import { gid, sld, ssv } from "../../utils/storage";
+import { useAuth } from "../../context/AuthContext";
+import { postLead } from "../../utils/leads";
 import CUILookup from "../purchase/CUILookup";
 
 export default function AdCheckout({ ad, onClose }) {
+  const { user, register, isAuthenticated } = useAuth();
   const [step, setStep] = useState(1);
   const [pay, setPay] = useState("proforma");
-  const [f, sF] = useState({ name: "", company: "", cui: "", phone: "", email: "" });
+  const [f, sF] = useState({
+    name: user?.name || "",
+    company: user?.company || "",
+    cui: "",
+    phone: user?.phone || "",
+    email: user?.email || "",
+  });
   const [v, sV] = useState({ terms: false, accurate: false, sent: false, code: "", real: "", ok: false });
   const set = (k, val) => sF(s => ({ ...s, [k]: val }));
   const tva = Math.round(ad.pr.total * 0.19), total = ad.pr.total + tva;
@@ -23,44 +32,52 @@ export default function AdCheckout({ ad, onClose }) {
       verified: true, converted: false,
     };
     const ex = await sld("ods-orders", []); await ssv("ods-orders", [order, ...ex]);
+
+    // Save as lead if not already authenticated
+    if (!isAuthenticated && f.name && f.email) {
+      register({ name: f.name, email: f.email, phone: f.phone, company: f.company, source: "anunturi" });
+    } else if (isAuthenticated) {
+      postLead({ ...user, source: "anunturi", converted: true });
+    }
+
     setStep(3);
   };
 
   return (
-    <div style={{ position: 'fixed', inset: 0, background: 'rgba(11,29,50,.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 12, backdropFilter: 'blur(4px)' }} onClick={onClose}>
-      <div className="card" style={{ width: '100%', maxWidth: 500, maxHeight: '92vh', overflowY: 'auto' }} onClick={e => e.stopPropagation()}>
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,48,191,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 12, backdropFilter: 'blur(4px)' }} onClick={onClose}>
+      <div className="card card-static" style={{ width: '100%', maxWidth: 500, maxHeight: '92vh', overflowY: 'auto' }} onClick={e => e.stopPropagation()}>
         {step === 3 ? (
           <div style={{ padding: 32, textAlign: 'center' }}>
             <div style={{ width: 56, height: 56, background: 'var(--c-success-bg)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px', fontSize: 28, color: 'var(--c-success)' }}>✓</div>
-            <h3 className="heading-md" style={{ color: 'var(--c-navy)', marginBottom: 8 }}>Anunt verificat si inregistrat!</h3>
+            <h3 className="heading-md" style={{ color: 'var(--c-primary)', marginBottom: 8 }}>Anunt verificat si inregistrat!</h3>
             <p className="text-sm text-muted">Va fi publicat in max 24h de la confirmarea platii.</p>
             <button className="btn btn-primary" style={{ marginTop: 16 }} onClick={onClose}>Inchide</button>
           </div>
         ) : (
           <div className="card-padding">
-            <h3 className="heading-md" style={{ color: 'var(--c-navy)', marginBottom: 14 }}>{ad.cat.icon} {ad.cat.label}</h3>
+            <h3 className="heading-md" style={{ color: 'var(--c-primary)', marginBottom: 14 }}>{ad.cat.icon} {ad.cat.label}</h3>
 
             {step === 1 && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 <CUILookup value={f.cui} onChange={val => set("cui", val)} onData={hCUI} />
-                <div className="form-row"><label className="label">Companie / Persoana</label><input className="input" value={f.company} onChange={e => set("company", e.target.value)} /></div>
+                <div className="form-row" style={{ margin: 0 }}><label className="label">Companie / Persoana</label><input className="input" value={f.company} onChange={e => set("company", e.target.value)} /></div>
                 <div className="form-grid">
-                  <div className="form-row"><label className="label">Nume *</label><input className="input" value={f.name} onChange={e => set("name", e.target.value)} /></div>
-                  <div className="form-row"><label className="label">Telefon *</label><input className="input" value={f.phone} onChange={e => set("phone", e.target.value)} /></div>
+                  <div className="form-row" style={{ margin: 0 }}><label className="label">Nume *</label><input className="input" value={f.name} onChange={e => set("name", e.target.value)} /></div>
+                  <div className="form-row" style={{ margin: 0 }}><label className="label">Telefon *</label><input className="input" value={f.phone} onChange={e => set("phone", e.target.value)} /></div>
                 </div>
 
-                <div style={{ background: '#FEF3C7', borderRadius: 'var(--radius-sm)', padding: 14, border: '1px solid #FDE68A' }}>
-                  <div style={{ fontSize: 12, fontWeight: 800, color: '#92400E', marginBottom: 8 }}>Verificare identitate</div>
-                  <label style={{ display: 'flex', gap: 8, marginBottom: 6, cursor: 'pointer', fontSize: 12, color: '#78350F' }}>
-                    <input type="checkbox" checked={v.accurate} onChange={e => sV(x => ({ ...x, accurate: e.target.checked }))} style={{ accentColor: 'var(--c-navy)', marginTop: 2 }} />
+                <div style={{ background: 'var(--c-primary-light)', borderRadius: 'var(--radius-sm)', padding: 14, border: '1px solid rgba(0,48,191,0.1)' }}>
+                  <div style={{ fontFamily: 'var(--font-heading)', fontSize: 12, fontWeight: 800, color: 'var(--c-primary)', marginBottom: 8 }}>Verificare identitate</div>
+                  <label style={{ display: 'flex', gap: 8, marginBottom: 6, cursor: 'pointer', fontSize: 12, color: 'var(--c-text)' }}>
+                    <input type="checkbox" checked={v.accurate} onChange={e => sV(x => ({ ...x, accurate: e.target.checked }))} style={{ accentColor: 'var(--c-primary)', marginTop: 2 }} />
                     Declar ca informatiile sunt reale si corecte.
                   </label>
-                  <label style={{ display: 'flex', gap: 8, marginBottom: 8, cursor: 'pointer', fontSize: 12, color: '#78350F' }}>
-                    <input type="checkbox" checked={v.terms} onChange={e => sV(x => ({ ...x, terms: e.target.checked }))} style={{ accentColor: 'var(--c-navy)', marginTop: 2 }} />
+                  <label style={{ display: 'flex', gap: 8, marginBottom: 8, cursor: 'pointer', fontSize: 12, color: 'var(--c-text)' }}>
+                    <input type="checkbox" checked={v.terms} onChange={e => sV(x => ({ ...x, terms: e.target.checked }))} style={{ accentColor: 'var(--c-primary)', marginTop: 2 }} />
                     Accept termenii si conditiile ODS SRL.
                   </label>
-                  <div style={{ borderTop: '1px solid #FDE68A', paddingTop: 8 }}>
-                    <div className="text-xs" style={{ fontWeight: 700, color: '#92400E', marginBottom: 4 }}>Verificare telefon (SMS)</div>
+                  <div style={{ borderTop: '1px solid rgba(0,48,191,0.1)', paddingTop: 8 }}>
+                    <div className="text-xs" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, color: 'var(--c-primary)', marginBottom: 4 }}>Verificare telefon (SMS)</div>
                     {!v.ok ? (
                       <div style={{ display: 'flex', gap: 6 }}>
                         {!v.sent
@@ -85,13 +102,13 @@ export default function AdCheckout({ ad, onClose }) {
                   <div className="text-xs text-muted" style={{ fontStyle: 'italic', maxHeight: 50, overflowY: 'auto' }}>{ad.text.substring(0, 200)}{ad.text.length > 200 ? "..." : ""}</div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 6 }}>
                     <span className="text-xs text-muted">{ad.words} cuv x {ad.days} zile</span>
-                    <span style={{ fontSize: 18, fontWeight: 800, color: 'var(--c-amber)' }}>{total.toLocaleString("ro")} lei</span>
+                    <span style={{ fontFamily: 'var(--font-heading)', fontSize: 18, fontWeight: 800, color: 'var(--c-accent)' }}>{total.toLocaleString("ro")} lei</span>
                   </div>
                 </div>
                 {[{ id: "proforma", l: "Transfer bancar" }, { id: "card", l: "Plata cu cardul" }].map(m => (
                   <label key={m.id} className={`payment-option ${pay === m.id ? 'active' : ''}`}>
                     <input type="radio" name="p" checked={pay === m.id} onChange={() => setPay(m.id)} />
-                    <span style={{ fontWeight: 600, fontSize: 13, color: 'var(--c-navy)' }}>{m.l}</span>
+                    <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: 13, color: 'var(--c-text)' }}>{m.l}</span>
                   </label>
                 ))}
                 <div style={{ display: 'flex', gap: 8 }}>

@@ -24,6 +24,10 @@ RUN npm ci --omit=dev
 COPY server.js ./
 COPY --from=build /app/dist ./dist
 
+# Persistent lead data directory
+RUN mkdir -p /app/data
+VOLUME ["/app/data"]
+
 EXPOSE 3001
 
 # Runtime env vars (read by server.js at startup)

@@ -1,10 +1,20 @@
 import { useState } from "react";
 import { gid, sld, ssv } from "../../utils/storage";
+import { useAuth } from "../../context/AuthContext";
 import CUILookup from "./CUILookup";
 
 export default function PurchaseForm({ pkg, onClose, onDone }) {
+  const { user } = useAuth();
   const [pay, setPay] = useState("proforma");
-  const [f, sF] = useState({ name: "", company: "", cui: "", address: "", phone: "", email: "", sub: false });
+  const [f, sF] = useState({
+    name: user?.name || "",
+    company: user?.company || "",
+    cui: "",
+    address: "",
+    phone: user?.phone || "",
+    email: user?.email || "",
+    sub: false,
+  });
   const set = (k, v) => sF(s => ({ ...s, [k]: v }));
 
   const price = f.sub && pkg.sub ? pkg.sub : pkg.price;
@@ -49,7 +59,7 @@ export default function PurchaseForm({ pkg, onClose, onDone }) {
       </div>
 
       <div className="form-row">
-        <label className="label">Email * (primesti accesul la dashboard)</label>
+        <label className="label">Email *</label>
         <input className="input" value={f.email} onChange={e => set("email", e.target.value)} />
       </div>
 
@@ -64,8 +74,8 @@ export default function PurchaseForm({ pkg, onClose, onDone }) {
       <div style={{ marginTop: 12 }}>
         {[{ id: "proforma", l: "Transfer bancar (proforma)" }, { id: "card", l: "Plata cu cardul" }].map(m => (
           <label key={m.id} className={`payment-option ${pay === m.id ? 'active' : ''}`}>
-            <input type="radio" name="pay" checked={pay === m.id} onChange={() => setPay(m.id)} style={{ accentColor: 'var(--c-blue)' }} />
-            <span style={{ fontWeight: 600, fontSize: 13, color: 'var(--c-navy)' }}>{m.l}</span>
+            <input type="radio" name="pay" checked={pay === m.id} onChange={() => setPay(m.id)} style={{ accentColor: 'var(--c-primary)' }} />
+            <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: 13, color: 'var(--c-text)' }}>{m.l}</span>
           </label>
         ))}
       </div>

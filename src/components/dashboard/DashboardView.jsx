@@ -2,9 +2,11 @@ import { useState } from "react";
 import { PKG, ODS } from "../../data/packages";
 import { sld, ssv } from "../../utils/storage";
 import { wpUploadImage, wpCreateDraft } from "../../utils/wordpress";
+import { useAuth } from "../../context/AuthContext";
 import ImageUploader from "../shared/ImageUploader";
 
 export default function DashboardView({ initOrder, onBack }) {
+  const { user } = useAuth();
   const [order, setOrder] = useState(initOrder);
   const [repostDay, setRD] = useState("");
   const [repostTime, setRT] = useState("orice");
@@ -51,15 +53,16 @@ export default function DashboardView({ initOrder, onBack }) {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12 }}>
           <div>
             <div className="dash-tag">Dashboard</div>
+            {user && <div className="dash-greeting">Bine ai revenit, {user.name}!</div>}
             <h2 className="dash-title">{order.company || order.name}</h2>
-            <div className="text-xs" style={{ color: 'var(--c-muted)' }}>Pachet: <strong style={{ color: '#fff' }}>{pkg?.name}</strong></div>
+            <div className="text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>Pachet: <strong style={{ color: '#fff' }}>{pkg?.name}</strong></div>
           </div>
-          <button className="btn btn-ghost btn-sm" style={{ background: 'rgba(255,255,255,.1)', color: 'var(--c-muted)', borderColor: 'transparent' }} onClick={onBack}>Inapoi</button>
+          <button className="btn btn-ghost btn-sm" style={{ background: 'rgba(255,255,255,.1)', color: 'rgba(255,255,255,.6)', borderColor: 'transparent' }} onClick={onBack}>Inapoi</button>
         </div>
       </div>
 
       {/* Progress */}
-      <div className="card card-padding" style={{ marginBottom: 16 }}>
+      <div className="card card-static card-padding" style={{ marginBottom: 16 }}>
         <div className="steps-bar" style={{ padding: 0, boxShadow: 'none', border: 'none' }}>
           {STEPS.map((s, i) => (
             <div key={i} className="step-item">
@@ -72,8 +75,8 @@ export default function DashboardView({ initOrder, onBack }) {
 
       {/* Content section */}
       {pkg?.hasArticle && (
-        <div className="card card-padding" style={{ marginBottom: 16 }}>
-          <h3 className="heading-sm" style={{ color: 'var(--c-navy)', marginBottom: 12 }}>Continutul articolului</h3>
+        <div className="card card-static card-padding" style={{ marginBottom: 16 }}>
+          <h3 className="heading-sm" style={{ color: 'var(--c-primary)', marginBottom: 12 }}>Continutul articolului</h3>
           {!order.contentChoice ? (
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
               <button className="btn btn-primary" style={{ flex: 1, minWidth: 200, padding: 18, textAlign: 'left', borderRadius: 'var(--radius)' }} onClick={() => upd({ contentChoice: "redactor", status: "review" })}>
@@ -81,13 +84,13 @@ export default function DashboardView({ initOrder, onBack }) {
                 <div style={{ fontSize: 12, fontWeight: 400, opacity: .8, marginTop: 4 }}>Veti fi contactat de un redactor</div></div>
               </button>
               <button className="btn btn-ghost" style={{ flex: 1, minWidth: 200, padding: 18, textAlign: 'left', borderRadius: 'var(--radius)' }} onClick={() => upd({ contentChoice: "propriu" })}>
-                <div><div style={{ fontWeight: 700, fontSize: 15, color: 'var(--c-navy)' }}>Trimit eu materialele</div>
+                <div><div style={{ fontWeight: 700, fontSize: 15, color: 'var(--c-primary)' }}>Trimit eu materialele</div>
                 <div style={{ fontSize: 12, color: 'var(--c-text2)', marginTop: 4 }}>Scriu textul si incarc pozele aici</div></div>
               </button>
             </div>
           ) : order.contentChoice === "redactor" ? (
-            <div style={{ background: '#FFFBEB', borderRadius: 'var(--radius-sm)', padding: 16, border: '1px solid #FDE68A' }}>
-              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--c-navy)', marginBottom: 4 }}>✍️ Un redactor va scrie articolul</div>
+            <div style={{ background: 'var(--c-primary-light)', borderRadius: 'var(--radius-sm)', padding: 16, border: '1px solid rgba(0,48,191,0.1)' }}>
+              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--c-primary)', marginBottom: 4 }}>✍️ Un redactor va scrie articolul</div>
               <div className="text-sm text-secondary">Veti fi contactat la numarul <strong>{order.phone}</strong> in urmatoarele 24h.</div>
             </div>
           ) : (
@@ -107,23 +110,23 @@ export default function DashboardView({ initOrder, onBack }) {
                 {wpLoading ? "Se trimite..." : "Trimite articolul spre publicare"}
               </button>
               {wpMsg === "ok" && <div style={{ padding: 12, background: 'var(--c-success-bg)', borderRadius: 'var(--radius-sm)', fontSize: 13, color: 'var(--c-success)', fontWeight: 600 }}>✓ Articolul a fost trimis ca draft in WordPress!</div>}
-              {wpMsg === "config" && <div style={{ padding: 12, background: '#FEF3C7', borderRadius: 'var(--radius-sm)', fontSize: 13, color: '#92400E' }}>Articolul a fost salvat local. Configurati WP_USER + WP_PASS pentru publicare automata.</div>}
-              {wpMsg && wpMsg !== "ok" && wpMsg !== "config" && <div style={{ padding: 12, background: '#FEE2E2', borderRadius: 'var(--radius-sm)', fontSize: 13, color: 'var(--c-red)' }}>{wpMsg}</div>}
-              {order.wpDraftUrl && <div style={{ padding: 12, background: 'var(--c-success-bg)', borderRadius: 'var(--radius-sm)', fontSize: 13 }}>Draft creat: <a href={order.wpDraftUrl} target="_blank" rel="noopener" style={{ color: 'var(--c-blue)' }}>{order.wpDraftUrl}</a></div>}
+              {wpMsg === "config" && <div style={{ padding: 12, background: 'var(--c-primary-light)', borderRadius: 'var(--radius-sm)', fontSize: 13, color: 'var(--c-primary)' }}>Articolul a fost salvat local. Configurati WP_USER + WP_PASS pentru publicare automata.</div>}
+              {wpMsg && wpMsg !== "ok" && wpMsg !== "config" && <div style={{ padding: 12, background: 'var(--c-accent-light)', borderRadius: 'var(--radius-sm)', fontSize: 13, color: 'var(--c-accent)' }}>{wpMsg}</div>}
+              {order.wpDraftUrl && <div style={{ padding: 12, background: 'var(--c-success-bg)', borderRadius: 'var(--radius-sm)', fontSize: 13 }}>Draft creat: <a href={order.wpDraftUrl} target="_blank" rel="noopener" style={{ color: 'var(--c-primary)' }}>{order.wpDraftUrl}</a></div>}
             </div>
           )}
         </div>
       )}
 
       {/* Calendar reposturi */}
-      <div className="card card-padding" style={{ marginBottom: 16 }}>
-        <h3 className="heading-sm" style={{ color: 'var(--c-navy)', marginBottom: 10 }}>Calendar postari sociale</h3>
+      <div className="card card-static card-padding" style={{ marginBottom: 16 }}>
+        <h3 className="heading-sm" style={{ color: 'var(--c-primary)', marginBottom: 10 }}>Calendar postari sociale</h3>
         <p className="text-xs text-muted" style={{ marginBottom: 12 }}>Alege zilele si ora la care vrei sa fie publicate postarile pe Facebook si Instagram:</p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 12 }}>
           {(order.reposts || []).map((entry, i) => {
             const parts = entry.split("|"); const dateStr = parts[0]; const timeStr = parts[1] || "orice";
             return (
-              <span key={i} style={{ background: 'rgba(59,130,246,.1)', color: 'var(--c-blue)', padding: '5px 12px', borderRadius: 20, fontSize: 12, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span key={i} style={{ background: 'var(--c-primary-light)', color: 'var(--c-primary)', padding: '5px 12px', borderRadius: 20, fontSize: 12, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}>
                 {new Date(dateStr).toLocaleDateString("ro-RO")} la {timeStr === "orice" ? "orice ora" : timeStr}
                 <span style={{ cursor: 'pointer', fontWeight: 800 }} onClick={() => upd({ reposts: (order.reposts || []).filter((_, j) => j !== i) })}>×</span>
               </span>
@@ -150,8 +153,8 @@ export default function DashboardView({ initOrder, onBack }) {
       </div>
 
       {/* Stats */}
-      <div className="card card-padding" style={{ marginBottom: 16 }}>
-        <h3 className="heading-sm" style={{ color: 'var(--c-navy)', marginBottom: 14 }}>Statistici</h3>
+      <div className="card card-static card-padding" style={{ marginBottom: 16 }}>
+        <h3 className="heading-sm" style={{ color: 'var(--c-primary)', marginBottom: 14 }}>Statistici</h3>
         {order.status !== "published" ? (
           <div style={{ textAlign: 'center', padding: 20, color: 'var(--c-muted)' }}>
             <div style={{ fontSize: 32, marginBottom: 8 }}>📊</div>
@@ -160,14 +163,14 @@ export default function DashboardView({ initOrder, onBack }) {
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(120px,1fr))', gap: 10 }}>
             {[
-              { l: "Vizualizari", v: order.stats.views, c: 'var(--c-navy)' },
-              { l: "Click-uri", v: order.stats.clicks, c: 'var(--c-amber)' },
+              { l: "Vizualizari", v: order.stats.views, c: 'var(--c-primary)' },
+              { l: "Click-uri", v: order.stats.clicks, c: 'var(--c-accent)' },
               { l: "Distribuiri", v: order.stats.shares, c: 'var(--c-success)' },
               { l: "Reach FB", v: order.stats.fbReach, c: 'var(--c-blue)' },
               { l: "Reach IG", v: order.stats.igReach, c: '#E1306C' },
             ].map((s, i) => (
               <div key={i} style={{ background: 'var(--c-bg)', borderRadius: 'var(--radius-sm)', padding: 12, textAlign: 'center' }}>
-                <div style={{ fontSize: 20, fontWeight: 800, color: s.c }}>{s.v.toLocaleString("ro")}</div>
+                <div style={{ fontFamily: 'var(--font-heading)', fontSize: 20, fontWeight: 800, color: s.c }}>{s.v.toLocaleString("ro")}</div>
                 <div className="text-xs text-muted">{s.l}</div>
               </div>
             ))}
@@ -176,8 +179,8 @@ export default function DashboardView({ initOrder, onBack }) {
       </div>
 
       {/* Contact */}
-      <div style={{ background: 'var(--c-bg)', borderRadius: 'var(--radius-sm)', padding: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
-        <div className="text-xs text-muted">Ai intrebari? Contact: <strong style={{ color: 'var(--c-navy)' }}>{ODS.phone}</strong> (WhatsApp)</div>
+      <div style={{ background: 'var(--c-bg-warm)', borderRadius: 'var(--radius-sm)', padding: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, border: '1px solid var(--c-border)' }}>
+        <div className="text-xs text-muted">Ai intrebari? Contact: <strong style={{ color: 'var(--c-primary)' }}>{ODS.phone}</strong> (WhatsApp)</div>
         <a href={"https://wa.me/40746752240?text=Salut,+comanda+" + order.id.toUpperCase()} target="_blank" rel="noopener" className="btn btn-sm" style={{ background: 'var(--c-success)', color: '#fff', textDecoration: 'none' }}>WhatsApp</a>
       </div>
     </div>

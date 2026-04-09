@@ -4,7 +4,7 @@ import { callAI } from "../../utils/ai";
 import { calcAd } from "../../utils/pricing";
 import AdCheckout from "./AdCheckout";
 
-export default function AnunturiView({ onBack }) {
+export default function AnunturiView({ onBack, onConsult }) {
   const [cat, setCat] = useState("");
   const [text, setText] = useState("");
   const [days, setDays] = useState(1);
@@ -31,10 +31,10 @@ export default function AnunturiView({ onBack }) {
     <div className="view-enter" style={{ maxWidth: 700, margin: '0 auto', padding: '24px 16px' }}>
       {/* Header */}
       <div style={{ textAlign: 'center', marginBottom: 32 }}>
-        <h1 className="heading-lg" style={{ color: 'var(--c-navy)', marginBottom: 8 }}>Mica Publicitate si Anunturi</h1>
+        <h1 className="heading-lg" style={{ color: 'var(--c-primary)', marginBottom: 8 }}>Mica Publicitate si Anunturi</h1>
         <p className="text-secondary">Publica anunturi pe oradesibiu.ro — avize, pierderi, decese, autorizatii</p>
         <div style={{ marginTop: 8 }}>
-          <span style={{ fontSize: 16, fontWeight: 800, color: 'var(--c-amber)' }}>de la 50 lei / zi</span>
+          <span style={{ fontFamily: 'var(--font-heading)', fontSize: 16, fontWeight: 800, color: 'var(--c-accent)' }}>de la 50 lei / zi</span>
           <span className="text-xs text-muted" style={{ marginLeft: 8 }}>pana la 250 cuvinte</span>
         </div>
       </div>
@@ -56,7 +56,7 @@ export default function AnunturiView({ onBack }) {
       <div style={{ marginBottom: 24 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <label className="label" style={{ fontSize: 12 }}>2. Textul anuntului</label>
-          <span style={{ fontSize: 12, fontWeight: 700, color: words > 1200 ? 'var(--c-red)' : words > 250 ? 'var(--c-amber)' : 'var(--c-success)' }}>{words} cuvinte</span>
+          <span style={{ fontFamily: 'var(--font-heading)', fontSize: 12, fontWeight: 700, color: words > 1200 ? 'var(--c-red)' : words > 250 ? 'var(--c-accent)' : 'var(--c-success)' }}>{words} cuvinte</span>
         </div>
         <textarea className="textarea" value={text} onChange={e => setText(e.target.value)} placeholder="Scrieti textul anuntului..." style={{ minHeight: 150, marginTop: 8 }} />
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 8 }}>
@@ -83,11 +83,11 @@ export default function AnunturiView({ onBack }) {
       </div>
 
       {/* Total */}
-      <div className="card card-padding">
+      <div className="card card-static card-padding">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 12 }}>
-          <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--c-navy)' }}>Total de plata:</span>
+          <span style={{ fontFamily: 'var(--font-heading)', fontSize: 14, fontWeight: 700, color: 'var(--c-primary)' }}>Total de plata:</span>
           <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: 28, fontWeight: 800, color: 'var(--c-amber)', fontFamily: 'var(--font-heading)' }}>{pr.total.toLocaleString("ro")} lei</div>
+            <div style={{ fontFamily: 'var(--font-heading)', fontSize: 28, fontWeight: 800, color: 'var(--c-accent)' }}>{pr.total.toLocaleString("ro")} lei</div>
             <div className="text-xs text-muted">+ TVA = {Math.round(pr.total * 1.19).toLocaleString("ro")} lei | {pr.a} lei/zi x {days} zile</div>
           </div>
         </div>
@@ -97,6 +97,14 @@ export default function AnunturiView({ onBack }) {
       </div>
 
       <button className="consult-back" onClick={onBack} style={{ marginTop: 24 }}>← Pagina principala</button>
+
+      {/* Cross-sell */}
+      {onConsult && (
+        <div className="cross-sell">
+          <div className="cross-sell-text">Ai si o afacere? Descopera pachetele de promovare!</div>
+          <button className="btn btn-secondary btn-sm" onClick={onConsult}>Incepe consultarea</button>
+        </div>
+      )}
 
       {adCheckout && <AdCheckout ad={adCheckout} onClose={() => setAdCheckout(null)} />}
     </div>

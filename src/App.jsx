@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import { sld } from "./utils/storage";
 import TopBar from "./components/layout/TopBar";
 import Footer from "./components/layout/Footer";
@@ -8,12 +9,15 @@ import RecommendView from "./components/recommend/RecommendView";
 import CatalogView from "./components/catalog/CatalogView";
 import AnunturiView from "./components/anunturi/AnunturiView";
 import DashboardView from "./components/dashboard/DashboardView";
+import LoginModal from "./components/auth/LoginModal";
 
-export default function App() {
+function AppInner() {
+  const { user, isAuthenticated } = useAuth();
   const [view, setView] = useState("landing");
   const [recommendation, setRecommendation] = useState(null);
   const [dashOrder, setDashOrder] = useState(null);
   const [myOrders, setMyOrders] = useState([]);
+  const [showLogin, setShowLogin] = useState(false);
 
   useEffect(() => { sld("ods-orders", []).then(setMyOrders); }, []);
 
@@ -39,11 +43,27 @@ export default function App() {
     if (o) { setDashOrder(o); setView("dashboard"); }
   };
 
+  const handleLoggedIn = (u) => {
+    sld("ods-orders", []).then(orders => {
+      setMyOrders(orders);
+      if (orders.length > 0) {
+        setDashOrder(orders[0]);
+        setView("dashboard");
+      }
+    });
+  };
+
   const showFooter = view === "landing" || view === "catalog" || view === "anunturi";
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--c-bg)' }}>
-      <TopBar myOrders={myOrders} onHome={goHome} onOpenOrder={handleOpenOrder} />
+      <TopBar
+        myOrders={myOrders}
+        onHome={goHome}
+        onOpenOrder={handleOpenOrder}
+        onLogin={() => setShowLogin(true)}
+        onConsult={() => setView("consult")}
+      />
 
       {view === "landing" && (
         <LandingView
@@ -71,7 +91,7 @@ export default function App() {
       )}
 
       {view === "anunturi" && (
-        <AnunturiView onBack={goHome} />
+        <AnunturiView onBack={goHome} onConsult={() => setView("consult")} />
       )}
 
       {view === "dashboard" && dashOrder && (
@@ -83,6 +103,18 @@ export default function App() {
           <Footer />
         </div>
       )}
+
+      {showLogin && (
+        <LoginModal onClose={() => setShowLogin(false)} onLoggedIn={handleLoggedIn} />
+      )}
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppInner />
+    </AuthProvider>
   );
 }
