@@ -27,7 +27,7 @@ export default function CUILookup({ value, onChange, onData }) {
           onKeyDown={e => e.key === "Enter" && go()}
         />
         <button className="btn btn-dark btn-sm" onClick={go} disabled={loading} style={{ whiteSpace: "nowrap" }}>
-          {loading ? "..." : "ANAF"}
+          {loading ? "..." : "Verifica"}
         </button>
       </div>
       {status === "ok" && <div style={{ fontSize: 12, color: 'var(--c-success)', marginTop: 4, fontWeight: 600 }}>✓ Date preluate</div>}

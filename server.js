@@ -149,6 +149,38 @@ app.post('/api/consult', async (req, res) => {
   }
 });
 
+// ── /api/cui/:cui — company lookup via firmeapi.ro ──
+app.get('/api/cui/:cui', async (req, res) => {
+  const cui = (req.params.cui || '').replace(/\D/g, '');
+  if (!cui || cui.length < 2) {
+    return res.status(400).json({ error: 'CUI invalid' });
+  }
+  const apiKey = process.env.FIRMEAPI_KEY;
+  if (!apiKey) {
+    return res.status(503).json({ error: 'API key not configured' });
+  }
+  try {
+    const r = await fetch(`https://www.firmeapi.ro/api/v1/firma/${cui}`, {
+      headers: { 'X-API-KEY': apiKey },
+    });
+    const d = await r.json();
+    if (d.success && d.data) {
+      const addr = d.data.adresa_sediu_social;
+      const address = [addr?.strada, addr?.numar, addr?.localitate, addr?.judet].filter(Boolean).join(', ');
+      return res.json({
+        company: d.data.denumire || '',
+        address,
+        regCom: d.data.nr_reg_com || '',
+        vat: d.data.tva?.platitor === true,
+      });
+    }
+    res.status(404).json({ error: 'CUI not found' });
+  } catch (e) {
+    console.error('CUI lookup error:', e.message);
+    res.status(500).json({ error: 'Lookup failed' });
+  }
+});
+
 // ── Health check ──
 app.get('/api/health', (_req, res) => {
   res.json({ ok: true, ts: new Date().toISOString() });
