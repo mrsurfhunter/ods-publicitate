@@ -39,7 +39,7 @@ export default function LeadCaptureStep({ onDone, source }) {
   const handleSubmit = async (e) => {
     e?.preventDefault();
     if (!canSubmit) return;
-    if (!/\S+@\S+\.\S+/.test(f.email)) { setErr("Email invalid"); return; }
+    if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(f.email)) { setErr("Email invalid"); return; }
     if (f.phone.replace(/\D/g, "").length < 10) { setErr("Telefon invalid"); return; }
     setLoading(true); setErr("");
     const u = await register({ ...f, source: source || "consult" });

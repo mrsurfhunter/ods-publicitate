@@ -1,11 +1,15 @@
 import { useState } from "react";
 import { gid, sld, ssv } from "../../utils/storage";
 import { useAuth } from "../../context/AuthContext";
+import { useToast } from "../shared/Toast";
+import { saveOrderToServer } from "../../utils/orders";
 import CUILookup from "./CUILookup";
 
 export default function PurchaseForm({ pkg, onClose, onDone }) {
   const { user } = useAuth();
+  const toast = useToast();
   const [pay, setPay] = useState("proforma");
+  const [submitting, setSubmitting] = useState(false);
   const [f, sF] = useState({
     name: user?.name || "",
     company: user?.company || "",
@@ -20,12 +24,13 @@ export default function PurchaseForm({ pkg, onClose, onDone }) {
   const price = f.sub && pkg.sub ? pkg.sub : pkg.price;
   const tva = Math.round(price * 0.19);
   const total = price + tva;
-  const canSubmit = f.name && f.phone && f.email;
+  const canSubmit = f.name && f.phone && f.email && !submitting;
 
   const hCUI = d => sF(s => ({ ...s, company: d.company || s.company, address: d.address || s.address }));
 
   const submit = async () => {
     if (!canSubmit) return;
+    setSubmitting(true);
     const order = {
       id: gid(), ...f, packageId: pkg.id, packageName: pkg.name, price, payMethod: pay,
       date: new Date().toISOString(), subscription: f.sub,
@@ -35,6 +40,10 @@ export default function PurchaseForm({ pkg, onClose, onDone }) {
     };
     const ex = await sld("ods-orders", []);
     await ssv("ods-orders", [order, ...ex]);
+    // Persist to server
+    await saveOrderToServer(order);
+    toast("Comanda a fost plasată cu succes!", "success");
+    setSubmitting(false);
     onDone(order);
   };
 
@@ -66,13 +75,13 @@ export default function PurchaseForm({ pkg, onClose, onDone }) {
       {pkg.sub && (
         <div className="sub-toggle" onClick={() => set("sub", !f.sub)}>
           {f.sub
-            ? `✓ Abonament: ${pkg.sub.toLocaleString("ro")} lei/lună`
-            : `→ Economisești ${((pkg.price - pkg.sub) * 3).toLocaleString("ro")} lei la abonament`}
+            ? `\u2713 Abonament: ${pkg.sub.toLocaleString("ro")} lei/lun\u0103`
+            : `\u2192 Economise\u0219ti ${((pkg.price - pkg.sub) * 3).toLocaleString("ro")} lei la abonament`}
         </div>
       )}
 
       <div style={{ marginTop: 12 }}>
-        {[{ id: "proforma", l: "Transfer bancar (proformă)" }, { id: "card", l: "Plată cu cardul" }].map(m => (
+        {[{ id: "proforma", l: "Transfer bancar (proform\u0103)" }, { id: "card", l: "Plat\u0103 cu cardul" }].map(m => (
           <label key={m.id} className={`payment-option ${pay === m.id ? 'active' : ''}`}>
             <input type="radio" name="pay" checked={pay === m.id} onChange={() => setPay(m.id)} style={{ accentColor: 'var(--c-primary)' }} />
             <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: 13, color: 'var(--c-text)' }}>{m.l}</span>
@@ -86,7 +95,7 @@ export default function PurchaseForm({ pkg, onClose, onDone }) {
           <div className="purchase-total-amount">{total.toLocaleString("ro")} lei</div>
         </div>
         <button className="btn btn-primary" onClick={submit} disabled={!canSubmit}>
-          {pay === "card" ? "Plătește" : "Cumpără"}
+          {submitting ? "Se procesează..." : pay === "card" ? "Plătește" : "Cumpără"}
         </button>
       </div>
 

@@ -6,11 +6,9 @@ export const ODS = {
   email: "promovare@oradesibiu.ro",
 };
 
+// WordPress config — credentials moved server-side for security
 export const WP = {
-  url: import.meta.env.VITE_WP_URL || "https://www.oradesibiu.ro",
-  rest: "/wp-json/wp/v2",
-  user: import.meta.env.VITE_WP_USER || "",
-  pass: import.meta.env.VITE_WP_PASS || "",
+  url: "https://www.oradesibiu.ro",
 };
 
 export const PKG = [

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { sld } from "./utils/storage";
+import { saveOrderToServer } from "./utils/orders";
 import TopBar from "./components/layout/TopBar";
 import Footer from "./components/layout/Footer";
 import LandingView from "./components/landing/LandingView";
@@ -10,6 +11,8 @@ import CatalogView from "./components/catalog/CatalogView";
 import AnunturiView from "./components/anunturi/AnunturiView";
 import DashboardView from "./components/dashboard/DashboardView";
 import LoginModal from "./components/auth/LoginModal";
+import ErrorBoundary from "./components/shared/ErrorBoundary";
+import { ToastProvider } from "./components/shared/Toast";
 
 function AppInner() {
   const { user, isAuthenticated } = useAuth();
@@ -36,6 +39,8 @@ function AppInner() {
     setDashOrder(order);
     setView("dashboard");
     sld("ods-orders", []).then(setMyOrders);
+    // Sync order to server
+    saveOrderToServer(order);
   };
 
   const handleOpenOrder = (orderId) => {
@@ -113,8 +118,12 @@ function AppInner() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <AppInner />
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <ToastProvider>
+          <AppInner />
+        </ToastProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
