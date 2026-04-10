@@ -247,19 +247,33 @@ img { max-width: 100%; display: block; }
 
 /* Trust strip */
 .landing-trust {
-  display: flex; justify-content: center; gap: 0; flex-wrap: wrap;
+  display: flex; justify-content: center; gap: 0; flex-wrap: nowrap;
   margin-top: 56px;
 }
 .landing-trust-item {
-  text-align: center; padding: 0 24px;
-  border-right: 1px solid rgba(255,255,255,0.15);
+  display: flex; align-items: center; gap: 10px;
+  padding: 0 22px;
+  border-right: 1px solid rgba(255,255,255,0.12);
 }
 .landing-trust-item:last-child { border-right: none; }
-.landing-trust-val {
-  font-family: var(--font-heading); font-size: clamp(30px, 5vw, 40px);
-  font-weight: 800; color: #fff;
+.landing-trust-icon {
+  flex-shrink: 0; opacity: 0.85;
 }
-.landing-trust-label { font-size: 13px; color: rgba(255,255,255,0.7); margin-top: 4px; font-weight: 500; }
+.landing-trust-icon svg { display: block; }
+.landing-trust-text { text-align: left; }
+.landing-trust-val {
+  font-family: var(--font-heading); font-size: clamp(18px, 2.8vw, 28px);
+  font-weight: 800; color: #fff; line-height: 1.1;
+}
+.landing-trust-label {
+  font-size: 11px; color: rgba(255,255,255,0.55); margin-top: 1px;
+  font-weight: 500; white-space: nowrap;
+}
+@media (max-width: 700px) {
+  .landing-trust { flex-wrap: wrap; gap: 12px 0; }
+  .landing-trust-item { padding: 0 14px; }
+  .landing-trust-item:nth-child(3) { border-right: none; }
+}
 
 .landing-secondary-link {
   color: rgba(255,255,255,0.4); font-size: 13px; font-weight: 500;
