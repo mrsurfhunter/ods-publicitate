@@ -251,15 +251,15 @@ img { max-width: 100%; display: block; }
   margin-top: 56px;
 }
 .landing-trust-item {
-  text-align: center; padding: 0 20px;
-  border-right: 1px solid rgba(255,255,255,0.1);
+  text-align: center; padding: 0 24px;
+  border-right: 1px solid rgba(255,255,255,0.15);
 }
 .landing-trust-item:last-child { border-right: none; }
 .landing-trust-val {
-  font-family: var(--font-heading); font-size: 26px;
+  font-family: var(--font-heading); font-size: clamp(30px, 5vw, 40px);
   font-weight: 800; color: #fff;
 }
-.landing-trust-label { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 2px; }
+.landing-trust-label { font-size: 13px; color: rgba(255,255,255,0.7); margin-top: 4px; font-weight: 500; }
 
 .landing-secondary-link {
   color: rgba(255,255,255,0.4); font-size: 13px; font-weight: 500;
@@ -410,18 +410,18 @@ img { max-width: 100%; display: block; }
 
 .consult-question {
   font-family: var(--font-heading); font-weight: 800;
-  font-size: clamp(24px, 4.5vw, 32px); color: var(--c-primary);
-  text-align: center; margin-bottom: 32px; line-height: 1.15;
+  font-size: clamp(26px, 5vw, 36px); color: var(--c-primary);
+  text-align: center; margin-bottom: 36px; line-height: 1.15;
 }
 
 .consult-options { display: flex; flex-direction: column; gap: 10px; }
 
 .consult-option {
-  display: flex; align-items: center; gap: 14px;
-  padding: 16px 20px; border-radius: var(--radius);
+  display: flex; align-items: center; gap: 16px;
+  padding: 18px 24px; border-radius: var(--radius);
   border: 2px solid var(--c-border); background: var(--c-card);
   cursor: pointer; font-family: var(--font-body);
-  font-size: 15px; font-weight: 600; color: var(--c-text);
+  font-size: 17px; font-weight: 600; color: var(--c-text);
   transition: all 0.15s var(--ease); text-align: left; width: 100%;
   box-shadow: var(--shadow);
 }
@@ -431,7 +431,7 @@ img { max-width: 100%; display: block; }
   border-color: var(--c-primary); background: var(--c-primary-light);
   box-shadow: 0 0 0 3px rgba(0,48,191,0.10);
 }
-.consult-option-icon { font-size: 24px; flex-shrink: 0; width: 36px; text-align: center; }
+.consult-option-icon { font-size: 28px; flex-shrink: 0; width: 40px; text-align: center; }
 
 .consult-free-input {
   margin-top: 10px; padding: 14px 16px;

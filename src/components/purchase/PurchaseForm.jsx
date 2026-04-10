@@ -66,13 +66,13 @@ export default function PurchaseForm({ pkg, onClose, onDone }) {
       {pkg.sub && (
         <div className="sub-toggle" onClick={() => set("sub", !f.sub)}>
           {f.sub
-            ? `✓ Abonament: ${pkg.sub.toLocaleString("ro")} lei/luna`
-            : `→ Economisesti ${((pkg.price - pkg.sub) * 3).toLocaleString("ro")} lei la abonament`}
+            ? `✓ Abonament: ${pkg.sub.toLocaleString("ro")} lei/lună`
+            : `→ Economisești ${((pkg.price - pkg.sub) * 3).toLocaleString("ro")} lei la abonament`}
         </div>
       )}
 
       <div style={{ marginTop: 12 }}>
-        {[{ id: "proforma", l: "Transfer bancar (proforma)" }, { id: "card", l: "Plata cu cardul" }].map(m => (
+        {[{ id: "proforma", l: "Transfer bancar (proformă)" }, { id: "card", l: "Plată cu cardul" }].map(m => (
           <label key={m.id} className={`payment-option ${pay === m.id ? 'active' : ''}`}>
             <input type="radio" name="pay" checked={pay === m.id} onChange={() => setPay(m.id)} style={{ accentColor: 'var(--c-primary)' }} />
             <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: 13, color: 'var(--c-text)' }}>{m.l}</span>
@@ -86,15 +86,15 @@ export default function PurchaseForm({ pkg, onClose, onDone }) {
           <div className="purchase-total-amount">{total.toLocaleString("ro")} lei</div>
         </div>
         <button className="btn btn-primary" onClick={submit} disabled={!canSubmit}>
-          {pay === "card" ? "Plateste" : "Cumpara"}
+          {pay === "card" ? "Plătește" : "Cumpără"}
         </button>
       </div>
 
       <div style={{ fontSize: 11, color: 'var(--c-muted)', textAlign: 'center', marginTop: 8 }}>
-        Dupa plata primesti dashboard-ul cu urmatorii pasi.
+        După plată primești dashboard-ul cu următorii pași.
       </div>
 
-      <button className="btn btn-ghost btn-sm btn-block" style={{ marginTop: 8 }} onClick={onClose}>Anuleaza</button>
+      <button className="btn btn-ghost btn-sm btn-block" style={{ marginTop: 8 }} onClick={onClose}>Anulează</button>
     </div>
   );
 }

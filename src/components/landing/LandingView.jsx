@@ -2,8 +2,8 @@ import TeaserCards from "./TeaserCards";
 import HowItWorks from "./HowItWorks";
 
 const TRUST = [
-  { v: "400k+", l: "vizitatori/luna" },
-  { v: "1.8M", l: "afisari/luna" },
+  { v: "400k+", l: "vizitatori/lună" },
+  { v: "1.8M", l: "afișări/lună" },
   { v: "218k", l: "Facebook" },
   { v: "18k", l: "Instagram" },
   { v: "24k", l: "TikTok" },
@@ -15,17 +15,17 @@ export default function LandingView({ onConsult, onAnunturi, onCatalog }) {
       {/* Hero */}
       <div className="landing-hero">
         <div className="container-narrow">
-          <div className="landing-eyebrow">Cea mai citita publicatie din Sibiu</div>
-          <h1 className="heading-xl landing-headline">Fa-ti afacerea vizibila in Sibiu</h1>
+          <div className="landing-eyebrow">Cea mai citită publicație din Sibiu</div>
+          <h1 className="heading-xl landing-headline">Fă-ți afacerea vizibilă în Sibiu</h1>
           <p className="landing-sub">
-            Spune-ne despre afacerea ta si iti cream o strategie de promovare personalizata. In 2 minute.
+            Spune-ne despre afacerea ta și îți creăm o strategie de promovare personalizată. În 2 minute.
           </p>
           <div className="landing-cta">
             <button className="btn btn-primary" onClick={onConsult}>
-              Incepe consultarea gratuita
+              Începe consultarea gratuită
             </button>
             <button className="btn btn-ghost" onClick={onAnunturi}>
-              Mica Publicitate
+              Mică Publicitate
             </button>
           </div>
           <div className="landing-trust">
@@ -44,9 +44,9 @@ export default function LandingView({ onConsult, onAnunturi, onCatalog }) {
 
       {/* Social proof */}
       <div className="social-proof-bar">
-        <div className="social-proof-item"><div className="social-proof-dot" /> 17 ani experienta</div>
+        <div className="social-proof-item"><div className="social-proof-dot" /> 17 ani experiență</div>
         <div className="social-proof-item"><div className="social-proof-dot" /> Trafic auditat BRAT</div>
-        <div className="social-proof-item"><div className="social-proof-dot" /> Peste 1.000 clienti</div>
+        <div className="social-proof-item"><div className="social-proof-dot" /> Peste 1.000 clienți</div>
       </div>
 
       {/* Teaser packages */}
@@ -59,8 +59,8 @@ export default function LandingView({ onConsult, onAnunturi, onCatalog }) {
 
       {/* Final CTA */}
       <div className="final-cta">
-        <h2 className="heading-lg">Gata sa incepi?</h2>
-        <button className="btn btn-primary" onClick={onConsult}>Descopera pachetul potrivit</button>
+        <h2 className="heading-lg">Gata să începi?</h2>
+        <button className="btn btn-primary" onClick={onConsult}>Descoperă pachetul potrivit</button>
         <a href="https://wa.me/40746752240" target="_blank" rel="noopener" className="final-cta-link">
           Sau scrie-ne pe WhatsApp
         </a>

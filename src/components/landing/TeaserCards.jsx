@@ -9,7 +9,7 @@ export default function TeaserCards({ onConsult }) {
     <div className="teaser-section">
       <div className="teaser-heading">
         <h2 className="heading-lg" style={{ color: "var(--c-primary)", marginBottom: 8 }}>Pachete de promovare</h2>
-        <p className="text-secondary" style={{ maxWidth: 440, margin: "0 auto" }}>Alege dintr-o gama completa de servicii adaptate nevoilor afacerii tale</p>
+        <p className="text-secondary" style={{ maxWidth: 440, margin: "0 auto" }}>Alege dintr-o gamă completă de servicii adaptate nevoilor afacerii tale</p>
       </div>
       <div className="teaser-grid">
         {pkgs.map((pkg, i) => (
@@ -25,13 +25,13 @@ export default function TeaserCards({ onConsult }) {
             </div>
             <div className="teaser-overlay">
               <div className="teaser-lock">🔒</div>
-              <div className="teaser-overlay-text">Creeaza cont gratuit pentru preturi</div>
+              <div className="teaser-overlay-text">Creează cont gratuit pentru prețuri</div>
             </div>
           </div>
         ))}
       </div>
       <div style={{ textAlign: "center", marginTop: 28 }}>
-        <button className="btn btn-secondary" onClick={onConsult}>Descopera pachetul potrivit</button>
+        <button className="btn btn-secondary" onClick={onConsult}>Descoperă pachetul potrivit</button>
       </div>
     </div>
   );

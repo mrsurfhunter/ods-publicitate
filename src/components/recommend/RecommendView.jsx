@@ -15,7 +15,7 @@ export default function RecommendView({ recommendation, onCatalog, onPurchased, 
         <div className="recommend-card-header">
           <div>
             <span className="recommend-card-badge" style={{ background: isPrimary ? 'var(--c-accent)' : 'var(--c-primary)' }}>
-              {isPrimary ? 'Recomandat' : 'Alternativa'}
+              {isPrimary ? 'Recomandat' : 'Alternativă'}
             </span>
             <div className="recommend-card-name">{pkg.name}</div>
             <div className="recommend-card-headline">{pkg.headline}</div>
@@ -33,8 +33,8 @@ export default function RecommendView({ recommendation, onCatalog, onPurchased, 
 
         <div className="recommend-card-footer">
           <div>
-            <div className="recommend-price">{pkg.price.toLocaleString("ro")} <span style={{ fontSize: 14, fontWeight: 400 }}>lei{pkg.cat !== "oneTime" ? "/luna" : ""}</span></div>
-            {pkg.sub && <div className="recommend-price-sub">{pkg.sub.toLocaleString("ro")} lei/luna la abonament</div>}
+            <div className="recommend-price">{pkg.price.toLocaleString("ro")} <span style={{ fontSize: 14, fontWeight: 400 }}>lei{pkg.cat !== "oneTime" ? "/lună" : ""}</span></div>
+            {pkg.sub && <div className="recommend-price-sub">{pkg.sub.toLocaleString("ro")} lei/lună la abonament</div>}
             <div className="recommend-price-sub">+ TVA</div>
           </div>
           {!isBuying && (
@@ -58,9 +58,9 @@ export default function RecommendView({ recommendation, onCatalog, onPurchased, 
         {primaryPkg && renderCard(primaryPkg, recommendation.primaryBenefits || [], true)}
         {secondaryPkg && renderCard(secondaryPkg, recommendation.secondaryBenefits || [], false)}
         <div className="recommend-links">
-          <button className="recommend-link" onClick={onCatalog}>Nu ma regasesc? Vezi toate pachetele →</button>
-          <a href="https://wa.me/40746752240?text=Salut, as vrea sa discut despre promovare pe oradesibiu.ro" target="_blank" rel="noopener" className="recommend-link" style={{ color: 'var(--c-success)' }}>
-            Vorbeste cu noi pe WhatsApp
+          <button className="recommend-link" onClick={onCatalog}>Nu mă regăsesc? Vezi toate pachetele →</button>
+          <a href="https://wa.me/40746752240?text=Salut, aș vrea să discut despre promovare pe oradesibiu.ro" target="_blank" rel="noopener" className="recommend-link" style={{ color: 'var(--c-success)' }}>
+            Vorbește cu noi pe WhatsApp
           </a>
           <button className="recommend-link" onClick={onBack}>← Reia consultarea</button>
         </div>

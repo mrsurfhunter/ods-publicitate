@@ -3,19 +3,19 @@ import { useAuth } from "../../context/AuthContext";
 
 const COPY = {
   consult: {
-    title: "Ca sa-ti cream recomandarea personalizata",
-    sub: "Spune-ne cum te gasim si primesti instant pachetul potrivit pentru afacerea ta",
-    btn: "Continua",
+    title: "Ca să-ți creăm recomandarea personalizată",
+    sub: "Spune-ne cum te găsim și primești instant pachetul potrivit pentru afacerea ta",
+    btn: "Continuă",
   },
   catalog: {
-    title: "Creeaza cont gratuit",
-    sub: "Completeaza datele pentru a vedea preturile si a comanda direct",
+    title: "Creează cont gratuit",
+    sub: "Completează datele pentru a vedea prețurile și a comanda direct",
     btn: "Vezi pachetele",
   },
   default: {
-    title: "Creeaza cont gratuit",
-    sub: "Completeaza datele de contact pentru a continua",
-    btn: "Continua",
+    title: "Creează cont gratuit",
+    sub: "Completează datele de contact pentru a continua",
+    btn: "Continuă",
   },
 };
 
@@ -55,7 +55,7 @@ export default function LeadCaptureStep({ onDone, source }) {
       <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
         <div className="form-row" style={{ margin: 0 }}>
           <label className="label">Nume *</label>
-          <input className="input" value={f.name} onChange={e => set("name", e.target.value)} placeholder="Numele tau" autoFocus />
+          <input className="input" value={f.name} onChange={e => set("name", e.target.value)} placeholder="Numele tău" autoFocus />
         </div>
         <div className="form-row" style={{ margin: 0 }}>
           <label className="label">Email *</label>
@@ -66,19 +66,19 @@ export default function LeadCaptureStep({ onDone, source }) {
           <input className="input" value={f.phone} onChange={e => set("phone", e.target.value)} placeholder="07xx xxx xxx" />
         </div>
         <div className="form-row" style={{ margin: 0 }}>
-          <label className="label">Firma <span style={{ fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>(optional)</span></label>
+          <label className="label">Firmă <span style={{ fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>(opțional)</span></label>
           <input className="input" value={f.company} onChange={e => set("company", e.target.value)} placeholder="Numele firmei" />
         </div>
 
         {err && <div style={{ fontSize: 12, color: "var(--c-red)", fontWeight: 600 }}>{err}</div>}
 
         <button className="btn btn-primary btn-block" type="submit" disabled={!canSubmit || loading} style={{ marginTop: 4 }}>
-          {loading ? "Se salveaza..." : copy.btn}
+          {loading ? "Se salvează..." : copy.btn}
         </button>
       </form>
 
       <div className="lead-capture-privacy">
-        <span>🔒</span> Nu trimitem spam. Datele tale sunt in siguranta.
+        <span>🔒</span> Nu trimitem spam. Datele tale sunt în siguranță.
       </div>
     </div>
   );

@@ -1,13 +1,13 @@
 const STEPS = [
-  { num: "1", title: "Raspunde la 4 intrebari", desc: "Spune-ne ce afacere ai, ce vrei sa obtii si ce buget ai. Dureaza sub 1 minut." },
-  { num: "2", title: "Primesti recomandarea AI", desc: "Algoritmul nostru analizeaza nevoile tale si iti sugereaza cel mai bun pachet." },
-  { num: "3", title: "Alegi si publici", desc: "Confirmi pachetul, trimiti materialele si te promovam pe toate canalele." },
+  { num: "1", title: "Răspunde la 4 întrebări", desc: "Spune-ne ce afacere ai, ce vrei să obții și ce buget ai. Durează sub 1 minut." },
+  { num: "2", title: "Primești recomandarea AI", desc: "Algoritmul nostru analizează nevoile tale și îți sugerează cel mai bun pachet." },
+  { num: "3", title: "Alegi și publici", desc: "Confirmi pachetul, trimiți materialele și te promovăm pe toate canalele." },
 ];
 
 export default function HowItWorks() {
   return (
     <div className="how-section">
-      <h2 className="heading-lg" style={{ textAlign: "center", color: "var(--c-primary)", marginBottom: 32 }}>Cum functioneaza</h2>
+      <h2 className="heading-lg" style={{ textAlign: "center", color: "var(--c-primary)", marginBottom: 32 }}>Cum funcționează</h2>
       <div className="how-grid">
         {STEPS.map((s, i) => (
           <div key={i} className={`how-step fade-up stagger-${i + 1}`}>

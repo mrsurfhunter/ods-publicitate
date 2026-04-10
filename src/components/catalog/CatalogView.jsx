@@ -19,7 +19,7 @@ function CatalogCard({ pkg, onPurchased, featured }) {
         </div>
         <div className="cat-card__price-area">
           <div className="cat-card__price">{pkg.price.toLocaleString("ro")} <span className="cat-card__price-unit">lei</span></div>
-          <div className="cat-card__price-meta">{pkg.cat !== "oneTime" ? "/ luna + TVA" : "+ TVA (o data)"}</div>
+          <div className="cat-card__price-meta">{pkg.cat !== "oneTime" ? "/ lună + TVA" : "+ TVA (o dată)"}</div>
           {pkg.sub && <div className="cat-card__sub">{pkg.sub.toLocaleString("ro")} lei la abonament</div>}
         </div>
       </div>
@@ -61,14 +61,14 @@ export default function CatalogView({ onConsult, onPurchased }) {
         <div className="catalog-header">
           <div className="eyebrow" style={{ marginBottom: 8 }}>Pachete de promovare</div>
           <h2 className="heading-lg" style={{ color: 'var(--c-primary)', marginBottom: 8 }}>Alege pachetul potrivit pentru afacerea ta</h2>
-          <p className="text-secondary" style={{ maxWidth: 420, margin: '0 auto 28px' }}>Creeaza un cont gratuit pentru a vedea detaliile complete si a comanda.</p>
+          <p className="text-secondary" style={{ maxWidth: 420, margin: '0 auto 28px' }}>Creează un cont gratuit pentru a vedea detaliile complete și a comanda.</p>
         </div>
         <div className="catalog-gate">
           <LeadCaptureStep source="catalog" />
         </div>
         <div style={{ textAlign: 'center', marginTop: 20 }}>
           <button className="consult-back" onClick={onConsult} style={{ margin: '0 auto' }}>
-            ← Nu stii ce sa alegi? Lasa-ne sa iti recomandam
+            ← Nu știi ce să alegi? Lasă-ne să îți recomandăm
           </button>
         </div>
       </div>
@@ -80,9 +80,9 @@ export default function CatalogView({ onConsult, onPurchased }) {
       <div className="catalog-header">
         <div className="eyebrow" style={{ marginBottom: 8 }}>Pachete de promovare</div>
         <h2 className="heading-lg" style={{ color: 'var(--c-primary)', marginBottom: 8 }}>Alege pachetul potrivit</h2>
-        <p className="text-secondary" style={{ marginBottom: 16 }}>Toate pachetele includ publicare pe oradesibiu.ro — cea mai citita publicatie din Sibiu.</p>
+        <p className="text-secondary" style={{ marginBottom: 16 }}>Toate pachetele includ publicare pe oradesibiu.ro — cea mai citită publicație din Sibiu.</p>
         <button className="btn btn-ghost btn-sm" onClick={onConsult}>
-          Nu stii ce sa alegi? Lasa-ne sa te ajutam →
+          Nu știi ce să alegi? Lasă-ne să te ajutăm →
         </button>
       </div>
       <div className="cat-list">

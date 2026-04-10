@@ -25,9 +25,9 @@ export default function LoginModal({ onClose, onLoggedIn }) {
     // Try server
     const server = await checkLead(email.trim().toLowerCase());
     if (server?.exists) {
-      setErr("Contul exista pe server, dar nu in acest browser. Te rugam sa incepi o consultare noua.");
+      setErr("Contul există pe server, dar nu în acest browser. Te rugăm să începi o consultare nouă.");
     } else {
-      setErr("Nu am gasit acest email. Incepe o consultare noua pentru a crea un cont.");
+      setErr("Nu am găsit acest email. Începe o consultare nouă pentru a crea un cont.");
     }
     setLoading(false);
   };
@@ -39,7 +39,7 @@ export default function LoginModal({ onClose, onLoggedIn }) {
 
         <div style={{ textAlign: "center", marginBottom: 24 }}>
           <h3 className="heading-md" style={{ color: "var(--c-primary)", marginBottom: 6 }}>Bine ai revenit!</h3>
-          <p className="text-sm text-secondary">Introdu emailul cu care te-ai inregistrat</p>
+          <p className="text-sm text-secondary">Introdu emailul cu care te-ai înregistrat</p>
         </div>
 
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -58,7 +58,7 @@ export default function LoginModal({ onClose, onLoggedIn }) {
           {err && <div style={{ fontSize: 12, color: "var(--c-accent)", fontWeight: 600, lineHeight: 1.4 }}>{err}</div>}
 
           <button className="btn btn-primary btn-block" type="submit" disabled={!email.trim() || loading}>
-            {loading ? "Se verifica..." : "Intra in cont"}
+            {loading ? "Se verifică..." : "Intră în cont"}
           </button>
         </form>
       </div>

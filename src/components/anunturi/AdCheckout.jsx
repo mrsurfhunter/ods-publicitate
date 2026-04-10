@@ -26,7 +26,7 @@ export default function AdCheckout({ ad, onClose }) {
     if (!canGo) return;
     const order = {
       id: gid(), ...f, packageId: "anunt-" + ad.cat.id,
-      packageName: "Anunt: " + ad.cat.label + " (" + ad.days + "z)",
+      packageName: "Anunț: " + ad.cat.label + " (" + ad.days + "z)",
       price: ad.pr.total, payMethod: pay, date: new Date().toISOString(),
       isAnunt: true, anuntText: ad.text, anuntDays: ad.days, anuntWords: ad.words,
       verified: true, converted: false,
@@ -49,9 +49,9 @@ export default function AdCheckout({ ad, onClose }) {
         {step === 3 ? (
           <div style={{ padding: 32, textAlign: 'center' }}>
             <div style={{ width: 56, height: 56, background: 'var(--c-success-bg)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px', fontSize: 28, color: 'var(--c-success)' }}>✓</div>
-            <h3 className="heading-md" style={{ color: 'var(--c-primary)', marginBottom: 8 }}>Anunt verificat si inregistrat!</h3>
-            <p className="text-sm text-muted">Va fi publicat in max 24h de la confirmarea platii.</p>
-            <button className="btn btn-primary" style={{ marginTop: 16 }} onClick={onClose}>Inchide</button>
+            <h3 className="heading-md" style={{ color: 'var(--c-primary)', marginBottom: 8 }}>Anunț verificat și înregistrat!</h3>
+            <p className="text-sm text-muted">Va fi publicat în max 24h de la confirmarea plății.</p>
+            <button className="btn btn-primary" style={{ marginTop: 16 }} onClick={onClose}>Închide</button>
           </div>
         ) : (
           <div className="card-padding">
@@ -60,7 +60,7 @@ export default function AdCheckout({ ad, onClose }) {
             {step === 1 && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 <CUILookup value={f.cui} onChange={val => set("cui", val)} onData={hCUI} />
-                <div className="form-row" style={{ margin: 0 }}><label className="label">Companie / Persoana</label><input className="input" value={f.company} onChange={e => set("company", e.target.value)} /></div>
+                <div className="form-row" style={{ margin: 0 }}><label className="label">Companie / Persoană</label><input className="input" value={f.company} onChange={e => set("company", e.target.value)} /></div>
                 <div className="form-grid">
                   <div className="form-row" style={{ margin: 0 }}><label className="label">Nume *</label><input className="input" value={f.name} onChange={e => set("name", e.target.value)} /></div>
                   <div className="form-row" style={{ margin: 0 }}><label className="label">Telefon *</label><input className="input" value={f.phone} onChange={e => set("phone", e.target.value)} /></div>
@@ -70,11 +70,11 @@ export default function AdCheckout({ ad, onClose }) {
                   <div style={{ fontFamily: 'var(--font-heading)', fontSize: 12, fontWeight: 800, color: 'var(--c-primary)', marginBottom: 8 }}>Verificare identitate</div>
                   <label style={{ display: 'flex', gap: 8, marginBottom: 6, cursor: 'pointer', fontSize: 12, color: 'var(--c-text)' }}>
                     <input type="checkbox" checked={v.accurate} onChange={e => sV(x => ({ ...x, accurate: e.target.checked }))} style={{ accentColor: 'var(--c-primary)', marginTop: 2 }} />
-                    Declar ca informatiile sunt reale si corecte.
+                    Declar că informațiile sunt reale și corecte.
                   </label>
                   <label style={{ display: 'flex', gap: 8, marginBottom: 8, cursor: 'pointer', fontSize: 12, color: 'var(--c-text)' }}>
                     <input type="checkbox" checked={v.terms} onChange={e => sV(x => ({ ...x, terms: e.target.checked }))} style={{ accentColor: 'var(--c-primary)', marginTop: 2 }} />
-                    Accept termenii si conditiile ODS SRL.
+                    Accept termenii și condițiile ODS SRL.
                   </label>
                   <div style={{ borderTop: '1px solid rgba(0,48,191,0.1)', paddingTop: 8 }}>
                     <div className="text-xs" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, color: 'var(--c-primary)', marginBottom: 4 }}>Verificare telefon (SMS)</div>
@@ -92,7 +92,7 @@ export default function AdCheckout({ ad, onClose }) {
                   </div>
                 </div>
 
-                <button className="btn btn-primary btn-block" onClick={() => { if (canGo) setStep(2); }} disabled={!canGo}>Continua</button>
+                <button className="btn btn-primary btn-block" onClick={() => { if (canGo) setStep(2); }} disabled={!canGo}>Continuă</button>
               </div>
             )}
 
@@ -105,15 +105,15 @@ export default function AdCheckout({ ad, onClose }) {
                     <span style={{ fontFamily: 'var(--font-heading)', fontSize: 18, fontWeight: 800, color: 'var(--c-accent)' }}>{total.toLocaleString("ro")} lei</span>
                   </div>
                 </div>
-                {[{ id: "proforma", l: "Transfer bancar" }, { id: "card", l: "Plata cu cardul" }].map(m => (
+                {[{ id: "proforma", l: "Transfer bancar" }, { id: "card", l: "Plată cu cardul" }].map(m => (
                   <label key={m.id} className={`payment-option ${pay === m.id ? 'active' : ''}`}>
                     <input type="radio" name="p" checked={pay === m.id} onChange={() => setPay(m.id)} />
                     <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: 13, color: 'var(--c-text)' }}>{m.l}</span>
                   </label>
                 ))}
                 <div style={{ display: 'flex', gap: 8 }}>
-                  <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => setStep(1)}>Inapoi</button>
-                  <button className="btn btn-primary" style={{ flex: 2 }} onClick={submit}>Confirma</button>
+                  <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => setStep(1)}>Înapoi</button>
+                  <button className="btn btn-primary" style={{ flex: 2 }} onClick={submit}>Confirmă</button>
                 </div>
               </div>
             )}

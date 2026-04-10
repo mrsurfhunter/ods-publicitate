@@ -43,11 +43,11 @@ export default function TopBar({ myOrders, onHome, onOpenOrder, onLogin, onConsu
                     </>
                   )}
                   <button className="topbar-dropdown-item" onClick={() => { onConsult(); setDropOpen(false); }}>
-                    Consultare noua
+                    Consultare nouă
                   </button>
                   <div className="topbar-dropdown-sep" />
                   <button className="topbar-dropdown-item" style={{ color: "var(--c-muted)" }} onClick={() => { logout(); setDropOpen(false); }}>
-                    Deconecteaza-te
+                    Deconectează-te
                   </button>
                 </div>
               )}
