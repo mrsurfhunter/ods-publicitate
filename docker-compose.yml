@@ -1,0 +1,34 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ods-publicitate
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - AI_MODEL=${AI_MODEL:-claude-sonnet-4-20250514}
+      - WP_URL=${WP_URL:-https://www.oradesibiu.ro}
+      - WP_USER=${WP_USER}
+      - WP_PASS=${WP_PASS}
+      - FIRMEAPI_KEY=${FIRMEAPI_KEY}
+      - CORS_ORIGIN=${CORS_ORIGIN}
+    volumes:
+      - ods-data:/app/data
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3001/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    labels:
+      - "coolify.managed=true"
+      - "coolify.type=application"
+
+volumes:
+  ods-data:
+    driver: local
