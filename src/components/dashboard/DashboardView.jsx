@@ -27,12 +27,11 @@ export default function DashboardView({ initOrder, onBack }) {
       const res = await wpUploadImage(order.featuredImg[0].file);
       if (res) featId = res.id;
     }
-    let galleryHtml = "";
+    const galleryIds = [];
     for (const img of (order.gallery || [])) {
-      if (img.file) { const res = await wpUploadImage(img.file); if (res) galleryHtml += `<!-- wp:image --><figure class="wp-block-image"><img src="${res.url}" alt=""/></figure><!-- /wp:image -->`; }
+      if (img.file) { const res = await wpUploadImage(img.file); if (res) galleryIds.push(res.id); }
     }
-    const content = order.articleText.split("\n").filter(p => p.trim()).map(p => `<!-- wp:paragraph --><p>${p}</p><!-- /wp:paragraph -->`).join("") + galleryHtml;
-    const result = await wpCreateDraft({ title: order.articleTitle, content, featuredImage: featId });
+    const result = await wpCreateDraft({ title: order.articleTitle, content: order.articleText, featuredImage: featId, galleryIds });
     setWpL(false);
     if (result.success) { setWpMsg("ok"); upd({ wpDraftId: result.id, wpDraftUrl: result.link, status: "review" }); }
     else if (result.error === "no-config") { setWpMsg("config"); }

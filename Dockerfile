@@ -6,6 +6,9 @@ COPY package*.json ./
 # Force install ALL deps (including devDeps) even if NODE_ENV=production is injected
 RUN npm ci --include=dev
 
+# Build-time env var (only URL is needed client-side)
+ARG VITE_WP_URL=https://www.oradesibiu.ro
+
 COPY . .
 RUN npm run build
 
@@ -19,7 +22,7 @@ RUN npm ci --omit=dev
 COPY server.js ./
 COPY --from=build /app/dist ./dist
 
-# Persistent data directory (leads + orders)
+# Persistent lead data directory
 RUN mkdir -p /app/data
 VOLUME ["/app/data"]
 
@@ -28,8 +31,5 @@ EXPOSE 3001
 # Runtime env vars (read by server.js at startup)
 ENV NODE_ENV=production
 ENV PORT=3001
-
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD wget -qO- http://localhost:3001/api/health || exit 1
 
 CMD ["node", "server.js"]

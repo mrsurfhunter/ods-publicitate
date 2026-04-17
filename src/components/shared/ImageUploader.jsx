@@ -4,9 +4,12 @@ import { gid } from "../../utils/storage";
 export default function ImageUploader({ label, images, onChange, multi }) {
   const ref = useRef();
 
+  const MAX_SIZE = 5 * 1024 * 1024;
+
   const handleFiles = (files) => {
     Array.from(files).forEach(file => {
       if (!file.type.startsWith("image/")) return;
+      if (file.size > MAX_SIZE) { alert(`${file.name} depășește limita de 5MB.`); return; }
       const reader = new FileReader();
       reader.onload = e => {
         const img = { id: gid(), name: file.name, data: e.target.result, file };
