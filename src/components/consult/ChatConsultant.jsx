@@ -58,7 +58,7 @@ export default function ChatConsultant({ onFinish }) {
   };
 
   return (
-    <div className="max-w-4xl mx-auto animate-fadeIn">
+    <div className="max-w-4xl mx-auto px-3 sm:px-4 animate-fadeIn">
       <div className="flex items-center gap-4 mb-6 bg-blue-50 p-4 border-2 border-blue-100">
         <div className="w-12 h-12 bg-blue-600 flex items-center justify-center text-white">
           <i className="fas fa-user-tie text-lg"></i>
@@ -69,7 +69,7 @@ export default function ChatConsultant({ onFinish }) {
         </div>
       </div>
 
-      <div className="bg-white border-2 border-slate-200 overflow-hidden flex flex-col h-[60vh]">
+      <div className="bg-white border-2 border-slate-200 overflow-hidden flex flex-col h-[50vh] sm:h-[60vh] min-h-[300px]">
         <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50/50">
           {messages.map((m, i) => (
             <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>

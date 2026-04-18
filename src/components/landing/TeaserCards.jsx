@@ -7,12 +7,12 @@ const BENEFITS = [
 
 export default function TeaserCards({ onConsult }) {
   return (
-    <div className="max-w-4xl mx-auto px-5 py-10 sm:py-14 md:py-20">
+    <div className="max-w-4xl mx-auto px-4 sm:px-5 py-8 sm:py-14 md:py-20">
       <div className="text-center mb-8 sm:mb-12">
         <h2 className="text-lg sm:text-xl md:text-2xl font-black text-slate-900 uppercase tracking-tight mb-2">De ce Ora de Sibiu?</h2>
         <p className="text-slate-400 font-medium text-sm">17 ani de experiență în promovarea afacerilor din Sibiu</p>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         {BENEFITS.map((b, i) => (
           <div key={i} className="bg-white border-2 border-slate-200 p-5 sm:p-6 hover:border-slate-400 transition-all group">
             <div className={`w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center mb-3 ${b.color}`}>

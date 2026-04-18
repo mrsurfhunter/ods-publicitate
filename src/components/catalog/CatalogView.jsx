@@ -17,8 +17,8 @@ function CatalogCard({ pkg, onPurchased, featured }) {
         </div>
       )}
 
-      <div className="p-6 md:p-8">
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-5">
+      <div className="p-4 sm:p-6 md:p-8">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 sm:gap-4 mb-4 sm:mb-5">
           <div>
             <h3 className="text-xl font-black text-slate-900 tracking-tight">{pkg.name}</h3>
             <p className="text-sm text-slate-500 mt-1">{pkg.headline}</p>
@@ -34,7 +34,7 @@ function CatalogCard({ pkg, onPurchased, featured }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2 mb-4 sm:mb-6">
           {pkg.inc.map((x, i) => (
             <div key={i} className="flex items-start gap-2 text-sm">
               <i className="fas fa-check text-green-500 text-xs mt-1 flex-shrink-0"></i>
@@ -47,7 +47,7 @@ function CatalogCard({ pkg, onPurchased, featured }) {
         </div>
       </div>
 
-      <div className={`px-6 md:px-8 py-5 border-t ${featured ? 'bg-red-50/30 border-red-100' : 'bg-slate-50 border-slate-100'}`}>
+      <div className={`px-4 sm:px-6 md:px-8 py-4 sm:py-5 border-t ${featured ? 'bg-red-50/30 border-red-100' : 'bg-slate-50 border-slate-100'}`}>
         <div className="text-xs text-slate-400 mb-3 flex items-center gap-1.5">
           <i className="far fa-calendar text-[10px]"></i> {pkg.delivery}
         </div>
@@ -90,7 +90,7 @@ export default function CatalogView({ onConsult, onPurchased }) {
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8 md:py-12 animate-fadeIn">
+    <div className="max-w-3xl mx-auto px-3 sm:px-4 py-6 sm:py-8 md:py-12 animate-fadeIn">
       <div className="text-center mb-10">
         <div className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] mb-3">Pachete de promovare</div>
         <h2 className="text-2xl md:text-3xl font-black text-slate-900 uppercase tracking-tight mb-3">Alege pachetul potrivit</h2>
@@ -99,7 +99,7 @@ export default function CatalogView({ onConsult, onPurchased }) {
           Nu știi ce să alegi? Lasă-ne să te ajutăm →
         </button>
       </div>
-      <div className="space-y-5">
+      <div className="space-y-4 sm:space-y-5">
         {PKG.map(p => (
           <CatalogCard key={p.id} pkg={p} onPurchased={onPurchased} featured={p.pop} />
         ))}

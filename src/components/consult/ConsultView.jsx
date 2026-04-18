@@ -120,7 +120,7 @@ export default function ConsultView({ onResult, onBack }) {
       visibleSteps.push(i);
     }
     return (
-      <div className="w-full mb-6 sm:mb-10">
+      <div className="w-full mb-4 sm:mb-6 md:mb-10 overflow-x-auto">
         <div className="flex items-center justify-between relative">
           <div className="absolute top-1/2 left-0 w-full h-0.5 bg-slate-200 -z-10 -translate-y-1/2"></div>
           <div
@@ -145,7 +145,7 @@ export default function ConsultView({ onResult, onBack }) {
   };
 
   return (
-    <div className="min-h-[calc(100vh-64px)] flex flex-col justify-center p-4 md:p-8 bg-slate-50">
+    <div className="min-h-[calc(100vh-56px)] sm:min-h-[calc(100vh-64px)] flex flex-col justify-center p-3 sm:p-4 md:p-8 bg-slate-50">
       <div className="max-w-xl mx-auto w-full" key={animKey}>
         {renderProgress()}
 
@@ -154,10 +154,10 @@ export default function ConsultView({ onResult, onBack }) {
             <LeadCaptureStep onDone={handleLeadDone} source="consult" />
           ) : current ? (
             <>
-              <h2 className="text-xl sm:text-2xl md:text-4xl font-black text-slate-900 text-center mb-5 sm:mb-8 tracking-tight leading-tight">
+              <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-black text-slate-900 text-center mb-4 sm:mb-6 md:mb-8 tracking-tight leading-tight">
                 {current.question}
               </h2>
-              <div className="flex flex-col gap-2.5 sm:gap-3">
+              <div className="flex flex-col gap-2 sm:gap-2.5 md:gap-3">
                 {current.options.map(opt => {
                   const isOpt = selected === opt.id || answers[current.id] === opt.id ||
                     (opt.freeText && answers[current.id] && !current.options.find(o => !o.freeText && o.id === answers[current.id]));

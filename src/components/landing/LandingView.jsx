@@ -18,11 +18,11 @@ export default function LandingView({ onConsult, onAnunturi, onCatalog }) {
       {/* Hero */}
       <div className="bg-navy relative overflow-hidden border-b-4 border-[#e30613]">
         <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'repeating-linear-gradient(-45deg, transparent, transparent 40px, white 40px, white 41px)' }}></div>
-        <div className="relative max-w-3xl mx-auto text-center px-5 py-12 sm:py-16 md:py-24">
-          <div className="w-14 h-14 sm:w-16 sm:h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-5 sm:mb-8">
+        <div className="relative max-w-3xl mx-auto text-center px-4 sm:px-5 py-10 sm:py-16 md:py-24">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-red-500/10 flex items-center justify-center mx-auto mb-5 sm:mb-8">
             <i className="fas fa-bullhorn text-xl sm:text-2xl text-[#e30613]"></i>
           </div>
-          <h1 className="text-2xl sm:text-3xl md:text-5xl font-black text-white uppercase tracking-tight mb-3 sm:mb-5 leading-[1.1]">
+          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black text-white uppercase tracking-tight mb-3 sm:mb-5 leading-[1.1]">
             Crește-ți Afacerea cu{" "}
             <span className="text-[#e30613]">Ora de Sibiu</span>
           </h1>
@@ -47,8 +47,8 @@ export default function LandingView({ onConsult, onAnunturi, onCatalog }) {
           </div>
 
           {/* Trust stats — 2 rows on mobile */}
-          <div className="mt-10 sm:mt-16">
-            <div className="flex justify-center items-center gap-6 sm:gap-8 mb-4">
+          <div className="mt-8 sm:mt-16">
+            <div className="flex justify-center items-center gap-4 sm:gap-6 md:gap-8 mb-4">
               {TRUST_MAIN.map((s, i) => (
                 <div key={i} className="text-center">
                   <div className="text-xl sm:text-2xl md:text-3xl font-black text-white leading-none">{s.v}</div>
@@ -92,7 +92,7 @@ export default function LandingView({ onConsult, onAnunturi, onCatalog }) {
       </div>
 
       {/* Final CTA */}
-      <div className="bg-gradient-to-br from-[#e30613] to-red-800 py-12 sm:py-16 md:py-20 text-center px-5">
+      <div className="bg-[#e30613] py-10 sm:py-16 md:py-20 text-center px-4 sm:px-5">
         <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white uppercase tracking-tight mb-4 sm:mb-6">Gata să începi?</h2>
         <button onClick={onConsult} className="w-full sm:w-auto px-8 py-4 sm:px-10 sm:py-5 bg-white text-red-700 font-black uppercase text-xs sm:text-sm tracking-widest border-2 border-white hover:bg-slate-100 active:bg-slate-200 transition-all">
           Descoperă pachetul potrivit

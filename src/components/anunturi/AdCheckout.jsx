@@ -48,7 +48,7 @@ export default function AdCheckout({ ad, onClose }) {
     <div className="fixed inset-0 bg-navy/80 flex items-center justify-center z-[1000] p-3" onClick={onClose}>
       <div className="bg-white w-full max-w-lg max-h-[92vh] overflow-y-auto animate-fadeIn border-2 border-slate-300" onClick={e => e.stopPropagation()}>
         {step === 3 ? (
-          <div className="p-10 text-center">
+          <div className="p-6 sm:p-10 text-center">
             <div className="w-16 h-16 bg-green-50 flex items-center justify-center mx-auto mb-5 border-2 border-green-200">
               <i className="fas fa-check text-2xl text-green-600"></i>
             </div>
@@ -57,7 +57,7 @@ export default function AdCheckout({ ad, onClose }) {
             <button className="mt-6 px-8 py-3.5 bg-[#e30613] text-white font-black hover:bg-red-700 transition-all uppercase text-xs tracking-widest border-2 border-red-700" onClick={onClose}>Închide</button>
           </div>
         ) : (
-          <div className="p-6 md:p-8">
+          <div className="p-4 sm:p-6 md:p-8">
             <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight mb-5">{ad.cat.icon} {ad.cat.label}</h3>
 
             {step === 1 && (
@@ -65,16 +65,16 @@ export default function AdCheckout({ ad, onClose }) {
                 <CUILookup value={f.cui} onChange={val => set("cui", val)} onData={hCUI} />
                 <div>
                   <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Companie / Persoană</label>
-                  <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 rounded-2xl outline-none text-sm font-medium" value={f.company} onChange={e => set("company", e.target.value)} />
+                  <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 outline-none text-sm font-medium" value={f.company} onChange={e => set("company", e.target.value)} />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Nume *</label>
-                    <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 rounded-2xl outline-none text-sm font-medium" value={f.name} onChange={e => set("name", e.target.value)} />
+                    <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 outline-none text-sm font-medium" value={f.name} onChange={e => set("name", e.target.value)} />
                   </div>
                   <div>
                     <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Telefon *</label>
-                    <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 rounded-2xl outline-none text-sm font-medium" value={f.phone} onChange={e => set("phone", e.target.value)} />
+                    <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 outline-none text-sm font-medium" value={f.phone} onChange={e => set("phone", e.target.value)} />
                   </div>
                 </div>
 
@@ -93,10 +93,10 @@ export default function AdCheckout({ ad, onClose }) {
                     {!v.ok ? (
                       <div className="flex gap-2">
                         {!v.sent
-                          ? <button className="px-5 py-2.5 bg-slate-900 text-white text-xs font-bold rounded-xl hover:bg-black transition-all disabled:opacity-50" onClick={sendCode} disabled={!f.phone || f.phone.replace(/\D/g, "").length < 10}>Trimite cod</button>
+                          ? <button className="px-5 py-2.5 bg-slate-900 text-white text-xs font-bold hover:bg-black transition-all disabled:opacity-50" onClick={sendCode} disabled={!f.phone || f.phone.replace(/\D/g, "").length < 10}>Trimite cod</button>
                           : <>
-                            <input className="w-24 p-3 bg-white border-2 border-blue-200 rounded-xl outline-none text-center text-base font-black tracking-[4px]" value={v.code} onChange={e => sV(x => ({ ...x, code: e.target.value }))} maxLength={4} placeholder="····" />
-                            <button className="px-5 py-2.5 bg-slate-900 text-white text-xs font-bold rounded-xl hover:bg-black transition-all" onClick={() => sV(x => ({ ...x, ok: x.code === x.real }))}>OK</button>
+                            <input className="w-24 p-3 bg-white border-2 border-blue-200 outline-none text-center text-base font-black tracking-[4px]" value={v.code} onChange={e => sV(x => ({ ...x, code: e.target.value }))} maxLength={4} placeholder="····" />
+                            <button className="px-5 py-2.5 bg-slate-900 text-white text-xs font-bold hover:bg-black transition-all" onClick={() => sV(x => ({ ...x, ok: x.code === x.real }))}>OK</button>
                           </>
                         }
                       </div>
@@ -112,7 +112,7 @@ export default function AdCheckout({ ad, onClose }) {
 
             {step === 2 && (
               <div className="space-y-4">
-                <div className="bg-slate-50 rounded-2xl p-4">
+                <div className="bg-slate-50 p-4 border-2 border-slate-200">
                   <p className="text-xs text-slate-500 italic line-clamp-3">{ad.text.substring(0, 200)}{ad.text.length > 200 ? "..." : ""}</p>
                   <div className="flex justify-between items-center mt-3 pt-3 border-t border-slate-200">
                     <span className="text-xs text-slate-400">{ad.words} cuv × {ad.days} zile</span>
@@ -121,7 +121,7 @@ export default function AdCheckout({ ad, onClose }) {
                 </div>
                 <div className="space-y-2">
                   {[{ id: "proforma", l: "Transfer bancar", icon: "fas fa-university" }, { id: "card", l: "Plată cu cardul", icon: "fas fa-credit-card" }].map(m => (
-                    <label key={m.id} className={`flex items-center gap-3 p-4 rounded-2xl cursor-pointer transition-all ${pay === m.id ? 'bg-blue-50 border-2 border-blue-200' : 'bg-slate-50 border-2 border-transparent'}`}>
+                    <label key={m.id} className={`flex items-center gap-3 p-4 cursor-pointer transition-all ${pay === m.id ? 'bg-blue-50 border-2 border-blue-200' : 'bg-slate-50 border-2 border-transparent'}`}>
                       <input type="radio" name="p" checked={pay === m.id} onChange={() => setPay(m.id)} className="accent-blue-600" />
                       <i className={`${m.icon} text-sm ${pay === m.id ? 'text-blue-600' : 'text-slate-400'}`}></i>
                       <span className="text-sm font-semibold text-slate-700">{m.l}</span>

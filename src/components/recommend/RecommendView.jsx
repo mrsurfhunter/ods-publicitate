@@ -14,8 +14,8 @@ export default function RecommendView({ recommendation, onCatalog, onPurchased, 
       <div className={`bg-white overflow-hidden mb-5 transition-all animate-fadeIn ${
         isPrimary ? 'border-2 border-[#e30613]' : 'border-2 border-slate-200'
       }`}>
-        <div className="p-6 md:p-8">
-          <div className="flex items-start justify-between gap-4 mb-4">
+        <div className="p-4 sm:p-6 md:p-8">
+          <div className="flex items-start justify-between gap-3 sm:gap-4 mb-4">
             <div>
               <span className={`inline-block text-[9px] font-black uppercase tracking-widest px-4 py-1.5 text-white mb-3 ${
                 isPrimary ? 'bg-[#e30613]' : 'bg-navy'
@@ -37,7 +37,7 @@ export default function RecommendView({ recommendation, onCatalog, onPurchased, 
           </div>
         </div>
 
-        <div className={`px-5 sm:px-6 md:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 ${
+        <div className={`px-4 sm:px-6 md:px-8 py-4 sm:py-5 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 ${
           isPrimary ? 'bg-red-50/50 border-t border-red-100' : 'bg-slate-50 border-t border-slate-100'
         }`}>
           <div className="text-center sm:text-left">
@@ -60,7 +60,7 @@ export default function RecommendView({ recommendation, onCatalog, onPurchased, 
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8 md:py-12 animate-fadeIn">
+    <div className="max-w-2xl mx-auto px-3 sm:px-4 py-6 sm:py-8 md:py-12 animate-fadeIn">
       <div className="bg-blue-50 border-l-4 border-blue-600 p-5 mb-8 text-sm text-slate-700 leading-relaxed font-medium">
         {recommendation.reasoning}
       </div>

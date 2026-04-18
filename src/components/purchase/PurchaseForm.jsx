@@ -43,28 +43,28 @@ export default function PurchaseForm({ pkg, onClose, onDone }) {
   };
 
   return (
-    <div className="border-t border-slate-100 p-6 md:p-8 space-y-4">
+    <div className="border-t border-slate-100 p-4 sm:p-6 md:p-8 space-y-4">
       <CUILookup value={f.cui} onChange={v => set("cui", v)} onData={hCUI} />
 
       <div>
         <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Companie</label>
-        <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 rounded-2xl outline-none text-sm font-medium" value={f.company} onChange={e => set("company", e.target.value)} />
+        <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 outline-none text-sm font-medium" value={f.company} onChange={e => set("company", e.target.value)} />
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Nume *</label>
-          <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 rounded-2xl outline-none text-sm font-medium" value={f.name} onChange={e => set("name", e.target.value)} />
+          <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 outline-none text-sm font-medium" value={f.name} onChange={e => set("name", e.target.value)} />
         </div>
         <div>
           <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Telefon *</label>
-          <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 rounded-2xl outline-none text-sm font-medium" value={f.phone} onChange={e => set("phone", e.target.value)} />
+          <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 outline-none text-sm font-medium" value={f.phone} onChange={e => set("phone", e.target.value)} />
         </div>
       </div>
 
       <div>
         <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Email *</label>
-        <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 rounded-2xl outline-none text-sm font-medium" value={f.email} onChange={e => set("email", e.target.value)} />
+        <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 outline-none text-sm font-medium" value={f.email} onChange={e => set("email", e.target.value)} />
       </div>
 
       {pkg.sub && (
@@ -77,7 +77,7 @@ export default function PurchaseForm({ pkg, onClose, onDone }) {
 
       <div className="space-y-2 pt-2">
         {[{ id: "proforma", l: "Transfer bancar (proformă)", icon: "fas fa-university" }, { id: "card", l: "Plată cu cardul", icon: "fas fa-credit-card" }].map(m => (
-          <label key={m.id} className={`flex items-center gap-3 p-4 rounded-2xl cursor-pointer transition-all ${pay === m.id ? 'bg-blue-50 border-2 border-blue-200' : 'bg-slate-50 border-2 border-transparent hover:border-slate-200'}`}>
+          <label key={m.id} className={`flex items-center gap-3 p-4 cursor-pointer transition-all ${pay === m.id ? 'bg-blue-50 border-2 border-blue-200' : 'bg-slate-50 border-2 border-transparent hover:border-slate-200'}`}>
             <input type="radio" name="pay" checked={pay === m.id} onChange={() => setPay(m.id)} className="accent-blue-600" />
             <i className={`${m.icon} text-sm ${pay === m.id ? 'text-blue-600' : 'text-slate-400'}`}></i>
             <span className="text-sm font-semibold text-slate-700">{m.l}</span>

@@ -28,7 +28,7 @@ export default function AnunturiView({ onBack, onConsult }) {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8 md:py-12 animate-fadeIn">
+    <div className="max-w-5xl mx-auto px-3 sm:px-4 py-6 sm:py-8 md:py-12 animate-fadeIn">
       <div className="text-center mb-10">
         <h2 className="text-2xl md:text-3xl font-black text-slate-900 uppercase tracking-tight">Publică un Anunț</h2>
         <p className="text-slate-500 mt-2 font-medium">Publică anunțuri pe oradesibiu.ro — avize, pierderi, decese, autorizații</p>
@@ -38,13 +38,13 @@ export default function AnunturiView({ onBack, onConsult }) {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
         {/* Left: form */}
         <div className="lg:col-span-2 space-y-6">
           {/* Category */}
-          <section className="bg-white p-6 md:p-8 border-2 border-slate-200">
+          <section className="bg-white p-4 sm:p-6 md:p-8 border-2 border-slate-200">
             <h3 className="text-sm font-black text-slate-800 uppercase mb-4">1. Tipul anunțului</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
               {AD_CAT.map(c => (
                 <button key={c.id} className={`p-4 border-2 text-left transition-all ${
                   cat === c.id ? 'border-blue-600 bg-blue-50' : 'border-slate-100 bg-slate-50 hover:border-blue-300'
@@ -57,7 +57,7 @@ export default function AnunturiView({ onBack, onConsult }) {
           </section>
 
           {/* Text */}
-          <section className="bg-white p-6 md:p-8 border-2 border-slate-200">
+          <section className="bg-white p-4 sm:p-6 md:p-8 border-2 border-slate-200">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-sm font-black text-slate-800 uppercase">2. Text Anunț</h3>
               <span className={`text-xs font-bold px-4 py-1.5 ${
@@ -84,7 +84,7 @@ export default function AnunturiView({ onBack, onConsult }) {
           </section>
 
           {/* Duration */}
-          <section className="bg-white p-6 md:p-8 border-2 border-slate-200">
+          <section className="bg-white p-4 sm:p-6 md:p-8 border-2 border-slate-200">
             <h3 className="text-sm font-black text-slate-800 uppercase mb-4">3. Durata</h3>
             <div className="flex gap-2 flex-wrap">
               {[1, 3, 5, 7, 14, 30].map(d => (
@@ -107,7 +107,7 @@ export default function AnunturiView({ onBack, onConsult }) {
 
         {/* Right: sticky summary */}
         <div className="space-y-4">
-          <div className="bg-slate-900 text-white p-6 lg:p-8 border-2 border-slate-700 lg:sticky lg:top-24">
+          <div className="bg-slate-900 text-white p-4 sm:p-6 lg:p-8 border-2 border-slate-700 lg:sticky lg:top-24">
             <h4 className="text-[10px] font-black text-[#e30613] uppercase tracking-widest mb-5">Sumar Comandă</h4>
 
             <div className="space-y-3 mb-6">

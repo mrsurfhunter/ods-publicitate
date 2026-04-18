@@ -55,9 +55,9 @@ export default function DashboardView({ initOrder, onBack }) {
   const stats = order.status === "published" ? order.stats : null;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6 md:py-10 animate-fadeIn">
+    <div className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-10 animate-fadeIn">
       {/* Header */}
-      <div className="bg-navy p-6 md:p-8 text-white mb-6 border-b-4 border-[#e30613]">
+      <div className="bg-navy p-4 sm:p-6 md:p-8 text-white mb-4 sm:mb-6 border-b-4 border-[#e30613]">
         <div className="flex justify-between items-start flex-wrap gap-4">
           <div>
             <div className="text-[9px] font-black text-white/40 uppercase tracking-[3px] mb-1">Dashboard</div>
@@ -90,10 +90,10 @@ export default function DashboardView({ initOrder, onBack }) {
 
       {/* Content section */}
       {pkg?.hasArticle && (
-        <div className="bg-white border-2 border-slate-200 p-6 md:p-8 mb-5">
-          <h3 className="text-sm font-black text-slate-900 uppercase tracking-tight mb-5">Conținutul articolului</h3>
+        <div className="bg-white border-2 border-slate-200 p-4 sm:p-6 md:p-8 mb-4 sm:mb-5">
+          <h3 className="text-sm font-black text-slate-900 uppercase tracking-tight mb-4 sm:mb-5">Conținutul articolului</h3>
           {!order.contentChoice ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <button className="p-6 bg-[#e30613] text-white text-left hover:bg-red-700 transition-all group border-2 border-red-700" onClick={() => upd({ contentChoice: "redactor", status: "review" })}>
                 <i className="fas fa-pen-nib text-lg mb-3 opacity-80"></i>
                 <div className="font-black text-sm mb-1">Vreau un redactor</div>
@@ -139,7 +139,7 @@ export default function DashboardView({ initOrder, onBack }) {
       )}
 
       {/* Calendar */}
-      <div className="bg-white border-2 border-slate-200 p-6 md:p-8 mb-5">
+      <div className="bg-white border-2 border-slate-200 p-4 sm:p-6 md:p-8 mb-4 sm:mb-5">
         <h3 className="text-sm font-black text-slate-900 uppercase tracking-tight mb-3">Calendar postări sociale</h3>
         <p className="text-xs text-slate-400 mb-4">Alege zilele și ora la care vrei să fie publicate postările:</p>
         {(order.reposts || []).length > 0 && (
@@ -177,7 +177,7 @@ export default function DashboardView({ initOrder, onBack }) {
       </div>
 
       {/* Analytics */}
-      <div className="bg-slate-900 text-white p-6 md:p-10 mb-5 border-2 border-slate-700">
+      <div className="bg-slate-900 text-white p-4 sm:p-6 md:p-10 mb-4 sm:mb-5 border-2 border-slate-700">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
             <h3 className="text-base sm:text-xl font-black uppercase tracking-tight italic">Analize Impact Campanii</h3>
@@ -189,14 +189,14 @@ export default function DashboardView({ initOrder, onBack }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
           {(stats ? [
             { label: "Vizualizări Articole", value: stats.views.toLocaleString("ro"), sub: `+14% vs. medie`, icon: "fas fa-eye", color: "text-green-500" },
             { label: "Reach Facebook", value: stats.fbReach.toLocaleString("ro"), sub: `${stats.clicks} click-uri`, icon: "fas fa-users", color: "text-blue-400" },
             { label: "Impresii Instagram", value: stats.igReach.toLocaleString("ro"), sub: `${stats.shares} interacțiuni`, icon: "fas fa-heart", color: "text-pink-400" },
             { label: "Vizualizări TikTok", value: "—", sub: "Se actualizează", icon: "fas fa-play", color: "text-cyan-400" },
           ] : ANALYTICS).map((m, i) => (
-            <div key={i} className="bg-white/5 p-5 border-2 border-white/10">
+            <div key={i} className="bg-white/5 p-3 sm:p-5 border-2 border-white/10">
               <div className="text-slate-500 text-[9px] font-black uppercase mb-2">{m.label}</div>
               <div className="text-2xl font-black">{m.value}</div>
               <div className={`${m.color} text-[10px] font-bold mt-2 flex items-center gap-1`}>
@@ -214,12 +214,12 @@ export default function DashboardView({ initOrder, onBack }) {
       </div>
 
       {/* Upsell */}
-      <div className="bg-[#e30613] text-white p-6 md:p-10 mb-5 border-2 border-red-700">
-        <h3 className="text-xl font-black uppercase tracking-tight mb-3">Vrei și mai multă vizibilitate?</h3>
+      <div className="bg-[#e30613] text-white p-4 sm:p-6 md:p-10 mb-4 sm:mb-5 border-2 border-red-700">
+        <h3 className="text-lg sm:text-xl font-black uppercase tracking-tight mb-3">Vrei și mai multă vizibilitate?</h3>
         <p className="text-red-100 font-medium mb-6 max-w-2xl text-sm">
           Abonează-te pentru minim 3 luni și primești <span className="font-black text-white">20% reducere</span> la abonamentul plătit în avans.
         </p>
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3">
           <button className="px-6 py-3 bg-white text-red-700 font-black uppercase text-xs tracking-widest hover:bg-slate-100 transition-all border-2 border-white">
             Abonare 3 luni (-20%)
           </button>

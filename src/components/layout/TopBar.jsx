@@ -20,7 +20,7 @@ export default function TopBar({ myOrders, onHome, onOpenOrder, onLogin, onConsu
 
   return (
     <header className="bg-navy sticky top-0 z-50 shadow-lg shadow-navy/20 noprint">
-      <div className="max-w-6xl mx-auto h-16 flex justify-between items-center px-4 md:px-6">
+      <div className="max-w-6xl mx-auto h-14 sm:h-16 flex justify-between items-center px-3 sm:px-4 md:px-6">
         <div className="flex items-center gap-3 cursor-pointer" onClick={onHome}>
           <img src="https://cdn.oradesibiu.ro/wp-content/uploads/2023/01/odsalbAsset-1.png" alt="Ora de Sibiu" className="h-6 sm:h-7" crossOrigin="anonymous" onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block'; }} />
           <span className="text-sm font-black text-white tracking-tight hidden" style={{display:'none'}}>OdS</span>
@@ -60,7 +60,7 @@ export default function TopBar({ myOrders, onHome, onOpenOrder, onLogin, onConsu
                   {(user.name || "U").charAt(0).toUpperCase()}
                 </div>
                 {dropOpen && (
-                  <div className="absolute top-12 right-0 bg-white rounded-2xl shadow-2xl border border-slate-100 min-w-[220px] py-1 z-[200] animate-fadeIn">
+                  <div className="absolute top-12 right-0 bg-white shadow-2xl border-2 border-slate-200 w-[calc(100vw-2rem)] sm:w-auto sm:min-w-[220px] max-w-[280px] py-1 z-[200] animate-fadeIn">
                     <div className="px-4 py-3 border-b border-slate-100">
                       <div className="text-sm font-bold text-slate-900">{user.name}</div>
                       <div className="text-[11px] text-slate-400">{user.email}</div>

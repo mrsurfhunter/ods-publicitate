@@ -32,7 +32,7 @@ export default function LoginModal({ onClose, onLoggedIn }) {
 
   return (
     <div className="fixed inset-0 bg-navy/80 flex items-center justify-center z-[1000] p-4" onClick={onClose}>
-      <div className="bg-white w-full max-w-md p-8 relative animate-fadeIn border-2 border-slate-300" onClick={e => e.stopPropagation()}>
+      <div className="bg-white w-full max-w-md p-6 sm:p-8 relative animate-fadeIn border-2 border-slate-300" onClick={e => e.stopPropagation()}>
         <button className="absolute top-4 right-4 w-8 h-8 bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-200 transition-all" onClick={onClose}>
           ×
         </button>
@@ -50,7 +50,7 @@ export default function LoginModal({ onClose, onLoggedIn }) {
             <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Email</label>
             <input
               type="email"
-              className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 rounded-2xl outline-none text-sm font-medium transition-all"
+              className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 outline-none text-sm font-medium transition-all"
               value={email}
               onChange={e => { setEmail(e.target.value); setErr(""); }}
               placeholder="email@firma.ro"
