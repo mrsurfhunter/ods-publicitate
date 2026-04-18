@@ -107,7 +107,7 @@ export default function AnunturiView({ onBack, onConsult }) {
 
         {/* Right: sticky summary */}
         <div className="space-y-4">
-          <div className="bg-slate-900 text-white rounded-[2.5rem] p-8 shadow-2xl sticky top-24">
+          <div className="bg-slate-900 text-white rounded-[2rem] lg:rounded-[2.5rem] p-6 lg:p-8 shadow-2xl lg:sticky lg:top-24">
             <h4 className="text-[10px] font-black text-[#e30613] uppercase tracking-widest mb-5">Sumar Comandă</h4>
 
             <div className="space-y-3 mb-6">
@@ -153,9 +153,9 @@ export default function AnunturiView({ onBack, onConsult }) {
           <i className="fas fa-arrow-left text-xs"></i> Pagina principală
         </button>
         {onConsult && (
-          <div className="bg-gradient-to-r from-red-600 to-red-800 text-white rounded-2xl px-6 py-4 flex items-center gap-4">
+          <div className="bg-gradient-to-r from-red-600 to-red-800 text-white rounded-2xl px-5 sm:px-6 py-4 flex flex-col sm:flex-row items-center gap-3 sm:gap-4 text-center sm:text-left">
             <span className="text-sm font-semibold">Ai și o afacere? Descoperă pachetele de promovare!</span>
-            <button className="px-5 py-2 bg-white text-red-700 text-xs font-black rounded-xl hover:bg-slate-100 transition-all whitespace-nowrap" onClick={onConsult}>
+            <button className="w-full sm:w-auto px-5 py-2.5 bg-white text-red-700 text-xs font-black rounded-xl hover:bg-slate-100 transition-all whitespace-nowrap" onClick={onConsult}>
               Începe consultarea
             </button>
           </div>

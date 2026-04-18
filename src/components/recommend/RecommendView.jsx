@@ -37,10 +37,10 @@ export default function RecommendView({ recommendation, onCatalog, onPurchased, 
           </div>
         </div>
 
-        <div className={`px-6 md:px-8 py-5 flex items-center justify-between flex-wrap gap-4 ${
+        <div className={`px-5 sm:px-6 md:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 ${
           isPrimary ? 'bg-red-50/50 border-t border-red-100' : 'bg-slate-50 border-t border-slate-100'
         }`}>
-          <div>
+          <div className="text-center sm:text-left">
             <div className="text-2xl font-black text-slate-900">
               {pkg.price.toLocaleString("ro")} <span className="text-sm font-medium text-slate-400">lei{pkg.cat !== "oneTime" ? "/lună" : ""}</span>
             </div>
@@ -48,7 +48,7 @@ export default function RecommendView({ recommendation, onCatalog, onPurchased, 
             <div className="text-[10px] text-slate-400 font-medium">+ TVA</div>
           </div>
           {!isBuying && (
-            <button className="px-8 py-3.5 bg-[#e30613] text-white font-black uppercase text-xs tracking-widest rounded-2xl hover:bg-red-700 transition-all shadow-lg shadow-red-500/20 hover:scale-105 active:scale-95" onClick={() => setBuying(pkg.id)}>
+            <button className="w-full sm:w-auto px-8 py-3.5 bg-[#e30613] text-white font-black uppercase text-xs tracking-widest rounded-2xl hover:bg-red-700 transition-all shadow-lg shadow-red-500/20 hover:scale-105 active:scale-95" onClick={() => setBuying(pkg.id)}>
               Alege acest pachet
             </button>
           )}

@@ -22,12 +22,13 @@ export default function TopBar({ myOrders, onHome, onOpenOrder, onLogin, onConsu
     <header className="bg-navy sticky top-0 z-50 shadow-lg shadow-navy/20 noprint">
       <div className="max-w-6xl mx-auto h-16 flex justify-between items-center px-4 md:px-6">
         <div className="flex items-center gap-3 cursor-pointer" onClick={onHome}>
-          <img src="https://cdn.oradesibiu.ro/wp-content/uploads/2023/01/odsalbAsset-1.png" alt="Ora de Sibiu" className="h-7" />
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-black text-white/40 tracking-[3px] uppercase border-l border-white/20 pl-2">
+          <img src="https://cdn.oradesibiu.ro/wp-content/uploads/2023/01/odsalbAsset-1.png" alt="Ora de Sibiu" className="h-6 sm:h-7" crossOrigin="anonymous" onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block'; }} />
+          <span className="text-sm font-black text-white tracking-tight hidden" style={{display:'none'}}>OdS</span>
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <span className="text-[9px] sm:text-[10px] font-black text-white/40 tracking-[2px] sm:tracking-[3px] uppercase border-l border-white/20 pl-1.5 sm:pl-2">
               Publicitate
             </span>
-            <span className="hidden sm:inline-flex items-center gap-1.5 bg-[#e30613] text-white text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider">
+            <span className="hidden md:inline-flex items-center gap-1.5 bg-[#e30613] text-white text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider">
               Business Console
               <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span>
             </span>

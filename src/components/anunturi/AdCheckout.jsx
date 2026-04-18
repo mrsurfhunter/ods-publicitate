@@ -67,7 +67,7 @@ export default function AdCheckout({ ad, onClose }) {
                   <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Companie / Persoană</label>
                   <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 rounded-2xl outline-none text-sm font-medium" value={f.company} onChange={e => set("company", e.target.value)} />
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Nume *</label>
                     <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 rounded-2xl outline-none text-sm font-medium" value={f.name} onChange={e => set("name", e.target.value)} />

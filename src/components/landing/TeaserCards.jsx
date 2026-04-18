@@ -1,31 +1,31 @@
 const BENEFITS = [
-  { icon: "fas fa-users", title: "400.000+ sibieni lunar", desc: "Cea mai citită publicație din Sibiu, cu trafic auditat BRAT. Afacerea ta ajunge la publicul potrivit." },
-  { icon: "fas fa-search-plus", title: "Vizibilitate pe Google", desc: "Articolele rămân indexate permanent. Clienții te găsesc când caută servicii ca ale tale în Sibiu." },
-  { icon: "fas fa-flag", title: "Toate canalele, un singur pachet", desc: "Site + Facebook (218k) + Instagram (18k) + TikTok (24k) + Newsletter + Push notifications." },
-  { icon: "fas fa-pen-nib", title: "Conținut profesional inclus", desc: "Redacția noastră scrie articolul, creează postările și se ocupă de tot. Tu doar aprobi." },
+  { icon: "fas fa-users", color: "text-blue-600 bg-blue-100", title: "400.000+ sibieni lunar", desc: "Cea mai citită publicație din Sibiu, cu trafic auditat BRAT." },
+  { icon: "fas fa-search-plus", color: "text-emerald-600 bg-emerald-100", title: "Vizibilitate pe Google", desc: "Articolele rămân indexate permanent. Clienții te găsesc pe Google." },
+  { icon: "fas fa-share-alt", color: "text-purple-600 bg-purple-100", title: "Toate canalele, un pachet", desc: "Site + Facebook + Instagram + TikTok + Newsletter + Push." },
+  { icon: "fas fa-pen-nib", color: "text-amber-600 bg-amber-100", title: "Conținut profesional", desc: "Redacția noastră scrie articolul și creează postările. Tu doar aprobi." },
 ];
 
 export default function TeaserCards({ onConsult }) {
   return (
-    <div className="max-w-5xl mx-auto px-4 py-16 md:py-20">
-      <div className="text-center mb-12">
-        <h2 className="text-2xl md:text-3xl font-black text-slate-900 uppercase tracking-tight mb-3">De ce să te promovezi pe Ora de Sibiu?</h2>
-        <p className="text-slate-500 font-medium max-w-lg mx-auto">17 ani de experiență în promovarea afacerilor locale din Sibiu</p>
+    <div className="max-w-4xl mx-auto px-5 py-10 sm:py-14 md:py-20">
+      <div className="text-center mb-8 sm:mb-12">
+        <h2 className="text-lg sm:text-xl md:text-2xl font-black text-slate-900 uppercase tracking-tight mb-2">De ce Ora de Sibiu?</h2>
+        <p className="text-slate-400 font-medium text-sm">17 ani de experiență în promovarea afacerilor din Sibiu</p>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {BENEFITS.map((b, i) => (
-          <div key={i} className="bg-white rounded-2xl border border-slate-100 p-7 hover:shadow-lg hover:-translate-y-1 transition-all group">
-            <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-blue-100 transition-colors">
-              <i className={`${b.icon} text-blue-600`}></i>
+          <div key={i} className="bg-white rounded-2xl border border-slate-100 p-5 sm:p-6 hover:shadow-lg hover:-translate-y-0.5 transition-all group">
+            <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center mb-3 ${b.color}`}>
+              <i className={`${b.icon} text-sm sm:text-base`}></i>
             </div>
-            <h3 className="text-lg font-bold text-slate-900 mb-2">{b.title}</h3>
+            <h3 className="text-base font-bold text-slate-900 mb-1">{b.title}</h3>
             <p className="text-sm text-slate-500 leading-relaxed">{b.desc}</p>
           </div>
         ))}
       </div>
-      <div className="text-center mt-12 space-y-4">
-        <p className="text-slate-500">Pachete de la <span className="text-xl font-black text-navy">500 lei</span></p>
-        <button onClick={onConsult} className="px-8 py-4 bg-navy text-white font-black uppercase text-xs tracking-widest rounded-2xl hover:bg-navy-dark transition-all shadow-lg shadow-navy/20">
+      <div className="text-center mt-8 sm:mt-10 flex flex-col items-center gap-3">
+        <p className="text-slate-400 text-sm">Pachete de la <span className="text-lg font-black text-navy">500 lei</span></p>
+        <button onClick={onConsult} className="w-full sm:w-auto px-7 py-3.5 bg-navy text-white font-black uppercase text-xs tracking-widest rounded-2xl hover:bg-navy-dark transition-all shadow-lg shadow-navy/20">
           Descoperă pachetul potrivit →
         </button>
       </div>

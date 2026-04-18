@@ -72,17 +72,17 @@ export default function DashboardView({ initOrder, onBack }) {
       </div>
 
       {/* Progress */}
-      <div className="bg-white rounded-3xl border border-slate-100 p-6 mb-5 shadow-sm">
+      <div className="bg-white rounded-3xl border border-slate-100 p-4 sm:p-6 mb-5 shadow-sm">
         <div className="flex items-center justify-between relative">
-          <div className="absolute top-4 left-[12%] right-[12%] h-0.5 bg-slate-100"></div>
+          <div className="absolute top-3 sm:top-4 left-[12%] right-[12%] h-0.5 bg-slate-100"></div>
           {STEPS.map((s, i) => (
             <div key={i} className="flex flex-col items-center relative z-10">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold mb-2 ${
+              <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-bold mb-1.5 sm:mb-2 ${
                 s.done ? 'bg-green-500 text-white' : 'bg-slate-200 text-slate-400'
               }`}>
-                {s.done ? <i className="fas fa-check text-[10px]"></i> : (i + 1)}
+                {s.done ? <i className="fas fa-check text-[9px] sm:text-[10px]"></i> : (i + 1)}
               </div>
-              <span className={`text-[9px] font-bold text-center whitespace-nowrap ${s.done ? 'text-green-600' : 'text-slate-400'}`}>{s.l}</span>
+              <span className={`text-[8px] sm:text-[9px] font-bold text-center max-w-[60px] sm:max-w-none leading-tight ${s.done ? 'text-green-600' : 'text-slate-400'}`}>{s.l}</span>
             </div>
           ))}
         </div>
@@ -180,7 +180,7 @@ export default function DashboardView({ initOrder, onBack }) {
       <div className="bg-slate-900 text-white rounded-[2.5rem] p-6 md:p-10 mb-5 shadow-2xl">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
-            <h3 className="text-xl font-black uppercase tracking-tight italic">Analize Impact Campanii</h3>
+            <h3 className="text-base sm:text-xl font-black uppercase tracking-tight italic">Analize Impact Campanii</h3>
             <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mt-1">Date agregate din Google Analytics & Social Media</p>
           </div>
           <div className="bg-white/5 border border-white/10 px-4 py-2 rounded-xl flex items-center gap-2">

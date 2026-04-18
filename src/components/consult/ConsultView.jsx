@@ -120,7 +120,7 @@ export default function ConsultView({ onResult, onBack }) {
       visibleSteps.push(i);
     }
     return (
-      <div className="w-full mb-10">
+      <div className="w-full mb-6 sm:mb-10">
         <div className="flex items-center justify-between relative">
           <div className="absolute top-1/2 left-0 w-full h-0.5 bg-slate-200 -z-10 -translate-y-1/2"></div>
           <div
@@ -128,13 +128,13 @@ export default function ConsultView({ onResult, onBack }) {
             style={{ width: `${(visibleSteps.indexOf(step) / (visibleSteps.length - 1)) * 100}%` }}
           ></div>
           {visibleSteps.map((s, idx) => (
-            <div key={s} className="flex flex-col items-center bg-slate-50 px-2">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors duration-300 ${
+            <div key={s} className="flex flex-col items-center bg-slate-50 px-1 sm:px-2">
+              <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center border-2 transition-colors duration-300 ${
                 step >= s ? 'bg-blue-600 border-blue-600 text-white' : 'bg-white border-slate-300 text-slate-400'
               }`}>
-                {step > s ? <i className="fas fa-check text-sm"></i> : <span className="text-sm font-bold">{idx + 1}</span>}
+                {step > s ? <i className="fas fa-check text-xs sm:text-sm"></i> : <span className="text-xs sm:text-sm font-bold">{idx + 1}</span>}
               </div>
-              <span className={`text-[10px] mt-1.5 font-semibold ${step >= s ? 'text-blue-700' : 'text-slate-400'}`}>
+              <span className={`text-[9px] sm:text-[10px] mt-1 sm:mt-1.5 font-semibold ${step >= s ? 'text-blue-700' : 'text-slate-400'}`}>
                 {STEP_LABELS[s]}
               </span>
             </div>
@@ -154,22 +154,22 @@ export default function ConsultView({ onResult, onBack }) {
             <LeadCaptureStep onDone={handleLeadDone} source="consult" />
           ) : current ? (
             <>
-              <h2 className="text-2xl md:text-4xl font-black text-slate-900 text-center mb-8 tracking-tight leading-tight">
+              <h2 className="text-xl sm:text-2xl md:text-4xl font-black text-slate-900 text-center mb-5 sm:mb-8 tracking-tight leading-tight">
                 {current.question}
               </h2>
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-2.5 sm:gap-3">
                 {current.options.map(opt => {
                   const isOpt = selected === opt.id || answers[current.id] === opt.id ||
                     (opt.freeText && answers[current.id] && !current.options.find(o => !o.freeText && o.id === answers[current.id]));
                   return (
                     <div key={opt.id}>
                       <button
-                        className={`w-full flex items-center gap-4 p-5 rounded-2xl border-2 text-left font-semibold text-base transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98] ${
+                        className={`w-full flex items-center gap-3 sm:gap-4 p-4 sm:p-5 rounded-2xl border-2 text-left font-semibold text-sm sm:text-base transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98] ${
                           isOpt ? 'border-blue-600 bg-blue-50 shadow-blue-100' : 'border-slate-200 bg-white hover:border-blue-300'
                         }`}
                         onClick={() => handleSelect(opt.id, opt)}
                       >
-                        <span className="text-2xl flex-shrink-0 w-10 text-center">{opt.icon}</span>
+                        <span className="text-xl sm:text-2xl flex-shrink-0 w-8 sm:w-10 text-center">{opt.icon}</span>
                         <span className="text-slate-800">{opt.label}</span>
                       </button>
                       {opt.freeText && (selected === opt.id || isOpt) && (
