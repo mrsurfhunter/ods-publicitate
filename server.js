@@ -1,4 +1,5 @@
 import express from 'express';
+import compression from 'compression';
 import Anthropic from '@anthropic-ai/sdk';
 import path from 'path';
 import fs from 'fs';
@@ -7,10 +8,17 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 
+app.use(compression());
 app.use(express.json({ limit: '2mb' }));
 
-// Serve Vite build in production
-app.use(express.static(path.join(__dirname, 'dist')));
+// Serve Vite build — hashed assets get long cache, HTML does not
+app.use('/assets', express.static(path.join(__dirname, 'dist', 'assets'), {
+  maxAge: '1y',
+  immutable: true,
+}));
+app.use(express.static(path.join(__dirname, 'dist'), {
+  maxAge: 0,
+}));
 
 // ── /api/ai — generic AI proxy (text enhancement) ──
 app.post('/api/ai', async (req, res) => {
