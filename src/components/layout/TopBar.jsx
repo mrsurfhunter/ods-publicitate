@@ -28,9 +28,9 @@ export default function TopBar({ myOrders, onHome, onOpenOrder, onLogin, onConsu
             <span className="text-[9px] sm:text-[10px] font-black text-white/40 tracking-[2px] sm:tracking-[3px] uppercase border-l border-white/20 pl-1.5 sm:pl-2">
               Publicitate
             </span>
-            <span className="hidden md:inline-flex items-center gap-1.5 bg-[#e30613] text-white text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider">
+            <span className="hidden md:inline-flex items-center gap-1.5 bg-[#e30613] text-white text-[9px] font-black px-3 py-1.5 uppercase tracking-wider">
               Business Console
-              <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span>
+              <span className="w-1.5 h-1.5 bg-green-400 animate-pulse"></span>
             </span>
           </div>
         </div>

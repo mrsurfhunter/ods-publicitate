@@ -11,7 +11,7 @@ export default function HowItWorks() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
         {STEPS.map((s, i) => (
           <div key={i} className="text-center">
-            <div className="w-12 h-12 rounded-full bg-blue-600 text-white font-black text-base flex items-center justify-center mx-auto mb-3">
+            <div className="w-12 h-12 bg-blue-600 text-white font-black text-base flex items-center justify-center mx-auto mb-3">
               <i className={`${s.icon} text-sm`}></i>
             </div>
             <h3 className="text-sm sm:text-base font-bold text-slate-900 mb-1.5">{s.title}</h3>

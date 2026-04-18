@@ -59,8 +59,8 @@ export default function ChatConsultant({ onFinish }) {
 
   return (
     <div className="max-w-4xl mx-auto animate-fadeIn">
-      <div className="flex items-center gap-4 mb-6 bg-blue-50 p-4 rounded-2xl border border-blue-100">
-        <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
+      <div className="flex items-center gap-4 mb-6 bg-blue-50 p-4 border-2 border-blue-100">
+        <div className="w-12 h-12 bg-blue-600 flex items-center justify-center text-white">
           <i className="fas fa-user-tie text-lg"></i>
         </div>
         <div>
@@ -69,14 +69,14 @@ export default function ChatConsultant({ onFinish }) {
         </div>
       </div>
 
-      <div className="bg-white rounded-[2rem] border border-slate-200 overflow-hidden flex flex-col h-[60vh] shadow-xl">
+      <div className="bg-white border-2 border-slate-200 overflow-hidden flex flex-col h-[60vh]">
         <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50/50">
           {messages.map((m, i) => (
             <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
-              <div className={`max-w-[85%] p-4 rounded-2xl text-sm font-medium leading-relaxed shadow-sm ${
+              <div className={`max-w-[85%] p-4 text-sm font-medium leading-relaxed ${
                 m.role === "user"
-                  ? "bg-slate-900 text-white rounded-tr-none"
-                  : "bg-white text-slate-700 border border-slate-100 rounded-tl-none"
+                  ? "bg-slate-900 text-white"
+                  : "bg-white text-slate-700 border-2 border-slate-100"
               }`}>
                 {m.text.split("\n").map((line, idx) => (
                   <p key={idx} className={idx > 0 ? "mt-2" : ""}>{line}</p>
@@ -86,10 +86,10 @@ export default function ChatConsultant({ onFinish }) {
           ))}
           {loading && (
             <div className="flex justify-start">
-              <div className="bg-white p-4 rounded-2xl border border-slate-100 flex gap-2">
-                <div className="w-2 h-2 bg-[#e30613] rounded-full animate-bounce"></div>
-                <div className="w-2 h-2 bg-[#e30613] rounded-full animate-bounce [animation-delay:100ms]"></div>
-                <div className="w-2 h-2 bg-[#e30613] rounded-full animate-bounce [animation-delay:200ms]"></div>
+              <div className="bg-white p-4 border-2 border-slate-100 flex gap-2">
+                <div className="w-2 h-2 bg-[#e30613] animate-bounce"></div>
+                <div className="w-2 h-2 bg-[#e30613] animate-bounce [animation-delay:100ms]"></div>
+                <div className="w-2 h-2 bg-[#e30613] animate-bounce [animation-delay:200ms]"></div>
               </div>
             </div>
           )}
@@ -99,7 +99,7 @@ export default function ChatConsultant({ onFinish }) {
           <div className="flex gap-2">
             <input
               type="text"
-              className="flex-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-red-500/30 transition-all text-sm font-medium"
+              className="flex-1 p-3 bg-slate-50 border-2 border-slate-200 outline-none focus:border-[#e30613] transition-all text-sm font-medium"
               placeholder="Scrie răspunsul tău aici..."
               value={input}
               onChange={e => setInput(e.target.value)}
@@ -108,7 +108,7 @@ export default function ChatConsultant({ onFinish }) {
             <button
               onClick={handleSend}
               disabled={loading || !input.trim()}
-              className="w-12 h-12 bg-[#e30613] text-white rounded-xl flex items-center justify-center hover:bg-red-700 transition-all shadow-lg shadow-red-200 disabled:opacity-50"
+              className="w-12 h-12 bg-[#e30613] text-white flex items-center justify-center hover:bg-red-700 transition-all disabled:opacity-50"
             >
               <i className="fas fa-paper-plane"></i>
             </button>
@@ -120,7 +120,7 @@ export default function ChatConsultant({ onFinish }) {
         <div className="mt-6 flex flex-col items-center gap-3">
           <button
             onClick={handleFinish}
-            className="group px-10 py-5 bg-slate-900 text-white font-black rounded-2xl shadow-2xl hover:bg-black transition-all flex items-center gap-4 hover:-translate-y-1"
+            className="group px-10 py-5 bg-slate-900 text-white font-black border-2 border-slate-700 hover:bg-black transition-all flex items-center gap-4"
           >
             <span className="uppercase text-xs tracking-widest">Vezi pachetul recomandat</span>
             <i className="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>

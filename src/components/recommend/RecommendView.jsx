@@ -11,13 +11,13 @@ export default function RecommendView({ recommendation, onCatalog, onPurchased, 
   const renderCard = (pkg, benefits, isPrimary) => {
     const isBuying = buying === pkg.id;
     return (
-      <div className={`bg-white rounded-3xl overflow-hidden mb-5 transition-all animate-fadeIn ${
-        isPrimary ? 'border-2 border-[#e30613] shadow-xl shadow-red-500/10' : 'border border-slate-200 shadow-sm'
+      <div className={`bg-white overflow-hidden mb-5 transition-all animate-fadeIn ${
+        isPrimary ? 'border-2 border-[#e30613]' : 'border-2 border-slate-200'
       }`}>
         <div className="p-6 md:p-8">
           <div className="flex items-start justify-between gap-4 mb-4">
             <div>
-              <span className={`inline-block text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full text-white mb-3 ${
+              <span className={`inline-block text-[9px] font-black uppercase tracking-widest px-4 py-1.5 text-white mb-3 ${
                 isPrimary ? 'bg-[#e30613]' : 'bg-navy'
               }`}>
                 {isPrimary ? 'Recomandat' : 'Alternativă'}
@@ -48,7 +48,7 @@ export default function RecommendView({ recommendation, onCatalog, onPurchased, 
             <div className="text-[10px] text-slate-400 font-medium">+ TVA</div>
           </div>
           {!isBuying && (
-            <button className="w-full sm:w-auto px-8 py-3.5 bg-[#e30613] text-white font-black uppercase text-xs tracking-widest rounded-2xl hover:bg-red-700 transition-all shadow-lg shadow-red-500/20 hover:scale-105 active:scale-95" onClick={() => setBuying(pkg.id)}>
+            <button className="w-full sm:w-auto px-8 py-3.5 bg-[#e30613] text-white font-black uppercase text-xs tracking-widest hover:bg-red-700 transition-all border-2 border-red-700" onClick={() => setBuying(pkg.id)}>
               Alege acest pachet
             </button>
           )}
@@ -61,7 +61,7 @@ export default function RecommendView({ recommendation, onCatalog, onPurchased, 
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8 md:py-12 animate-fadeIn">
-      <div className="bg-blue-50 border-l-4 border-blue-600 rounded-r-2xl p-5 mb-8 text-sm text-slate-700 leading-relaxed font-medium">
+      <div className="bg-blue-50 border-l-4 border-blue-600 p-5 mb-8 text-sm text-slate-700 leading-relaxed font-medium">
         {recommendation.reasoning}
       </div>
       {primaryPkg && renderCard(primaryPkg, recommendation.primaryBenefits || [], true)}

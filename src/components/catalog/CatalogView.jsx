@@ -8,8 +8,8 @@ function CatalogCard({ pkg, onPurchased, featured }) {
   const [buying, setBuying] = useState(false);
 
   return (
-    <div className={`bg-white rounded-3xl overflow-hidden transition-all hover:shadow-lg ${
-      featured ? 'border-2 border-[#e30613] shadow-xl shadow-red-500/10' : 'border border-slate-200 shadow-sm'
+    <div className={`bg-white overflow-hidden transition-all ${
+      featured ? 'border-2 border-[#e30613]' : 'border-2 border-slate-200'
     }`}>
       {featured && (
         <div className="bg-[#e30613] text-white text-[10px] font-black text-center py-2 uppercase tracking-[2px]">
@@ -53,8 +53,8 @@ function CatalogCard({ pkg, onPurchased, featured }) {
         </div>
         {!buying ? (
           <button
-            className={`w-full py-4 font-black uppercase text-xs tracking-widest rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg ${
-              featured ? 'bg-[#e30613] text-white shadow-red-500/20 hover:bg-red-700' : 'bg-navy text-white shadow-navy/20 hover:bg-navy-dark'
+            className={`w-full py-4 font-black uppercase text-xs tracking-widest transition-all ${
+              featured ? 'bg-[#e30613] text-white hover:bg-red-700 border-2 border-red-700' : 'bg-navy text-white hover:bg-navy-dark border-2 border-navy'
             }`}
             onClick={() => setBuying(true)}
           >
@@ -95,7 +95,7 @@ export default function CatalogView({ onConsult, onPurchased }) {
         <div className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] mb-3">Pachete de promovare</div>
         <h2 className="text-2xl md:text-3xl font-black text-slate-900 uppercase tracking-tight mb-3">Alege pachetul potrivit</h2>
         <p className="text-slate-500 text-sm mb-4">Toate pachetele includ publicare pe oradesibiu.ro — cea mai citită publicație din Sibiu.</p>
-        <button className="px-6 py-2.5 text-xs font-bold text-slate-500 border border-slate-200 rounded-xl hover:border-navy hover:text-navy transition-all" onClick={onConsult}>
+        <button className="px-6 py-2.5 text-xs font-bold text-slate-500 border-2 border-slate-200 hover:border-navy hover:text-navy transition-all" onClick={onConsult}>
           Nu știi ce să alegi? Lasă-ne să te ajutăm →
         </button>
       </div>

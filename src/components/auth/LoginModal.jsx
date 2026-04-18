@@ -31,14 +31,14 @@ export default function LoginModal({ onClose, onLoggedIn }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-navy/30 backdrop-blur-sm flex items-center justify-center z-[1000] p-4" onClick={onClose}>
-      <div className="bg-white rounded-[2rem] shadow-2xl w-full max-w-md p-8 relative animate-fadeIn" onClick={e => e.stopPropagation()}>
-        <button className="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-200 transition-all" onClick={onClose}>
+    <div className="fixed inset-0 bg-navy/80 flex items-center justify-center z-[1000] p-4" onClick={onClose}>
+      <div className="bg-white w-full max-w-md p-8 relative animate-fadeIn border-2 border-slate-300" onClick={e => e.stopPropagation()}>
+        <button className="absolute top-4 right-4 w-8 h-8 bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-200 transition-all" onClick={onClose}>
           ×
         </button>
 
         <div className="text-center mb-6">
-          <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <div className="w-14 h-14 bg-blue-50 flex items-center justify-center mx-auto mb-4 border-2 border-blue-100">
             <i className="fas fa-user-circle text-2xl text-blue-600"></i>
           </div>
           <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">Bine ai revenit!</h3>
@@ -63,7 +63,7 @@ export default function LoginModal({ onClose, onLoggedIn }) {
           <button
             type="submit"
             disabled={!email.trim() || loading}
-            className="w-full py-4 bg-[#e30613] text-white font-black rounded-2xl hover:bg-red-700 transition-all shadow-lg shadow-red-500/20 disabled:opacity-50 uppercase text-xs tracking-widest"
+            className="w-full py-4 bg-[#e30613] text-white font-black hover:bg-red-700 transition-all disabled:opacity-50 uppercase text-xs tracking-widest border-2 border-red-700"
           >
             {loading ? <i className="fas fa-spinner animate-spin"></i> : "Intră în cont"}
           </button>

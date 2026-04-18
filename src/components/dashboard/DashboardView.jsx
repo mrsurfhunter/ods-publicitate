@@ -57,7 +57,7 @@ export default function DashboardView({ initOrder, onBack }) {
   return (
     <div className="max-w-4xl mx-auto px-4 py-6 md:py-10 animate-fadeIn">
       {/* Header */}
-      <div className="bg-navy rounded-3xl p-6 md:p-8 text-white mb-6 shadow-xl shadow-navy/20">
+      <div className="bg-navy p-6 md:p-8 text-white mb-6 border-b-4 border-[#e30613]">
         <div className="flex justify-between items-start flex-wrap gap-4">
           <div>
             <div className="text-[9px] font-black text-white/40 uppercase tracking-[3px] mb-1">Dashboard</div>
@@ -65,19 +65,19 @@ export default function DashboardView({ initOrder, onBack }) {
             <h2 className="text-2xl font-black tracking-tight">{order.company || order.name}</h2>
             <div className="text-xs text-white/40 mt-1">Pachet: <strong className="text-white/80">{pkg?.name}</strong></div>
           </div>
-          <button className="px-4 py-2 bg-white/10 text-white/50 text-xs font-bold rounded-xl hover:bg-white/20 transition-all" onClick={onBack}>
+          <button className="px-4 py-2 bg-white/10 text-white/50 text-xs font-bold border border-white/20 hover:bg-white/20 transition-all" onClick={onBack}>
             <i className="fas fa-arrow-left mr-1.5"></i> Înapoi
           </button>
         </div>
       </div>
 
       {/* Progress */}
-      <div className="bg-white rounded-3xl border border-slate-100 p-4 sm:p-6 mb-5 shadow-sm">
+      <div className="bg-white border-2 border-slate-200 p-4 sm:p-6 mb-5">
         <div className="flex items-center justify-between relative">
           <div className="absolute top-3 sm:top-4 left-[12%] right-[12%] h-0.5 bg-slate-100"></div>
           {STEPS.map((s, i) => (
             <div key={i} className="flex flex-col items-center relative z-10">
-              <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-bold mb-1.5 sm:mb-2 ${
+              <div className={`w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center text-[10px] sm:text-xs font-bold mb-1.5 sm:mb-2 ${
                 s.done ? 'bg-green-500 text-white' : 'bg-slate-200 text-slate-400'
               }`}>
                 {s.done ? <i className="fas fa-check text-[9px] sm:text-[10px]"></i> : (i + 1)}
@@ -90,23 +90,23 @@ export default function DashboardView({ initOrder, onBack }) {
 
       {/* Content section */}
       {pkg?.hasArticle && (
-        <div className="bg-white rounded-3xl border border-slate-100 p-6 md:p-8 mb-5 shadow-sm">
+        <div className="bg-white border-2 border-slate-200 p-6 md:p-8 mb-5">
           <h3 className="text-sm font-black text-slate-900 uppercase tracking-tight mb-5">Conținutul articolului</h3>
           {!order.contentChoice ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <button className="p-6 rounded-2xl bg-[#e30613] text-white text-left hover:bg-red-700 transition-all group" onClick={() => upd({ contentChoice: "redactor", status: "review" })}>
+              <button className="p-6 bg-[#e30613] text-white text-left hover:bg-red-700 transition-all group border-2 border-red-700" onClick={() => upd({ contentChoice: "redactor", status: "review" })}>
                 <i className="fas fa-pen-nib text-lg mb-3 opacity-80"></i>
                 <div className="font-black text-sm mb-1">Vreau un redactor</div>
                 <div className="text-xs text-white/70">Veți fi contactat de un redactor</div>
               </button>
-              <button className="p-6 rounded-2xl border-2 border-slate-200 text-left hover:border-blue-300 transition-all group" onClick={() => upd({ contentChoice: "propriu" })}>
+              <button className="p-6 border-2 border-slate-200 text-left hover:border-blue-300 transition-all group" onClick={() => upd({ contentChoice: "propriu" })}>
                 <i className="fas fa-upload text-lg text-slate-400 mb-3 group-hover:text-blue-600 transition-colors"></i>
                 <div className="font-bold text-sm text-slate-800 mb-1">Trimit eu materialele</div>
                 <div className="text-xs text-slate-400">Scriu textul și încarc pozele aici</div>
               </button>
             </div>
           ) : order.contentChoice === "redactor" ? (
-            <div className="bg-blue-50 rounded-2xl p-5 border border-blue-100">
+            <div className="bg-blue-50 p-5 border-2 border-blue-200">
               <div className="flex items-center gap-2 mb-2">
                 <i className="fas fa-pen-nib text-blue-600"></i>
                 <span className="text-sm font-bold text-blue-700">Un redactor va scrie articolul</span>
@@ -126,20 +126,20 @@ export default function DashboardView({ initOrder, onBack }) {
               </div>
               <ImageUploader label="Fotografie principală (cover)" images={order.featuredImg || []} onChange={imgs => upd({ featuredImg: imgs })} multi={false} />
               <ImageUploader label="Galerie foto (opțional)" images={order.gallery || []} onChange={imgs => upd({ gallery: imgs })} multi={true} />
-              <button className="w-full py-4 bg-slate-900 text-white font-black rounded-2xl hover:bg-black transition-all uppercase text-xs tracking-widest disabled:opacity-50" onClick={submitToWP} disabled={wpLoading || !order.articleTitle || !order.articleText}>
+              <button className="w-full py-4 bg-slate-900 text-white font-black hover:bg-black transition-all uppercase text-xs tracking-widest disabled:opacity-50 border-2 border-slate-700" onClick={submitToWP} disabled={wpLoading || !order.articleTitle || !order.articleText}>
                 {wpLoading ? <><i className="fas fa-spinner animate-spin mr-2"></i>Se trimite...</> : "Trimite articolul spre publicare"}
               </button>
-              {wpMsg === "ok" && <div className="p-4 bg-green-50 border border-green-200 rounded-2xl text-sm text-green-700 font-semibold flex items-center gap-2"><i className="fas fa-check"></i> Articolul a fost trimis ca draft în WordPress!</div>}
-              {wpMsg === "config" && <div className="p-4 bg-blue-50 border border-blue-200 rounded-2xl text-sm text-blue-700">Articolul a fost salvat local. Configurați WP_USER + WP_PASS pentru publicare automată.</div>}
-              {wpMsg && wpMsg !== "ok" && wpMsg !== "config" && <div className="p-4 bg-red-50 border border-red-200 rounded-2xl text-sm text-red-600">{wpMsg}</div>}
-              {order.wpDraftUrl && <div className="p-4 bg-green-50 border border-green-200 rounded-2xl text-sm">Draft creat: <a href={order.wpDraftUrl} target="_blank" rel="noopener" className="text-blue-600 hover:underline">{order.wpDraftUrl}</a></div>}
+              {wpMsg === "ok" && <div className="p-4 bg-green-50 border-2 border-green-200 text-sm text-green-700 font-semibold flex items-center gap-2"><i className="fas fa-check"></i> Articolul a fost trimis ca draft în WordPress!</div>}
+              {wpMsg === "config" && <div className="p-4 bg-blue-50 border-2 border-blue-200 text-sm text-blue-700">Articolul a fost salvat local. Configurați WP_USER + WP_PASS pentru publicare automată.</div>}
+              {wpMsg && wpMsg !== "ok" && wpMsg !== "config" && <div className="p-4 bg-red-50 border-2 border-red-200 text-sm text-red-600">{wpMsg}</div>}
+              {order.wpDraftUrl && <div className="p-4 bg-green-50 border-2 border-green-200 text-sm">Draft creat: <a href={order.wpDraftUrl} target="_blank" rel="noopener" className="text-blue-600 hover:underline">{order.wpDraftUrl}</a></div>}
             </div>
           )}
         </div>
       )}
 
       {/* Calendar */}
-      <div className="bg-white rounded-3xl border border-slate-100 p-6 md:p-8 mb-5 shadow-sm">
+      <div className="bg-white border-2 border-slate-200 p-6 md:p-8 mb-5">
         <h3 className="text-sm font-black text-slate-900 uppercase tracking-tight mb-3">Calendar postări sociale</h3>
         <p className="text-xs text-slate-400 mb-4">Alege zilele și ora la care vrei să fie publicate postările:</p>
         {(order.reposts || []).length > 0 && (
@@ -147,7 +147,7 @@ export default function DashboardView({ initOrder, onBack }) {
             {(order.reposts || []).map((entry, i) => {
               const parts = entry.split("|"); const dateStr = parts[0]; const timeStr = parts[1] || "orice";
               return (
-                <span key={i} className="bg-blue-50 text-blue-700 px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-2">
+                <span key={i} className="bg-blue-50 text-blue-700 px-4 py-2 text-xs font-semibold flex items-center gap-2 border border-blue-200">
                   {new Date(dateStr).toLocaleDateString("ro-RO")} la {timeStr === "orice" ? "orice oră" : timeStr}
                   <span className="cursor-pointer text-blue-400 hover:text-red-500 font-bold transition-colors" onClick={() => upd({ reposts: (order.reposts || []).filter((_, j) => j !== i) })}>×</span>
                 </span>
@@ -170,21 +170,21 @@ export default function DashboardView({ initOrder, onBack }) {
               })}
             </select>
           </div>
-          <button className="px-5 py-3 bg-slate-900 text-white text-xs font-bold rounded-xl hover:bg-black transition-all disabled:opacity-50" onClick={() => { if (repostDay) { upd({ reposts: [...(order.reposts || []), repostDay + "|" + repostTime] }); setRD(""); setRT("orice"); } }} disabled={!repostDay}>
+          <button className="px-5 py-3 bg-slate-900 text-white text-xs font-bold hover:bg-black transition-all disabled:opacity-50 border-2 border-slate-700" onClick={() => { if (repostDay) { upd({ reposts: [...(order.reposts || []), repostDay + "|" + repostTime] }); setRD(""); setRT("orice"); } }} disabled={!repostDay}>
             Adaugă
           </button>
         </div>
       </div>
 
       {/* Analytics */}
-      <div className="bg-slate-900 text-white rounded-[2.5rem] p-6 md:p-10 mb-5 shadow-2xl">
+      <div className="bg-slate-900 text-white p-6 md:p-10 mb-5 border-2 border-slate-700">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
             <h3 className="text-base sm:text-xl font-black uppercase tracking-tight italic">Analize Impact Campanii</h3>
             <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mt-1">Date agregate din Google Analytics & Social Media</p>
           </div>
-          <div className="bg-white/5 border border-white/10 px-4 py-2 rounded-xl flex items-center gap-2">
-            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+          <div className="bg-white/5 border-2 border-white/10 px-4 py-2 flex items-center gap-2">
+            <span className="w-2 h-2 bg-green-500 animate-pulse"></span>
             <span className="text-[9px] font-black uppercase tracking-widest">Live Sync</span>
           </div>
         </div>
@@ -196,7 +196,7 @@ export default function DashboardView({ initOrder, onBack }) {
             { label: "Impresii Instagram", value: stats.igReach.toLocaleString("ro"), sub: `${stats.shares} interacțiuni`, icon: "fas fa-heart", color: "text-pink-400" },
             { label: "Vizualizări TikTok", value: "—", sub: "Se actualizează", icon: "fas fa-play", color: "text-cyan-400" },
           ] : ANALYTICS).map((m, i) => (
-            <div key={i} className="bg-white/5 p-5 rounded-2xl border border-white/5">
+            <div key={i} className="bg-white/5 p-5 border-2 border-white/10">
               <div className="text-slate-500 text-[9px] font-black uppercase mb-2">{m.label}</div>
               <div className="text-2xl font-black">{m.value}</div>
               <div className={`${m.color} text-[10px] font-bold mt-2 flex items-center gap-1`}>
@@ -214,25 +214,25 @@ export default function DashboardView({ initOrder, onBack }) {
       </div>
 
       {/* Upsell */}
-      <div className="bg-gradient-to-r from-red-600 to-red-800 text-white rounded-3xl p-6 md:p-10 mb-5 shadow-xl">
+      <div className="bg-[#e30613] text-white p-6 md:p-10 mb-5 border-2 border-red-700">
         <h3 className="text-xl font-black uppercase tracking-tight mb-3">Vrei și mai multă vizibilitate?</h3>
         <p className="text-red-100 font-medium mb-6 max-w-2xl text-sm">
           Abonează-te pentru minim 3 luni și primești <span className="font-black text-white">20% reducere</span> la abonamentul plătit în avans.
         </p>
         <div className="flex flex-wrap gap-3">
-          <button className="px-6 py-3 bg-white text-red-700 font-black uppercase text-xs tracking-widest rounded-2xl hover:bg-slate-100 transition-all">
+          <button className="px-6 py-3 bg-white text-red-700 font-black uppercase text-xs tracking-widest hover:bg-slate-100 transition-all border-2 border-white">
             Abonare 3 luni (-20%)
           </button>
-          <button className="px-6 py-3 border-2 border-white text-white font-black uppercase text-xs tracking-widest rounded-2xl hover:bg-white/10 transition-all">
+          <button className="px-6 py-3 border-2 border-white text-white font-black uppercase text-xs tracking-widest hover:bg-white/10 transition-all">
             Adaugă Postări
           </button>
         </div>
       </div>
 
       {/* Contact */}
-      <div className="bg-white rounded-2xl border border-slate-100 p-5 flex flex-col sm:flex-row justify-between items-center gap-4 shadow-sm">
+      <div className="bg-white border-2 border-slate-200 p-5 flex flex-col sm:flex-row justify-between items-center gap-4">
         <span className="text-xs text-slate-400">Ai întrebări? Contact: <strong className="text-slate-700">{ODS.phone}</strong> (WhatsApp)</span>
-        <a href={"https://wa.me/40746752240?text=Salut,+comanda+" + order.id.toUpperCase()} target="_blank" rel="noopener" className="px-5 py-2.5 bg-green-500 text-white font-bold text-xs rounded-xl hover:bg-green-600 transition-all flex items-center gap-2">
+        <a href={"https://wa.me/40746752240?text=Salut,+comanda+" + order.id.toUpperCase()} target="_blank" rel="noopener" className="px-5 py-2.5 bg-green-500 text-white font-bold text-xs hover:bg-green-600 transition-all flex items-center gap-2 border-2 border-green-600">
           <i className="fab fa-whatsapp"></i> WhatsApp
         </a>
       </div>

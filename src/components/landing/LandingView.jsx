@@ -16,7 +16,7 @@ export default function LandingView({ onConsult, onAnunturi, onCatalog }) {
   return (
     <div className="animate-fadeIn">
       {/* Hero */}
-      <div className="bg-navy relative overflow-hidden">
+      <div className="bg-navy relative overflow-hidden border-b-4 border-[#e30613]">
         <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'repeating-linear-gradient(-45deg, transparent, transparent 40px, white 40px, white 41px)' }}></div>
         <div className="relative max-w-3xl mx-auto text-center px-5 py-12 sm:py-16 md:py-24">
           <div className="w-14 h-14 sm:w-16 sm:h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-5 sm:mb-8">
@@ -34,13 +34,13 @@ export default function LandingView({ onConsult, onAnunturi, onCatalog }) {
           <div className="flex flex-col sm:flex-row gap-3 justify-center items-center px-4">
             <button
               onClick={onConsult}
-              className="group w-full sm:w-auto inline-flex items-center justify-center px-7 py-4 sm:px-10 sm:py-5 text-sm sm:text-base font-black text-white uppercase tracking-wider bg-[#e30613] rounded-full shadow-2xl shadow-red-900/30 hover:scale-105 active:scale-95 transition-all"
+              className="group w-full sm:w-auto inline-flex items-center justify-center px-7 py-4 sm:px-10 sm:py-5 text-sm sm:text-base font-black text-white uppercase tracking-wider bg-[#e30613] border-2 border-red-700 hover:bg-red-700 active:bg-red-800 transition-all"
             >
               Începe Promovarea <i className="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform text-xs"></i>
             </button>
             <button
               onClick={onAnunturi}
-              className="w-full sm:w-auto px-7 py-3.5 text-sm font-semibold text-white/50 border border-white/15 rounded-full hover:bg-white/5 hover:text-white/70 transition-all"
+              className="w-full sm:w-auto px-7 py-3.5 text-sm font-semibold text-white/50 border-2 border-white/20 hover:bg-white/5 hover:text-white/70 transition-all"
             >
               Mică Publicitate →
             </button>
@@ -77,7 +77,7 @@ export default function LandingView({ onConsult, onAnunturi, onCatalog }) {
         <div className="flex justify-center items-center gap-4 sm:gap-8 flex-wrap">
           {["17 ani experiență", "Trafic auditat BRAT", "Peste 1.000 clienți"].map((t, i) => (
             <div key={i} className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-500">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0"></span>{t}
+              <span className="w-1.5 h-1.5 bg-green-500 flex-shrink-0"></span>{t}
             </div>
           ))}
         </div>
@@ -94,7 +94,7 @@ export default function LandingView({ onConsult, onAnunturi, onCatalog }) {
       {/* Final CTA */}
       <div className="bg-gradient-to-br from-[#e30613] to-red-800 py-12 sm:py-16 md:py-20 text-center px-5">
         <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white uppercase tracking-tight mb-4 sm:mb-6">Gata să începi?</h2>
-        <button onClick={onConsult} className="w-full sm:w-auto px-8 py-4 sm:px-10 sm:py-5 bg-white text-red-700 font-black uppercase text-xs sm:text-sm tracking-widest rounded-full shadow-2xl hover:scale-105 active:scale-95 transition-all">
+        <button onClick={onConsult} className="w-full sm:w-auto px-8 py-4 sm:px-10 sm:py-5 bg-white text-red-700 font-black uppercase text-xs sm:text-sm tracking-widest border-2 border-white hover:bg-slate-100 active:bg-slate-200 transition-all">
           Descoperă pachetul potrivit
         </button>
         <div className="mt-4 sm:mt-6">

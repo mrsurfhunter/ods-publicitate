@@ -12,9 +12,9 @@ export default function Footer() {
           />
           <div className="flex items-center gap-2 sm:gap-4 flex-wrap justify-center text-[10px] sm:text-[11px] font-bold text-slate-400 uppercase tracking-wider">
             <span>17 ani experiență</span>
-            <span className="w-1 h-1 bg-slate-300 rounded-full flex-shrink-0"></span>
+            <span className="w-1 h-1 bg-slate-300 flex-shrink-0"></span>
             <span>Trafic BRAT</span>
-            <span className="w-1 h-1 bg-slate-300 rounded-full flex-shrink-0"></span>
+            <span className="w-1 h-1 bg-slate-300 flex-shrink-0"></span>
             <span>400k+ vizitatori/lună</span>
           </div>
           <a

@@ -46,7 +46,7 @@ export default function LeadCaptureStep({ onDone, source }) {
   };
 
   return (
-    <div className="bg-white rounded-[2rem] p-8 shadow-xl border border-slate-100 animate-fadeIn">
+    <div className="bg-white p-8 border-2 border-slate-200 animate-fadeIn">
       <div className="text-center mb-6">
         <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">{copy.title}</h3>
         <p className="text-sm text-slate-500 mt-1">{copy.sub}</p>
@@ -72,7 +72,7 @@ export default function LeadCaptureStep({ onDone, source }) {
 
         {err && <p className="text-xs text-[#e30613] font-semibold">{err}</p>}
 
-        <button type="submit" disabled={!canSubmit || loading} className="w-full py-4 bg-[#e30613] text-white font-black rounded-2xl hover:bg-red-700 transition-all shadow-lg shadow-red-500/20 disabled:opacity-50 uppercase text-xs tracking-widest mt-2">
+        <button type="submit" disabled={!canSubmit || loading} className="w-full py-4 bg-[#e30613] text-white font-black hover:bg-red-700 transition-all disabled:opacity-50 uppercase text-xs tracking-widest mt-2 border-2 border-red-700">
           {loading ? "Se salvează..." : copy.btn}
         </button>
       </form>

@@ -104,9 +104,9 @@ export default function ConsultView({ onResult, onBack }) {
     return (
       <div className="min-h-[calc(100vh-64px)] flex flex-col items-center justify-center gap-6 p-8 bg-slate-50">
         <div className="flex gap-2">
-          <div className="w-3 h-3 rounded-full bg-[#e30613] animate-bounce"></div>
-          <div className="w-3 h-3 rounded-full bg-[#e30613] animate-bounce [animation-delay:100ms]"></div>
-          <div className="w-3 h-3 rounded-full bg-[#e30613] animate-bounce [animation-delay:200ms]"></div>
+          <div className="w-3 h-3 bg-[#e30613] animate-bounce"></div>
+          <div className="w-3 h-3 bg-[#e30613] animate-bounce [animation-delay:100ms]"></div>
+          <div className="w-3 h-3 bg-[#e30613] animate-bounce [animation-delay:200ms]"></div>
         </div>
         <p className="text-slate-500 font-semibold">Analizăm cele mai bune opțiuni pentru tine...</p>
       </div>
@@ -129,7 +129,7 @@ export default function ConsultView({ onResult, onBack }) {
           ></div>
           {visibleSteps.map((s, idx) => (
             <div key={s} className="flex flex-col items-center bg-slate-50 px-1 sm:px-2">
-              <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center border-2 transition-colors duration-300 ${
+              <div className={`w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center border-2 transition-colors duration-300 ${
                 step >= s ? 'bg-blue-600 border-blue-600 text-white' : 'bg-white border-slate-300 text-slate-400'
               }`}>
                 {step > s ? <i className="fas fa-check text-xs sm:text-sm"></i> : <span className="text-xs sm:text-sm font-bold">{idx + 1}</span>}
@@ -164,7 +164,7 @@ export default function ConsultView({ onResult, onBack }) {
                   return (
                     <div key={opt.id}>
                       <button
-                        className={`w-full flex items-center gap-3 sm:gap-4 p-4 sm:p-5 rounded-2xl border-2 text-left font-semibold text-sm sm:text-base transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98] ${
+                        className={`w-full flex items-center gap-3 sm:gap-4 p-4 sm:p-5 border-2 text-left font-semibold text-sm sm:text-base transition-all ${
                           isOpt ? 'border-blue-600 bg-blue-50 shadow-blue-100' : 'border-slate-200 bg-white hover:border-blue-300'
                         }`}
                         onClick={() => handleSelect(opt.id, opt)}
@@ -176,7 +176,7 @@ export default function ConsultView({ onResult, onBack }) {
                         <div className="flex gap-2 mt-3">
                           <input
                             ref={freeRef}
-                            className="flex-1 p-4 bg-blue-50 border-2 border-blue-200 rounded-2xl outline-none focus:border-blue-500 text-sm font-medium"
+                            className="flex-1 p-4 bg-blue-50 border-2 border-blue-200 outline-none focus:border-blue-500 text-sm font-medium"
                             placeholder="Descrie pe scurt afacerea ta..."
                             value={freeText}
                             onChange={e => setFreeText(e.target.value)}
@@ -184,7 +184,7 @@ export default function ConsultView({ onResult, onBack }) {
                             onKeyDown={e => { if (e.key === 'Enter' && freeText.trim()) handleFreeTextSubmit(); }}
                           />
                           <button
-                            className="px-6 py-3 bg-[#e30613] text-white font-bold rounded-2xl hover:bg-red-700 transition-all disabled:opacity-50 text-sm whitespace-nowrap"
+                            className="px-6 py-3 bg-[#e30613] text-white font-bold hover:bg-red-700 transition-all disabled:opacity-50 text-sm whitespace-nowrap"
                             disabled={!freeText.trim()}
                             onClick={handleFreeTextSubmit}
                           >

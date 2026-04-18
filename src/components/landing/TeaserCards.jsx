@@ -14,8 +14,8 @@ export default function TeaserCards({ onConsult }) {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {BENEFITS.map((b, i) => (
-          <div key={i} className="bg-white rounded-2xl border border-slate-100 p-5 sm:p-6 hover:shadow-lg hover:-translate-y-0.5 transition-all group">
-            <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center mb-3 ${b.color}`}>
+          <div key={i} className="bg-white border-2 border-slate-200 p-5 sm:p-6 hover:border-slate-400 transition-all group">
+            <div className={`w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center mb-3 ${b.color}`}>
               <i className={`${b.icon} text-sm sm:text-base`}></i>
             </div>
             <h3 className="text-base font-bold text-slate-900 mb-1">{b.title}</h3>
@@ -25,7 +25,7 @@ export default function TeaserCards({ onConsult }) {
       </div>
       <div className="text-center mt-8 sm:mt-10 flex flex-col items-center gap-3">
         <p className="text-slate-400 text-sm">Pachete de la <span className="text-lg font-black text-navy">500 lei</span></p>
-        <button onClick={onConsult} className="w-full sm:w-auto px-7 py-3.5 bg-navy text-white font-black uppercase text-xs tracking-widest rounded-2xl hover:bg-navy-dark transition-all shadow-lg shadow-navy/20">
+        <button onClick={onConsult} className="w-full sm:w-auto px-7 py-3.5 bg-navy text-white font-black uppercase text-xs tracking-widest hover:bg-navy-dark transition-all border-2 border-navy">
           Descoperă pachetul potrivit →
         </button>
       </div>

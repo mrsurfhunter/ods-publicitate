@@ -45,16 +45,16 @@ export default function AdCheckout({ ad, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-navy/30 backdrop-blur-sm flex items-center justify-center z-[1000] p-3" onClick={onClose}>
-      <div className="bg-white rounded-[2rem] shadow-2xl w-full max-w-lg max-h-[92vh] overflow-y-auto animate-fadeIn" onClick={e => e.stopPropagation()}>
+    <div className="fixed inset-0 bg-navy/80 flex items-center justify-center z-[1000] p-3" onClick={onClose}>
+      <div className="bg-white w-full max-w-lg max-h-[92vh] overflow-y-auto animate-fadeIn border-2 border-slate-300" onClick={e => e.stopPropagation()}>
         {step === 3 ? (
           <div className="p-10 text-center">
-            <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-5">
+            <div className="w-16 h-16 bg-green-50 flex items-center justify-center mx-auto mb-5 border-2 border-green-200">
               <i className="fas fa-check text-2xl text-green-600"></i>
             </div>
             <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight mb-2">Anunț verificat și înregistrat!</h3>
             <p className="text-sm text-slate-500">Va fi publicat în max 24h de la confirmarea plății.</p>
-            <button className="mt-6 px-8 py-3.5 bg-[#e30613] text-white font-black rounded-2xl hover:bg-red-700 transition-all uppercase text-xs tracking-widest" onClick={onClose}>Închide</button>
+            <button className="mt-6 px-8 py-3.5 bg-[#e30613] text-white font-black hover:bg-red-700 transition-all uppercase text-xs tracking-widest border-2 border-red-700" onClick={onClose}>Închide</button>
           </div>
         ) : (
           <div className="p-6 md:p-8">
@@ -78,7 +78,7 @@ export default function AdCheckout({ ad, onClose }) {
                   </div>
                 </div>
 
-                <div className="bg-blue-50 rounded-2xl p-5 border border-blue-100 space-y-3">
+                <div className="bg-blue-50 p-5 border-2 border-blue-200 space-y-3">
                   <div className="text-[10px] font-black text-blue-700 uppercase tracking-widest">Verificare identitate</div>
                   <label className="flex gap-2.5 cursor-pointer text-xs text-slate-700 font-medium">
                     <input type="checkbox" checked={v.accurate} onChange={e => sV(x => ({ ...x, accurate: e.target.checked }))} className="accent-blue-600 mt-0.5" />
@@ -104,7 +104,7 @@ export default function AdCheckout({ ad, onClose }) {
                   </div>
                 </div>
 
-                <button className="w-full py-4 bg-[#e30613] text-white font-black rounded-2xl hover:bg-red-700 transition-all uppercase text-xs tracking-widest disabled:opacity-50 shadow-lg shadow-red-500/20" onClick={() => { if (canGo) setStep(2); }} disabled={!canGo}>
+                <button className="w-full py-4 bg-[#e30613] text-white font-black hover:bg-red-700 transition-all uppercase text-xs tracking-widest disabled:opacity-50 border-2 border-red-700" onClick={() => { if (canGo) setStep(2); }} disabled={!canGo}>
                   Continuă
                 </button>
               </div>
@@ -129,8 +129,8 @@ export default function AdCheckout({ ad, onClose }) {
                   ))}
                 </div>
                 <div className="flex gap-3">
-                  <button className="flex-1 py-3.5 border border-slate-200 text-slate-500 font-bold rounded-2xl hover:bg-slate-50 transition-all text-sm" onClick={() => setStep(1)}>Înapoi</button>
-                  <button className="flex-[2] py-3.5 bg-[#e30613] text-white font-black rounded-2xl hover:bg-red-700 transition-all uppercase text-xs tracking-widest shadow-lg shadow-red-500/20" onClick={submit}>Confirmă</button>
+                  <button className="flex-1 py-3.5 border-2 border-slate-200 text-slate-500 font-bold hover:bg-slate-50 transition-all text-sm" onClick={() => setStep(1)}>Înapoi</button>
+                  <button className="flex-[2] py-3.5 bg-[#e30613] text-white font-black hover:bg-red-700 transition-all uppercase text-xs tracking-widest border-2 border-red-700" onClick={submit}>Confirmă</button>
                 </div>
               </div>
             )}

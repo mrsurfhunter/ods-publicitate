@@ -85,12 +85,12 @@ export default function PurchaseForm({ pkg, onClose, onDone }) {
         ))}
       </div>
 
-      <div className="bg-slate-900 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-3 mt-4">
+      <div className="bg-slate-900 p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-3 mt-4 border-2 border-slate-700">
         <div className="text-center sm:text-left">
           <div className="text-[10px] text-slate-500 font-bold uppercase">Total:</div>
           <div className="text-2xl font-black text-white">{total.toLocaleString("ro")} lei</div>
         </div>
-        <button className="w-full sm:w-auto px-8 py-3.5 bg-[#e30613] text-white font-black uppercase text-xs tracking-widest rounded-2xl hover:bg-red-700 transition-all disabled:opacity-50 shadow-lg shadow-red-900/30" onClick={submit} disabled={!canSubmit}>
+        <button className="w-full sm:w-auto px-8 py-3.5 bg-[#e30613] text-white font-black uppercase text-xs tracking-widest hover:bg-red-700 transition-all disabled:opacity-50 border-2 border-red-700" onClick={submit} disabled={!canSubmit}>
           {submitting ? <i className="fas fa-spinner animate-spin"></i> : pay === "card" ? "Plătește" : "Cumpără"}
         </button>
       </div>
@@ -99,7 +99,7 @@ export default function PurchaseForm({ pkg, onClose, onDone }) {
         După plată primești dashboard-ul cu următorii pași.
       </p>
 
-      <button className="w-full py-3 text-sm font-semibold text-slate-400 border border-slate-200 rounded-2xl hover:bg-slate-50 transition-all" onClick={onClose}>
+      <button className="w-full py-3 text-sm font-semibold text-slate-400 border-2 border-slate-200 hover:bg-slate-50 transition-all" onClick={onClose}>
         Anulează
       </button>
     </div>

@@ -42,11 +42,11 @@ export default function AnunturiView({ onBack, onConsult }) {
         {/* Left: form */}
         <div className="lg:col-span-2 space-y-6">
           {/* Category */}
-          <section className="bg-white p-6 md:p-8 rounded-[2rem] border border-slate-200 shadow-sm">
+          <section className="bg-white p-6 md:p-8 border-2 border-slate-200">
             <h3 className="text-sm font-black text-slate-800 uppercase mb-4">1. Tipul anunțului</h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {AD_CAT.map(c => (
-                <button key={c.id} className={`p-4 rounded-2xl border-2 text-left transition-all ${
+                <button key={c.id} className={`p-4 border-2 text-left transition-all ${
                   cat === c.id ? 'border-blue-600 bg-blue-50' : 'border-slate-100 bg-slate-50 hover:border-blue-300'
                 }`} onClick={() => setCat(c.id)}>
                   <div className="text-xl mb-1">{c.icon}</div>
@@ -57,22 +57,22 @@ export default function AnunturiView({ onBack, onConsult }) {
           </section>
 
           {/* Text */}
-          <section className="bg-white p-6 md:p-8 rounded-[2rem] border border-slate-200 shadow-sm">
+          <section className="bg-white p-6 md:p-8 border-2 border-slate-200">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-sm font-black text-slate-800 uppercase">2. Text Anunț</h3>
-              <span className={`text-xs font-bold px-3 py-1 rounded-lg ${
+              <span className={`text-xs font-bold px-4 py-1.5 ${
                 words > 1200 ? 'bg-red-50 text-red-600' : words > 250 ? 'bg-amber-50 text-amber-600' : 'bg-green-50 text-green-600'
               }`}>{words} cuvinte</span>
             </div>
             <textarea
-              className="w-full h-48 p-5 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none focus:border-red-200 transition-all resize-none text-sm leading-relaxed"
+              className="w-full h-48 p-5 bg-slate-50 border-2 border-slate-100 outline-none focus:border-red-200 transition-all resize-none text-sm leading-relaxed"
               value={text}
               onChange={e => setText(e.target.value)}
               placeholder="Scrieți sau copiați aici textul anunțului (ex: licitație, mediu, angajare, deces)..."
             />
             <div className="flex items-center gap-3 mt-3">
               <button
-                className="flex items-center gap-2 px-4 py-2.5 bg-slate-900 text-white text-xs font-bold rounded-xl hover:bg-black transition-all disabled:opacity-50"
+                className="flex items-center gap-2 px-4 py-2.5 bg-slate-900 text-white text-xs font-bold hover:bg-black transition-all disabled:opacity-50"
                 onClick={enhance}
                 disabled={ai || !text.trim() || words < 5}
               >
@@ -84,11 +84,11 @@ export default function AnunturiView({ onBack, onConsult }) {
           </section>
 
           {/* Duration */}
-          <section className="bg-white p-6 md:p-8 rounded-[2rem] border border-slate-200 shadow-sm">
+          <section className="bg-white p-6 md:p-8 border-2 border-slate-200">
             <h3 className="text-sm font-black text-slate-800 uppercase mb-4">3. Durata</h3>
             <div className="flex gap-2 flex-wrap">
               {[1, 3, 5, 7, 14, 30].map(d => (
-                <button key={d} className={`px-5 py-2.5 rounded-xl text-sm font-bold border-2 transition-all ${
+                <button key={d} className={`px-5 py-2.5 text-sm font-bold border-2 transition-all ${
                   days === d ? 'border-blue-600 bg-blue-600 text-white' : 'border-slate-200 text-slate-500 hover:border-blue-300'
                 }`} onClick={() => setDays(d)}>
                   {d} {d === 1 ? "zi" : "zile"}
@@ -96,7 +96,7 @@ export default function AnunturiView({ onBack, onConsult }) {
               ))}
               <input
                 type="number"
-                className="w-20 p-2.5 bg-slate-50 border-2 border-slate-200 rounded-xl outline-none focus:border-blue-300 text-center text-sm font-bold"
+                className="w-20 p-2.5 bg-slate-50 border-2 border-slate-200 outline-none focus:border-blue-300 text-center text-sm font-bold"
                 min={1} max={90} value={days}
                 onChange={e => setDays(Math.max(1, Math.min(90, Number(e.target.value))))}
               />
@@ -107,7 +107,7 @@ export default function AnunturiView({ onBack, onConsult }) {
 
         {/* Right: sticky summary */}
         <div className="space-y-4">
-          <div className="bg-slate-900 text-white rounded-[2rem] lg:rounded-[2.5rem] p-6 lg:p-8 shadow-2xl lg:sticky lg:top-24">
+          <div className="bg-slate-900 text-white p-6 lg:p-8 border-2 border-slate-700 lg:sticky lg:top-24">
             <h4 className="text-[10px] font-black text-[#e30613] uppercase tracking-widest mb-5">Sumar Comandă</h4>
 
             <div className="space-y-3 mb-6">
@@ -137,7 +137,7 @@ export default function AnunturiView({ onBack, onConsult }) {
             </div>
 
             <button
-              className="w-full py-5 bg-[#e30613] hover:bg-red-700 text-white font-black rounded-2xl shadow-xl shadow-red-900/30 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+              className="w-full py-5 bg-[#e30613] hover:bg-red-700 text-white font-black border-2 border-red-700 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
               disabled={!canOrd}
               onClick={() => setAdCheckout({ cat: AD_CAT.find(c => c.id === cat), text, words, days, pr })}
             >
@@ -153,9 +153,9 @@ export default function AnunturiView({ onBack, onConsult }) {
           <i className="fas fa-arrow-left text-xs"></i> Pagina principală
         </button>
         {onConsult && (
-          <div className="bg-gradient-to-r from-red-600 to-red-800 text-white rounded-2xl px-5 sm:px-6 py-4 flex flex-col sm:flex-row items-center gap-3 sm:gap-4 text-center sm:text-left">
+          <div className="bg-[#e30613] text-white px-5 sm:px-6 py-4 flex flex-col sm:flex-row items-center gap-3 sm:gap-4 text-center sm:text-left border-2 border-red-700">
             <span className="text-sm font-semibold">Ai și o afacere? Descoperă pachetele de promovare!</span>
-            <button className="w-full sm:w-auto px-5 py-2.5 bg-white text-red-700 text-xs font-black rounded-xl hover:bg-slate-100 transition-all whitespace-nowrap" onClick={onConsult}>
+            <button className="w-full sm:w-auto px-5 py-2.5 bg-white text-red-700 text-xs font-black hover:bg-slate-100 transition-all whitespace-nowrap border-2 border-white" onClick={onConsult}>
               Începe consultarea
             </button>
           </div>
