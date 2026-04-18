@@ -11,12 +11,8 @@ export default function PurchaseForm({ pkg, onClose, onDone }) {
   const [pay, setPay] = useState("proforma");
   const [submitting, setSubmitting] = useState(false);
   const [f, sF] = useState({
-    name: user?.name || "",
-    company: user?.company || "",
-    cui: "",
-    address: "",
-    phone: user?.phone || "",
-    email: user?.email || "",
+    name: user?.name || "", company: user?.company || "",
+    cui: "", address: "", phone: user?.phone || "", email: user?.email || "",
     sub: false,
   });
   const set = (k, v) => sF(s => ({ ...s, [k]: v }));
@@ -40,7 +36,6 @@ export default function PurchaseForm({ pkg, onClose, onDone }) {
     };
     const ex = await sld("ods-orders", []);
     await ssv("ods-orders", [order, ...ex]);
-    // Persist to server
     await saveOrderToServer(order);
     toast("Comanda a fost plasată cu succes!", "success");
     setSubmitting(false);
@@ -48,62 +43,65 @@ export default function PurchaseForm({ pkg, onClose, onDone }) {
   };
 
   return (
-    <div className="purchase-form" style={{ borderTop: '1px solid var(--c-border)' }}>
+    <div className="border-t border-slate-100 p-6 md:p-8 space-y-4">
       <CUILookup value={f.cui} onChange={v => set("cui", v)} onData={hCUI} />
 
-      <div className="form-row">
-        <label className="label">Companie</label>
-        <input className="input" value={f.company} onChange={e => set("company", e.target.value)} />
+      <div>
+        <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Companie</label>
+        <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 rounded-2xl outline-none text-sm font-medium" value={f.company} onChange={e => set("company", e.target.value)} />
       </div>
 
-      <div className="form-grid">
-        <div className="form-row">
-          <label className="label">Nume *</label>
-          <input className="input" value={f.name} onChange={e => set("name", e.target.value)} />
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Nume *</label>
+          <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 rounded-2xl outline-none text-sm font-medium" value={f.name} onChange={e => set("name", e.target.value)} />
         </div>
-        <div className="form-row">
-          <label className="label">Telefon *</label>
-          <input className="input" value={f.phone} onChange={e => set("phone", e.target.value)} />
+        <div>
+          <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Telefon *</label>
+          <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 rounded-2xl outline-none text-sm font-medium" value={f.phone} onChange={e => set("phone", e.target.value)} />
         </div>
       </div>
 
-      <div className="form-row">
-        <label className="label">Email *</label>
-        <input className="input" value={f.email} onChange={e => set("email", e.target.value)} />
+      <div>
+        <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Email *</label>
+        <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 rounded-2xl outline-none text-sm font-medium" value={f.email} onChange={e => set("email", e.target.value)} />
       </div>
 
       {pkg.sub && (
-        <div className="sub-toggle" onClick={() => set("sub", !f.sub)}>
+        <button className="text-sm font-bold text-green-600 hover:text-green-700 transition-colors" onClick={() => set("sub", !f.sub)}>
           {f.sub
-            ? `\u2713 Abonament: ${pkg.sub.toLocaleString("ro")} lei/lun\u0103`
-            : `\u2192 Economise\u0219ti ${((pkg.price - pkg.sub) * 3).toLocaleString("ro")} lei la abonament`}
-        </div>
+            ? `✓ Abonament: ${pkg.sub.toLocaleString("ro")} lei/lună`
+            : `→ Economisești ${((pkg.price - pkg.sub) * 3).toLocaleString("ro")} lei la abonament`}
+        </button>
       )}
 
-      <div style={{ marginTop: 12 }}>
-        {[{ id: "proforma", l: "Transfer bancar (proform\u0103)" }, { id: "card", l: "Plat\u0103 cu cardul" }].map(m => (
-          <label key={m.id} className={`payment-option ${pay === m.id ? 'active' : ''}`}>
-            <input type="radio" name="pay" checked={pay === m.id} onChange={() => setPay(m.id)} style={{ accentColor: 'var(--c-primary)' }} />
-            <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: 13, color: 'var(--c-text)' }}>{m.l}</span>
+      <div className="space-y-2 pt-2">
+        {[{ id: "proforma", l: "Transfer bancar (proformă)", icon: "fas fa-university" }, { id: "card", l: "Plată cu cardul", icon: "fas fa-credit-card" }].map(m => (
+          <label key={m.id} className={`flex items-center gap-3 p-4 rounded-2xl cursor-pointer transition-all ${pay === m.id ? 'bg-blue-50 border-2 border-blue-200' : 'bg-slate-50 border-2 border-transparent hover:border-slate-200'}`}>
+            <input type="radio" name="pay" checked={pay === m.id} onChange={() => setPay(m.id)} className="accent-blue-600" />
+            <i className={`${m.icon} text-sm ${pay === m.id ? 'text-blue-600' : 'text-slate-400'}`}></i>
+            <span className="text-sm font-semibold text-slate-700">{m.l}</span>
           </label>
         ))}
       </div>
 
-      <div className="purchase-total">
+      <div className="bg-slate-900 rounded-2xl p-5 flex items-center justify-between mt-4">
         <div>
-          <div className="purchase-total-label">Total:</div>
-          <div className="purchase-total-amount">{total.toLocaleString("ro")} lei</div>
+          <div className="text-[10px] text-slate-500 font-bold uppercase">Total:</div>
+          <div className="text-2xl font-black text-white">{total.toLocaleString("ro")} lei</div>
         </div>
-        <button className="btn btn-primary" onClick={submit} disabled={!canSubmit}>
-          {submitting ? "Se procesează..." : pay === "card" ? "Plătește" : "Cumpără"}
+        <button className="px-8 py-3.5 bg-[#e30613] text-white font-black uppercase text-xs tracking-widest rounded-2xl hover:bg-red-700 transition-all disabled:opacity-50 shadow-lg shadow-red-900/30" onClick={submit} disabled={!canSubmit}>
+          {submitting ? <i className="fas fa-spinner animate-spin"></i> : pay === "card" ? "Plătește" : "Cumpără"}
         </button>
       </div>
 
-      <div style={{ fontSize: 11, color: 'var(--c-muted)', textAlign: 'center', marginTop: 8 }}>
+      <p className="text-[10px] text-slate-400 text-center font-medium">
         După plată primești dashboard-ul cu următorii pași.
-      </div>
+      </p>
 
-      <button className="btn btn-ghost btn-sm btn-block" style={{ marginTop: 8 }} onClick={onClose}>Anulează</button>
+      <button className="w-full py-3 text-sm font-semibold text-slate-400 border border-slate-200 rounded-2xl hover:bg-slate-50 transition-all" onClick={onClose}>
+        Anulează
+      </button>
     </div>
   );
 }

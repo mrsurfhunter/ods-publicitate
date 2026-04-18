@@ -28,83 +28,139 @@ export default function AnunturiView({ onBack, onConsult }) {
   };
 
   return (
-    <div className="view-enter" style={{ maxWidth: 700, margin: '0 auto', padding: '24px 16px' }}>
-      {/* Header */}
-      <div style={{ textAlign: 'center', marginBottom: 32 }}>
-        <h1 className="heading-lg" style={{ color: 'var(--c-primary)', marginBottom: 8 }}>Mică Publicitate și Anunțuri</h1>
-        <p className="text-secondary">Publică anunțuri pe oradesibiu.ro — avize, pierderi, decese, autorizații</p>
-        <div style={{ marginTop: 8 }}>
-          <span style={{ fontFamily: 'var(--font-heading)', fontSize: 16, fontWeight: 800, color: 'var(--c-accent)' }}>de la 50 lei / zi</span>
-          <span className="text-xs text-muted" style={{ marginLeft: 8 }}>până la 250 cuvinte</span>
-        </div>
+    <div className="max-w-5xl mx-auto px-4 py-8 md:py-12 animate-fadeIn">
+      <div className="text-center mb-10">
+        <h2 className="text-2xl md:text-3xl font-black text-slate-900 uppercase tracking-tight">Publică un Anunț</h2>
+        <p className="text-slate-500 mt-2 font-medium">Publică anunțuri pe oradesibiu.ro — avize, pierderi, decese, autorizații</p>
+        <p className="mt-2">
+          <span className="text-lg font-black text-[#e30613]">de la 50 lei / zi</span>
+          <span className="text-xs text-slate-400 ml-2">până la 250 cuvinte</span>
+        </p>
       </div>
 
-      {/* Step 1: Category */}
-      <div style={{ marginBottom: 24 }}>
-        <label className="label" style={{ fontSize: 12 }}>1. Tipul anunțului</label>
-        <div className="ad-cat-grid" style={{ marginTop: 8 }}>
-          {AD_CAT.map(c => (
-            <button key={c.id} className={`ad-cat-card ${cat === c.id ? 'active' : ''}`} onClick={() => setCat(c.id)}>
-              <div className="ad-cat-icon">{c.icon}</div>
-              <div className="ad-cat-label">{c.label}</div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Left: form */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Category */}
+          <section className="bg-white p-6 md:p-8 rounded-[2rem] border border-slate-200 shadow-sm">
+            <h3 className="text-sm font-black text-slate-800 uppercase mb-4">1. Tipul anunțului</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {AD_CAT.map(c => (
+                <button key={c.id} className={`p-4 rounded-2xl border-2 text-left transition-all ${
+                  cat === c.id ? 'border-blue-600 bg-blue-50' : 'border-slate-100 bg-slate-50 hover:border-blue-300'
+                }`} onClick={() => setCat(c.id)}>
+                  <div className="text-xl mb-1">{c.icon}</div>
+                  <div className={`text-xs font-bold ${cat === c.id ? 'text-blue-700' : 'text-slate-500'}`}>{c.label}</div>
+                </button>
+              ))}
+            </div>
+          </section>
+
+          {/* Text */}
+          <section className="bg-white p-6 md:p-8 rounded-[2rem] border border-slate-200 shadow-sm">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-sm font-black text-slate-800 uppercase">2. Text Anunț</h3>
+              <span className={`text-xs font-bold px-3 py-1 rounded-lg ${
+                words > 1200 ? 'bg-red-50 text-red-600' : words > 250 ? 'bg-amber-50 text-amber-600' : 'bg-green-50 text-green-600'
+              }`}>{words} cuvinte</span>
+            </div>
+            <textarea
+              className="w-full h-48 p-5 bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none focus:border-red-200 transition-all resize-none text-sm leading-relaxed"
+              value={text}
+              onChange={e => setText(e.target.value)}
+              placeholder="Scrieți sau copiați aici textul anunțului (ex: licitație, mediu, angajare, deces)..."
+            />
+            <div className="flex items-center gap-3 mt-3">
+              <button
+                className="flex items-center gap-2 px-4 py-2.5 bg-slate-900 text-white text-xs font-bold rounded-xl hover:bg-black transition-all disabled:opacity-50"
+                onClick={enhance}
+                disabled={ai || !text.trim() || words < 5}
+              >
+                {ai ? <i className="fas fa-spinner animate-spin"></i> : <><i className="fas fa-wand-magic-sparkles"></i> Îmbunătățește cu AI</>}
+              </button>
+              {aiOk === true && <span className="text-xs text-green-600 font-semibold flex items-center gap-1"><i className="fas fa-check"></i> Îmbunătățit!</span>}
+              {aiOk === false && <span className="text-xs text-red-500">AI indisponibil</span>}
+            </div>
+          </section>
+
+          {/* Duration */}
+          <section className="bg-white p-6 md:p-8 rounded-[2rem] border border-slate-200 shadow-sm">
+            <h3 className="text-sm font-black text-slate-800 uppercase mb-4">3. Durata</h3>
+            <div className="flex gap-2 flex-wrap">
+              {[1, 3, 5, 7, 14, 30].map(d => (
+                <button key={d} className={`px-5 py-2.5 rounded-xl text-sm font-bold border-2 transition-all ${
+                  days === d ? 'border-blue-600 bg-blue-600 text-white' : 'border-slate-200 text-slate-500 hover:border-blue-300'
+                }`} onClick={() => setDays(d)}>
+                  {d} {d === 1 ? "zi" : "zile"}
+                </button>
+              ))}
+              <input
+                type="number"
+                className="w-20 p-2.5 bg-slate-50 border-2 border-slate-200 rounded-xl outline-none focus:border-blue-300 text-center text-sm font-bold"
+                min={1} max={90} value={days}
+                onChange={e => setDays(Math.max(1, Math.min(90, Number(e.target.value))))}
+              />
+            </div>
+            {pr.disc > 0 && <p className="text-xs text-green-600 font-bold mt-2">Discount {Math.round(pr.disc * 100)}%</p>}
+          </section>
+        </div>
+
+        {/* Right: sticky summary */}
+        <div className="space-y-4">
+          <div className="bg-slate-900 text-white rounded-[2.5rem] p-8 shadow-2xl sticky top-24">
+            <h4 className="text-[10px] font-black text-[#e30613] uppercase tracking-widest mb-5">Sumar Comandă</h4>
+
+            <div className="space-y-3 mb-6">
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-400">Preț de bază / zi</span>
+                <span className="font-bold">{pr.p} lei</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-400">Durata</span>
+                <span className="font-bold">{days} {days === 1 ? "zi" : "zile"}</span>
+              </div>
+              {pr.disc > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-green-400">Discount</span>
+                  <span className="font-bold text-green-400">-{Math.round(pr.disc * 100)}%</span>
+                </div>
+              )}
+              <div className="text-[10px] text-slate-600 italic border-t border-slate-800 pt-3">
+                * Până la 250 cuv: 50 lei/zi. Se aplică discount la durate mai lungi.
+              </div>
+            </div>
+
+            <div className="border-t border-slate-800 pt-5 mb-6">
+              <div className="text-[10px] text-slate-500 font-bold uppercase mb-1">Total (+TVA)</div>
+              <div className="text-4xl font-black">{pr.total.toLocaleString("ro")} <span className="text-xs font-normal">lei</span></div>
+              <div className="text-[10px] text-slate-500 mt-1">= {Math.round(pr.total * 1.19).toLocaleString("ro")} lei cu TVA</div>
+            </div>
+
+            <button
+              className="w-full py-5 bg-[#e30613] hover:bg-red-700 text-white font-black rounded-2xl shadow-xl shadow-red-900/30 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+              disabled={!canOrd}
+              onClick={() => setAdCheckout({ cat: AD_CAT.find(c => c.id === cat), text, words, days, pr })}
+            >
+              <i className="fas fa-credit-card"></i> Plasează anunțul
             </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Step 2: Text */}
-      <div style={{ marginBottom: 24 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <label className="label" style={{ fontSize: 12 }}>2. Textul anunțului</label>
-          <span style={{ fontFamily: 'var(--font-heading)', fontSize: 12, fontWeight: 700, color: words > 1200 ? 'var(--c-red)' : words > 250 ? 'var(--c-accent)' : 'var(--c-success)' }}>{words} cuvinte</span>
-        </div>
-        <textarea className="textarea" value={text} onChange={e => setText(e.target.value)} placeholder="Scrieți textul anunțului..." style={{ minHeight: 150, marginTop: 8 }} />
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 8 }}>
-          <button className="btn btn-dark btn-sm" onClick={enhance} disabled={ai || !text.trim() || words < 5}>
-            {ai ? "..." : "✨ Îmbunătățește cu AI"}
-          </button>
-          {aiOk === true && <span className="text-xs" style={{ color: 'var(--c-success)', fontWeight: 600 }}>Îmbunătățit!</span>}
-          {aiOk === false && <span className="text-xs" style={{ color: 'var(--c-red)' }}>AI indisponibil</span>}
-        </div>
-      </div>
-
-      {/* Step 3: Duration */}
-      <div style={{ marginBottom: 24 }}>
-        <label className="label" style={{ fontSize: 12 }}>3. Durata</label>
-        <div className="dur-btn-group" style={{ marginTop: 8 }}>
-          {[1, 3, 5, 7, 14, 30].map(d => (
-            <button key={d} className={`dur-btn ${days === d ? 'active' : ''}`} onClick={() => setDays(d)}>
-              {d} {d === 1 ? "zi" : "zile"}
-            </button>
-          ))}
-          <input type="number" className="input" min={1} max={90} value={days} onChange={e => setDays(Math.max(1, Math.min(90, Number(e.target.value))))} style={{ width: 70, textAlign: 'center' }} />
-        </div>
-        {pr.disc > 0 && <div className="text-xs" style={{ color: 'var(--c-success)', fontWeight: 600, marginTop: 6 }}>Discount {Math.round(pr.disc * 100)}%</div>}
-      </div>
-
-      {/* Total */}
-      <div className="card card-static card-padding">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 12 }}>
-          <span style={{ fontFamily: 'var(--font-heading)', fontSize: 14, fontWeight: 700, color: 'var(--c-primary)' }}>Total de plată:</span>
-          <div style={{ textAlign: 'right' }}>
-            <div style={{ fontFamily: 'var(--font-heading)', fontSize: 28, fontWeight: 800, color: 'var(--c-accent)' }}>{pr.total.toLocaleString("ro")} lei</div>
-            <div className="text-xs text-muted">+ TVA = {Math.round(pr.total * 1.19).toLocaleString("ro")} lei | {pr.a} lei/zi x {days} zile</div>
+            <p className="text-[10px] text-slate-500 text-center mt-3 uppercase tracking-widest font-bold">Plată securizată</p>
           </div>
         </div>
-        <button className="btn btn-primary btn-block" disabled={!canOrd} onClick={() => setAdCheckout({ cat: AD_CAT.find(c => c.id === cat), text, words, days, pr })}>
-          Plasează anunțul
-        </button>
       </div>
 
-      <button className="consult-back" onClick={onBack} style={{ marginTop: 24 }}>← Pagina principală</button>
-
-      {/* Cross-sell */}
-      {onConsult && (
-        <div className="cross-sell">
-          <div className="cross-sell-text">Ai și o afacere? Descoperă pachetele de promovare!</div>
-          <button className="btn btn-secondary btn-sm" onClick={onConsult}>Începe consultarea</button>
-        </div>
-      )}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-10">
+        <button className="text-slate-400 text-sm font-semibold hover:text-slate-700 transition-colors flex items-center gap-2" onClick={onBack}>
+          <i className="fas fa-arrow-left text-xs"></i> Pagina principală
+        </button>
+        {onConsult && (
+          <div className="bg-gradient-to-r from-red-600 to-red-800 text-white rounded-2xl px-6 py-4 flex items-center gap-4">
+            <span className="text-sm font-semibold">Ai și o afacere? Descoperă pachetele de promovare!</span>
+            <button className="px-5 py-2 bg-white text-red-700 text-xs font-black rounded-xl hover:bg-slate-100 transition-all whitespace-nowrap" onClick={onConsult}>
+              Începe consultarea
+            </button>
+          </div>
+        )}
+      </div>
 
       {adCheckout && <AdCheckout ad={adCheckout} onClose={() => setAdCheckout(null)} />}
     </div>

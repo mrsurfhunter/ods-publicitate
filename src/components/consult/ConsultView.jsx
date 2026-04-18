@@ -7,11 +7,13 @@ import LeadCaptureStep from "../auth/LeadCaptureStep";
 const TOTAL_DOTS = 5;
 const LEAD_STEP = 2;
 
+const STEP_LABELS = ["Afacere", "Obiectiv", "Cont", "Buget", "Frecvență"];
+
 export default function ConsultView({ onResult, onBack }) {
   const { isAuthenticated, updateUser } = useAuth();
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState({});
-  const [selected, setSelected] = useState(null); // selected option id (before confirming freeText)
+  const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(false);
   const [freeText, setFreeText] = useState("");
   const [animKey, setAnimKey] = useState(0);
@@ -48,7 +50,6 @@ export default function ConsultView({ onResult, onBack }) {
   };
 
   const handleSelect = (optionId, option) => {
-    // Free text option: first click selects it, second click (or Enter) submits
     if (option?.freeText) {
       if (selected === optionId && freeText.trim()) {
         const updated = { ...answers, [current.id]: freeText.trim() };
@@ -60,8 +61,6 @@ export default function ConsultView({ onResult, onBack }) {
       }
       return;
     }
-
-    // Normal option: immediate advance
     const updated = { ...answers, [current.id]: optionId };
     setAnswers(updated);
     advance(updated);
@@ -95,9 +94,7 @@ export default function ConsultView({ onResult, onBack }) {
 
   useEffect(() => {
     const handler = (e) => {
-      if (e.key === "Enter" && freeText.trim() && selected) {
-        handleFreeTextSubmit();
-      }
+      if (e.key === "Enter" && freeText.trim() && selected) handleFreeTextSubmit();
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
@@ -105,74 +102,91 @@ export default function ConsultView({ onResult, onBack }) {
 
   if (loading) {
     return (
-      <div className="loading-screen">
-        <div className="loading-dots">
-          <div className="loading-dot" />
-          <div className="loading-dot" />
-          <div className="loading-dot" />
+      <div className="min-h-[calc(100vh-64px)] flex flex-col items-center justify-center gap-6 p-8 bg-slate-50">
+        <div className="flex gap-2">
+          <div className="w-3 h-3 rounded-full bg-[#e30613] animate-bounce"></div>
+          <div className="w-3 h-3 rounded-full bg-[#e30613] animate-bounce [animation-delay:100ms]"></div>
+          <div className="w-3 h-3 rounded-full bg-[#e30613] animate-bounce [animation-delay:200ms]"></div>
         </div>
-        <div className="loading-text">Analizăm cele mai bune opțiuni pentru tine...</div>
+        <p className="text-slate-500 font-semibold">Analizăm cele mai bune opțiuni pentru tine...</p>
       </div>
     );
   }
 
   const renderProgress = () => {
-    const dots = [];
+    const visibleSteps = [];
     for (let i = 0; i < TOTAL_DOTS; i++) {
       if (i === LEAD_STEP && isAuthenticated) continue;
-      if (dots.length > 0) {
-        const prevDone = i <= step;
-        dots.push(<div key={"line-" + i} className={`consult-dot-line ${prevDone ? 'done' : ''}`} />);
-      }
-      const cls = i === step ? 'active' : i < step ? 'done' : '';
-      dots.push(<div key={"dot-" + i} className={`consult-dot ${cls}`} />);
+      visibleSteps.push(i);
     }
-    return dots;
+    return (
+      <div className="w-full mb-10">
+        <div className="flex items-center justify-between relative">
+          <div className="absolute top-1/2 left-0 w-full h-0.5 bg-slate-200 -z-10 -translate-y-1/2"></div>
+          <div
+            className="absolute top-1/2 left-0 h-0.5 bg-blue-600 -z-10 transition-all duration-500 -translate-y-1/2"
+            style={{ width: `${(visibleSteps.indexOf(step) / (visibleSteps.length - 1)) * 100}%` }}
+          ></div>
+          {visibleSteps.map((s, idx) => (
+            <div key={s} className="flex flex-col items-center bg-slate-50 px-2">
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors duration-300 ${
+                step >= s ? 'bg-blue-600 border-blue-600 text-white' : 'bg-white border-slate-300 text-slate-400'
+              }`}>
+                {step > s ? <i className="fas fa-check text-sm"></i> : <span className="text-sm font-bold">{idx + 1}</span>}
+              </div>
+              <span className={`text-[10px] mt-1.5 font-semibold ${step >= s ? 'text-blue-700' : 'text-slate-400'}`}>
+                {STEP_LABELS[s]}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   };
 
   return (
-    <div className="consult">
-      <div className="consult-inner" key={animKey}>
-        <div className="consult-progress">
-          {renderProgress()}
-        </div>
+    <div className="min-h-[calc(100vh-64px)] flex flex-col justify-center p-4 md:p-8 bg-slate-50">
+      <div className="max-w-xl mx-auto w-full" key={animKey}>
+        {renderProgress()}
 
-        <div className="slide-left">
+        <div className="animate-slideUp">
           {isLeadStep ? (
             <LeadCaptureStep onDone={handleLeadDone} source="consult" />
           ) : current ? (
             <>
-              <h2 className="consult-question">{current.question}</h2>
-              <div className="consult-options">
+              <h2 className="text-2xl md:text-4xl font-black text-slate-900 text-center mb-8 tracking-tight leading-tight">
+                {current.question}
+              </h2>
+              <div className="flex flex-col gap-3">
                 {current.options.map(opt => {
                   const isOpt = selected === opt.id || answers[current.id] === opt.id ||
                     (opt.freeText && answers[current.id] && !current.options.find(o => !o.freeText && o.id === answers[current.id]));
                   return (
                     <div key={opt.id}>
                       <button
-                        className={`consult-option ${isOpt ? 'selected' : ''}`}
+                        className={`w-full flex items-center gap-4 p-5 rounded-2xl border-2 text-left font-semibold text-base transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98] ${
+                          isOpt ? 'border-blue-600 bg-blue-50 shadow-blue-100' : 'border-slate-200 bg-white hover:border-blue-300'
+                        }`}
                         onClick={() => handleSelect(opt.id, opt)}
                       >
-                        <span className="consult-option-icon">{opt.icon}</span>
-                        <span>{opt.label}</span>
+                        <span className="text-2xl flex-shrink-0 w-10 text-center">{opt.icon}</span>
+                        <span className="text-slate-800">{opt.label}</span>
                       </button>
                       {opt.freeText && (selected === opt.id || isOpt) && (
-                        <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+                        <div className="flex gap-2 mt-3">
                           <input
                             ref={freeRef}
-                            className="consult-free-input"
+                            className="flex-1 p-4 bg-blue-50 border-2 border-blue-200 rounded-2xl outline-none focus:border-blue-500 text-sm font-medium"
                             placeholder="Descrie pe scurt afacerea ta..."
                             value={freeText}
                             onChange={e => setFreeText(e.target.value)}
                             autoFocus
                             onKeyDown={e => { if (e.key === 'Enter' && freeText.trim()) handleFreeTextSubmit(); }}
-                            style={{ flex: 1 }}
                           />
                           <button
-                            className="btn btn-primary"
+                            className="px-6 py-3 bg-[#e30613] text-white font-bold rounded-2xl hover:bg-red-700 transition-all disabled:opacity-50 text-sm whitespace-nowrap"
                             disabled={!freeText.trim()}
                             onClick={handleFreeTextSubmit}
-                            style={{ padding: '12px 20px', flexShrink: 0 }}
                           >
                             Continuă →
                           </button>
@@ -186,8 +200,8 @@ export default function ConsultView({ onResult, onBack }) {
           ) : null}
         </div>
 
-        <button className="consult-back" onClick={handleBack}>
-          ← {step > 0 ? 'Înapoi' : 'Pagina principală'}
+        <button className="flex items-center gap-2 text-slate-400 text-sm font-semibold mt-8 hover:text-slate-700 transition-colors" onClick={handleBack}>
+          <i className="fas fa-arrow-left text-xs"></i> {step > 0 ? 'Înapoi' : 'Pagina principală'}
         </button>
       </div>
     </div>

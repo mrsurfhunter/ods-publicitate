@@ -3,7 +3,6 @@ import { gid } from "../../utils/storage";
 
 export default function ImageUploader({ label, images, onChange, multi }) {
   const ref = useRef();
-
   const MAX_SIZE = 5 * 1024 * 1024;
 
   const handleFiles = (files) => {
@@ -20,41 +19,39 @@ export default function ImageUploader({ label, images, onChange, multi }) {
   };
 
   return (
-    <div className="form-row">
-      <label className="label">{label}</label>
+    <div>
+      <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">{label}</label>
       <div
         onClick={() => ref.current?.click()}
-        className="img-dropzone"
-        style={{
-          border: '2px dashed var(--c-border)', borderRadius: 'var(--radius-sm)',
-          padding: images.length > 0 ? 12 : 28, cursor: 'pointer',
-          textAlign: 'center', background: 'var(--c-bg)', minHeight: 60,
-        }}
+        className="border-2 border-dashed border-slate-200 rounded-2xl cursor-pointer hover:border-red-200 transition-all bg-slate-50"
+        style={{ padding: images.length > 0 ? 12 : 28 }}
       >
         {images.length === 0 && (
-          <div>
-            <div style={{ fontSize: 24, color: 'var(--c-muted)' }}>📷</div>
-            <div className="text-xs text-muted" style={{ marginTop: 4 }}>
-              Click pentru a adauga {multi ? "fotografii" : "fotografia principala"}
+          <div className="text-center">
+            <i className="fas fa-camera text-2xl text-slate-300 mb-2"></i>
+            <div className="text-xs text-slate-400 font-medium">
+              Click pentru a adăuga {multi ? "fotografii" : "fotografia principală"}
             </div>
           </div>
         )}
         {images.length > 0 && (
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <div className="flex gap-2 flex-wrap">
             {images.map((img, i) => (
-              <div key={img.id} style={{ position: 'relative', width: 72, height: 72, borderRadius: 8, overflow: 'hidden', border: '2px solid var(--c-border)' }}>
-                <img src={img.data} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+              <div key={img.id} className="relative w-18 h-18 rounded-xl overflow-hidden border-2 border-slate-200 group">
+                <img src={img.data} className="w-full h-full object-cover" alt="" />
                 <div
                   onClick={e => { e.stopPropagation(); onChange(images.filter((_, j) => j !== i)); }}
-                  style={{ position: 'absolute', top: 2, right: 2, width: 20, height: 20, borderRadius: '50%', background: 'rgba(0,0,0,.6)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, cursor: 'pointer' }}
+                  className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/60 text-white flex items-center justify-center text-xs cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
                 >×</div>
               </div>
             ))}
-            {multi && <div style={{ width: 72, height: 72, borderRadius: 8, border: '2px dashed var(--c-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, color: 'var(--c-muted)' }}>+</div>}
+            {multi && (
+              <div className="w-18 h-18 rounded-xl border-2 border-dashed border-slate-200 flex items-center justify-center text-2xl text-slate-300">+</div>
+            )}
           </div>
         )}
       </div>
-      <input ref={ref} type="file" accept="image/*" multiple={multi} style={{ display: 'none' }} onChange={e => handleFiles(e.target.files)} />
+      <input ref={ref} type="file" accept="image/*" multiple={multi} className="hidden" onChange={e => handleFiles(e.target.files)} />
     </div>
   );
 }

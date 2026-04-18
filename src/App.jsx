@@ -6,6 +6,7 @@ import TopBar from "./components/layout/TopBar";
 import Footer from "./components/layout/Footer";
 import LandingView from "./components/landing/LandingView";
 import ConsultView from "./components/consult/ConsultView";
+import ChatConsultant from "./components/consult/ChatConsultant";
 import RecommendView from "./components/recommend/RecommendView";
 import CatalogView from "./components/catalog/CatalogView";
 import AnunturiView from "./components/anunturi/AnunturiView";
@@ -13,6 +14,7 @@ import DashboardView from "./components/dashboard/DashboardView";
 import LoginModal from "./components/auth/LoginModal";
 import ErrorBoundary from "./components/shared/ErrorBoundary";
 import { ToastProvider } from "./components/shared/Toast";
+import { PKG } from "./data/packages";
 
 function AppInner() {
   const { user, isAuthenticated } = useAuth();
@@ -35,11 +37,24 @@ function AppInner() {
     }
   };
 
+  const handleChatFinish = (pkgId) => {
+    const pkg = PKG.find(p => p.id === pkgId);
+    if (pkg) {
+      setRecommendation({
+        primary: pkgId,
+        secondary: null,
+        reasoning: `Pe baza conversației, pachetul ${pkg.name} este cel mai potrivit pentru afacerea ta.`,
+        primaryBenefits: pkg.inc.slice(0, 4).map(x => x.w + (x.d ? " — " + x.d : "")),
+        secondaryBenefits: [],
+      });
+      setView("recommend");
+    }
+  };
+
   const handlePurchased = (order) => {
     setDashOrder(order);
     setView("dashboard");
     sld("ods-orders", []).then(setMyOrders);
-    // Sync order to server
     saveOrderToServer(order);
   };
 
@@ -48,7 +63,7 @@ function AppInner() {
     if (o) { setDashOrder(o); setView("dashboard"); }
   };
 
-  const handleLoggedIn = (u) => {
+  const handleLoggedIn = () => {
     sld("ods-orders", []).then(orders => {
       setMyOrders(orders);
       if (orders.length > 0) {
@@ -61,13 +76,14 @@ function AppInner() {
   const showFooter = view === "landing" || view === "catalog" || view === "anunturi";
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--c-bg)' }}>
+    <div className="min-h-screen bg-slate-50">
       <TopBar
         myOrders={myOrders}
         onHome={goHome}
         onOpenOrder={handleOpenOrder}
         onLogin={() => setShowLogin(true)}
         onConsult={() => setView("consult")}
+        onDashboard={myOrders.length > 0 ? () => { setDashOrder(myOrders[0]); setView("dashboard"); } : undefined}
       />
 
       {view === "landing" && (
@@ -80,6 +96,17 @@ function AppInner() {
 
       {view === "consult" && (
         <ConsultView onResult={handleConsultResult} onBack={goHome} />
+      )}
+
+      {view === "chat" && (
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          <ChatConsultant onFinish={handleChatFinish} />
+          <div className="text-center mt-6">
+            <button className="text-slate-400 text-sm font-semibold hover:text-slate-700 transition-colors" onClick={goHome}>
+              ← Pagina principală
+            </button>
+          </div>
+        </div>
       )}
 
       {view === "recommend" && recommendation && (
@@ -103,11 +130,7 @@ function AppInner() {
         <DashboardView initOrder={dashOrder} onBack={goHome} />
       )}
 
-      {showFooter && (
-        <div className="container" style={{ paddingBottom: 32 }}>
-          <Footer />
-        </div>
-      )}
+      {showFooter && <Footer />}
 
       {showLogin && (
         <LoginModal onClose={() => setShowLogin(false)} onLoggedIn={handleLoggedIn} />

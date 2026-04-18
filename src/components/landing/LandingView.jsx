@@ -1,98 +1,96 @@
 import TeaserCards from "./TeaserCards";
 import HowItWorks from "./HowItWorks";
 
-const IconEye = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
-  </svg>
-);
-const IconChart = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
-  </svg>
-);
-const IconFB = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-  </svg>
-);
-const IconIG = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
-  </svg>
-);
-const IconTT = () => (
-  <svg width="18" height="20" viewBox="0 0 448 512" fill="currentColor">
-    <path d="M448 209.91a210.06 210.06 0 01-122.77-39.25v178.72A162.55 162.55 0 11185 188.31v89.89a74.62 74.62 0 1052.23 71.18V0h88a121 121 0 00122.77 121v88.91z"/>
-  </svg>
-);
-
 const TRUST = [
-  { v: "400k+", l: "vizitatori/lună", icon: IconEye },
-  { v: "1.8M", l: "afișări/lună", icon: IconChart },
-  { v: "218k", l: "Facebook", icon: IconFB },
-  { v: "18k", l: "Instagram", icon: IconIG },
-  { v: "24k", l: "TikTok", icon: IconTT },
+  { v: "400k+", l: "vizitatori/lună", icon: "fas fa-eye" },
+  { v: "1.8M", l: "afișări/lună", icon: "fas fa-chart-bar" },
+  { v: "218k", l: "Facebook", icon: "fab fa-facebook-f" },
+  { v: "18k", l: "Instagram", icon: "fab fa-instagram" },
+  { v: "24k", l: "TikTok", icon: "fab fa-tiktok" },
 ];
 
 export default function LandingView({ onConsult, onAnunturi, onCatalog }) {
   return (
-    <div className="view-enter">
+    <div className="animate-fadeIn">
       {/* Hero */}
-      <div className="landing-hero">
-        <div className="container-narrow">
-          <div className="landing-eyebrow">Cea mai citită publicație din Sibiu</div>
-          <h1 className="heading-xl landing-headline">Fă-ți afacerea vizibilă în Sibiu</h1>
-          <p className="landing-sub">
-            Spune-ne despre afacerea ta și îți creăm o strategie de promovare personalizată. În 2 minute.
+      <div className="bg-navy relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGxpbmUgeDE9IjAiIHkxPSI0MCIgeDI9IjQwIiB5Mj0iMCIgc3Ryb2tlPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMDMpIiBzdHJva2Utd2lkdGg9IjEiLz48L3N2Zz4=')] opacity-50"></div>
+        <div className="relative max-w-4xl mx-auto text-center px-4 py-16 md:py-24">
+          <div className="inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-red-500/10 rounded-full mb-6 md:mb-8">
+            <i className="fas fa-bullhorn text-2xl md:text-3xl text-[#e30613]"></i>
+          </div>
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-black text-white uppercase tracking-tighter mb-4 md:mb-6 leading-tight">
+            Crește-ți Afacerea cu <br className="hidden sm:block" /><span className="text-[#e30613]">Ora de Sibiu</span>
+          </h1>
+          <p className="text-white/50 text-base md:text-xl max-w-2xl mx-auto font-medium mb-8 md:mb-12 px-2">
+            Bannere, articole sponsorizate și promovare pe Social Media — totul într-un singur loc. Ajungi la cei mai mulți sibieni.
           </p>
-          <div className="landing-cta">
-            <button className="btn btn-primary" onClick={onConsult}>
-              Începe consultarea gratuită
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <button
+              onClick={onConsult}
+              className="group relative inline-flex items-center justify-center w-full sm:w-auto px-8 py-4 md:px-12 md:py-5 text-base md:text-lg font-black text-white uppercase tracking-widest bg-[#e30613] rounded-full overflow-hidden shadow-2xl shadow-red-900/30 hover:scale-105 active:scale-95 transition-all"
+            >
+              <span className="absolute inset-0 w-full h-full opacity-30 bg-gradient-to-b from-transparent via-transparent to-black"></span>
+              <span className="relative flex items-center gap-3">
+                Începe Promovarea <i className="fas fa-arrow-right group-hover:translate-x-2 transition-transform"></i>
+              </span>
             </button>
-            <button className="btn btn-ghost" onClick={onAnunturi}>
+            <button
+              onClick={onAnunturi}
+              className="px-8 py-4 text-sm font-bold text-white/60 border border-white/15 rounded-full hover:bg-white/5 hover:text-white/80 transition-all"
+            >
               Mică Publicitate
             </button>
           </div>
-          <div className="landing-trust">
+
+          {/* Trust strip */}
+          <div className="flex justify-center items-center gap-0 flex-wrap mt-14 md:mt-20">
             {TRUST.map((s, i) => (
-              <div key={i} className="landing-trust-item">
-                <div className="landing-trust-icon"><s.icon /></div>
-                <div className="landing-trust-text">
-                  <div className="landing-trust-val">{s.v}</div>
-                  <div className="landing-trust-label">{s.l}</div>
+              <div key={i} className="flex items-center gap-2.5 px-3 md:px-5 border-r border-white/10 last:border-r-0">
+                <i className={`${s.icon} text-white/40 text-sm`}></i>
+                <div className="text-left">
+                  <div className="text-lg md:text-2xl font-black text-white leading-none">{s.v}</div>
+                  <div className="text-[10px] text-white/40 font-medium whitespace-nowrap">{s.l}</div>
                 </div>
               </div>
             ))}
           </div>
-          <button className="landing-secondary-link" onClick={onCatalog}>
+
+          <button className="text-white/30 text-sm font-medium mt-6 hover:text-white/60 transition-colors" onClick={onCatalog}>
             Vezi toate pachetele →
           </button>
         </div>
       </div>
 
-      {/* Social proof */}
-      <div className="social-proof-bar">
-        <div className="social-proof-item"><div className="social-proof-dot" /> 17 ani experiență</div>
-        <div className="social-proof-item"><div className="social-proof-dot" /> Trafic auditat BRAT</div>
-        <div className="social-proof-item"><div className="social-proof-dot" /> Peste 1.000 clienți</div>
+      {/* Social proof bar */}
+      <div className="bg-white border-b border-slate-100 py-4 flex justify-center items-center gap-6 md:gap-8 flex-wrap px-4">
+        {["17 ani experiență", "Trafic auditat BRAT", "Peste 1.000 clienți"].map((t, i) => (
+          <div key={i} className="flex items-center gap-2 text-sm font-semibold text-slate-500">
+            <span className="w-2 h-2 rounded-full bg-green-500"></span>{t}
+          </div>
+        ))}
       </div>
 
-      {/* Teaser packages */}
+      {/* Benefits */}
       <TeaserCards onConsult={onConsult} />
 
       {/* How it works */}
-      <div style={{ background: "var(--c-card)", borderTop: "1px solid var(--c-border)", borderBottom: "1px solid var(--c-border)" }}>
+      <div className="bg-white border-t border-b border-slate-100">
         <HowItWorks />
       </div>
 
       {/* Final CTA */}
-      <div className="final-cta">
-        <h2 className="heading-lg">Gata să începi?</h2>
-        <button className="btn btn-primary" onClick={onConsult}>Descoperă pachetul potrivit</button>
-        <a href="https://wa.me/40746752240" target="_blank" rel="noopener" className="final-cta-link">
-          Sau scrie-ne pe WhatsApp
-        </a>
+      <div className="bg-gradient-to-r from-red-600 to-red-800 py-16 md:py-20 text-center px-4">
+        <h2 className="text-2xl md:text-4xl font-black text-white uppercase tracking-tight mb-6">Gata să începi?</h2>
+        <button onClick={onConsult} className="px-10 py-5 bg-white text-red-700 font-black uppercase text-sm tracking-widest rounded-full shadow-2xl hover:scale-105 active:scale-95 transition-all">
+          Descoperă pachetul potrivit
+        </button>
+        <div className="mt-6">
+          <a href="https://wa.me/40746752240" target="_blank" rel="noopener" className="text-red-200/60 text-sm font-medium hover:text-white transition-colors">
+            Sau scrie-ne pe WhatsApp
+          </a>
+        </div>
       </div>
     </div>
   );

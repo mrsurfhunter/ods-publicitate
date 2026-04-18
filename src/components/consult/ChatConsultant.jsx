@@ -1,0 +1,133 @@
+import { useState, useEffect, useRef } from "react";
+import { callAI } from "../../utils/ai";
+import { PKG } from "../../data/packages";
+
+const SYSTEM_PROMPT = `Esti consultant media pentru Ora de Sibiu (oradesibiu.ro), cea mai citita publicatie din Sibiu.
+Ajuta clientul sa aleaga pachetul potrivit punand intrebari pe rand (cate una):
+1. Ce vrei sa promovezi?
+2. Care e publicul tinta?
+3. Ce te diferentiaza de concurenta?
+4. Ai materiale (foto/video)?
+
+Pachete disponibile: social-single (500 lei, 1 postare FB+IG), social-pack (700 lei/luna, 4 postari), mini-business (1200 lei/luna, articol + social), advertorial (1800 lei/luna, articol premium + social), banner (1800 lei/luna, 1.5M afisari), premium (3000 lei/luna, tot).
+
+Dupa ce ai suficiente informatii, recomanda un pachet specific mentionand ID-ul exact (ex: "social-pack" sau "advertorial").
+Fii concis, profesional si prietenos. Raspunde in romana. Max 2-3 propozitii per mesaj.`;
+
+export default function ChatConsultant({ onFinish }) {
+  const [messages, setMessages] = useState([
+    { role: "assistant", text: "Bună! Cu ce te ocupi și ce vrei să obții — mai mulți clienți, vizibilitate sau promovarea unui eveniment?" }
+  ]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [suggestedPkg, setSuggestedPkg] = useState(null);
+  const scrollRef = useRef();
+
+  useEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  }, [messages, loading]);
+
+  const handleSend = async () => {
+    if (!input.trim() || loading) return;
+    const userMsg = { role: "user", text: input };
+    const updated = [...messages, userMsg];
+    setMessages(updated);
+    setInput("");
+    setLoading(true);
+
+    const history = updated.map(m => `${m.role === "user" ? "Client" : "Consultant"}: ${m.text}`).join("\n");
+    const response = await callAI(SYSTEM_PROMPT, history + "\nConsultant:");
+
+    if (response) {
+      setMessages(prev => [...prev, { role: "assistant", text: response }]);
+      const pkgIds = PKG.map(p => p.id);
+      for (const id of pkgIds) {
+        if (response.toLowerCase().includes(id)) {
+          setSuggestedPkg(id);
+          break;
+        }
+      }
+    } else {
+      setMessages(prev => [...prev, { role: "assistant", text: "Am o eroare temporară. Putem încerca din nou?" }]);
+    }
+    setLoading(false);
+  };
+
+  const handleFinish = () => {
+    if (suggestedPkg && onFinish) onFinish(suggestedPkg);
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto animate-fadeIn">
+      <div className="flex items-center gap-4 mb-6 bg-blue-50 p-4 rounded-2xl border border-blue-100">
+        <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
+          <i className="fas fa-user-tie text-lg"></i>
+        </div>
+        <div>
+          <h2 className="text-lg font-black text-slate-800 uppercase leading-none tracking-tight">Consultant Ora de Sibiu</h2>
+          <p className="text-[10px] text-blue-600 font-bold mt-1 uppercase tracking-widest">Recomandări personalizate cu AI</p>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-[2rem] border border-slate-200 overflow-hidden flex flex-col h-[60vh] shadow-xl">
+        <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50/50">
+          {messages.map((m, i) => (
+            <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+              <div className={`max-w-[85%] p-4 rounded-2xl text-sm font-medium leading-relaxed shadow-sm ${
+                m.role === "user"
+                  ? "bg-slate-900 text-white rounded-tr-none"
+                  : "bg-white text-slate-700 border border-slate-100 rounded-tl-none"
+              }`}>
+                {m.text.split("\n").map((line, idx) => (
+                  <p key={idx} className={idx > 0 ? "mt-2" : ""}>{line}</p>
+                ))}
+              </div>
+            </div>
+          ))}
+          {loading && (
+            <div className="flex justify-start">
+              <div className="bg-white p-4 rounded-2xl border border-slate-100 flex gap-2">
+                <div className="w-2 h-2 bg-[#e30613] rounded-full animate-bounce"></div>
+                <div className="w-2 h-2 bg-[#e30613] rounded-full animate-bounce [animation-delay:100ms]"></div>
+                <div className="w-2 h-2 bg-[#e30613] rounded-full animate-bounce [animation-delay:200ms]"></div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="p-4 bg-white border-t border-slate-100">
+          <div className="flex gap-2">
+            <input
+              type="text"
+              className="flex-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-red-500/30 transition-all text-sm font-medium"
+              placeholder="Scrie răspunsul tău aici..."
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={e => e.key === "Enter" && handleSend()}
+            />
+            <button
+              onClick={handleSend}
+              disabled={loading || !input.trim()}
+              className="w-12 h-12 bg-[#e30613] text-white rounded-xl flex items-center justify-center hover:bg-red-700 transition-all shadow-lg shadow-red-200 disabled:opacity-50"
+            >
+              <i className="fas fa-paper-plane"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {suggestedPkg && (
+        <div className="mt-6 flex flex-col items-center gap-3">
+          <button
+            onClick={handleFinish}
+            className="group px-10 py-5 bg-slate-900 text-white font-black rounded-2xl shadow-2xl hover:bg-black transition-all flex items-center gap-4 hover:-translate-y-1"
+          >
+            <span className="uppercase text-xs tracking-widest">Vezi pachetul recomandat</span>
+            <i className="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+          </button>
+          <p className="text-[10px] text-slate-400">Poți schimba pachetul manual în pasul următor.</p>
+        </div>
+      )}
+    </div>
+  );
+}

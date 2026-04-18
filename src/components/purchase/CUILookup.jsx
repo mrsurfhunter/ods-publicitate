@@ -15,23 +15,26 @@ export default function CUILookup({ value, onChange, onData }) {
   };
 
   return (
-    <div className="form-row">
-      <label className="label">CUI / Cod Fiscal</label>
-      <div style={{ display: "flex", gap: 8 }}>
+    <div>
+      <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">CUI / Cod Fiscal</label>
+      <div className="flex gap-2">
         <input
-          className="input"
-          style={{ flex: 1 }}
+          className="flex-1 p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 rounded-2xl outline-none text-sm font-medium"
           value={value}
           onChange={e => { onChange(e.target.value); setStatus(null); }}
           placeholder="ex: 39899930"
           onKeyDown={e => e.key === "Enter" && go()}
         />
-        <button className="btn btn-dark btn-sm" onClick={go} disabled={loading} style={{ whiteSpace: "nowrap" }}>
-          {loading ? "..." : "Verifica"}
+        <button
+          className="px-6 py-3 bg-[#e30613] text-white font-bold rounded-2xl hover:bg-red-700 transition-all text-xs disabled:opacity-50 whitespace-nowrap"
+          onClick={go}
+          disabled={loading}
+        >
+          {loading ? <i className="fas fa-spinner animate-spin"></i> : "Caută"}
         </button>
       </div>
-      {status === "ok" && <div style={{ fontSize: 12, color: 'var(--c-success)', marginTop: 4, fontWeight: 600 }}>✓ Date preluate</div>}
-      {status === "err" && <div style={{ fontSize: 12, color: 'var(--c-red)', marginTop: 4 }}>CUI negasit</div>}
+      {status === "ok" && <p className="text-xs text-green-600 mt-1.5 font-semibold flex items-center gap-1"><i className="fas fa-check"></i> Date preluate</p>}
+      {status === "err" && <p className="text-xs text-red-500 mt-1.5 font-medium">CUI negăsit</p>}
     </div>
   );
 }

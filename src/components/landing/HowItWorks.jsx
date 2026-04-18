@@ -6,14 +6,16 @@ const STEPS = [
 
 export default function HowItWorks() {
   return (
-    <div className="how-section">
-      <h2 className="heading-lg" style={{ textAlign: "center", color: "var(--c-primary)", marginBottom: 32 }}>Cum funcționează</h2>
-      <div className="how-grid">
+    <div className="max-w-3xl mx-auto px-4 py-14 md:py-20">
+      <h2 className="text-2xl md:text-3xl font-black text-slate-900 uppercase tracking-tight text-center mb-12">Cum funcționează</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
         {STEPS.map((s, i) => (
-          <div key={i} className={`how-step fade-up stagger-${i + 1}`}>
-            <div className="how-step-num">{s.num}</div>
-            <div className="how-step-title">{s.title}</div>
-            <div className="how-step-desc">{s.desc}</div>
+          <div key={i} className="text-center">
+            <div className="w-12 h-12 rounded-full bg-blue-50 text-blue-600 font-black text-lg flex items-center justify-center mx-auto mb-4">
+              {s.num}
+            </div>
+            <h3 className="text-base font-bold text-slate-900 mb-2">{s.title}</h3>
+            <p className="text-sm text-slate-500 leading-relaxed">{s.desc}</p>
           </div>
         ))}
       </div>

@@ -25,10 +25,8 @@ export default function LeadCaptureStep({ onDone, source }) {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
   const set = (k, v) => sF(s => ({ ...s, [k]: v }));
-
   const copy = COPY[source] || COPY.default;
 
-  // Skip if already authenticated
   if (isAuthenticated && user) {
     if (onDone) onDone(user);
     return null;
@@ -48,38 +46,40 @@ export default function LeadCaptureStep({ onDone, source }) {
   };
 
   return (
-    <div className="lead-capture fade-up">
-      <div className="lead-capture-title">{copy.title}</div>
-      <div className="lead-capture-sub">{copy.sub}</div>
+    <div className="bg-white rounded-[2rem] p-8 shadow-xl border border-slate-100 animate-fadeIn">
+      <div className="text-center mb-6">
+        <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">{copy.title}</h3>
+        <p className="text-sm text-slate-500 mt-1">{copy.sub}</p>
+      </div>
 
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <div className="form-row" style={{ margin: 0 }}>
-          <label className="label">Nume *</label>
-          <input className="input" value={f.name} onChange={e => set("name", e.target.value)} placeholder="Numele tău" autoFocus />
+      <form onSubmit={handleSubmit} className="space-y-3">
+        <div>
+          <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Nume *</label>
+          <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 rounded-2xl outline-none text-sm font-medium" value={f.name} onChange={e => set("name", e.target.value)} placeholder="Numele tău" autoFocus />
         </div>
-        <div className="form-row" style={{ margin: 0 }}>
-          <label className="label">Email *</label>
-          <input className="input" type="email" value={f.email} onChange={e => set("email", e.target.value)} placeholder="email@firma.ro" />
+        <div>
+          <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Email *</label>
+          <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 rounded-2xl outline-none text-sm font-medium" type="email" value={f.email} onChange={e => set("email", e.target.value)} placeholder="email@firma.ro" />
         </div>
-        <div className="form-row" style={{ margin: 0 }}>
-          <label className="label">Telefon *</label>
-          <input className="input" value={f.phone} onChange={e => set("phone", e.target.value)} placeholder="07xx xxx xxx" />
+        <div>
+          <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Telefon *</label>
+          <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 rounded-2xl outline-none text-sm font-medium" value={f.phone} onChange={e => set("phone", e.target.value)} placeholder="07xx xxx xxx" />
         </div>
-        <div className="form-row" style={{ margin: 0 }}>
-          <label className="label">Firmă <span style={{ fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>(opțional)</span></label>
-          <input className="input" value={f.company} onChange={e => set("company", e.target.value)} placeholder="Numele firmei" />
+        <div>
+          <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Firmă <span className="font-normal normal-case tracking-normal">(opțional)</span></label>
+          <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 rounded-2xl outline-none text-sm font-medium" value={f.company} onChange={e => set("company", e.target.value)} placeholder="Numele firmei" />
         </div>
 
-        {err && <div style={{ fontSize: 12, color: "var(--c-red)", fontWeight: 600 }}>{err}</div>}
+        {err && <p className="text-xs text-[#e30613] font-semibold">{err}</p>}
 
-        <button className="btn btn-primary btn-block" type="submit" disabled={!canSubmit || loading} style={{ marginTop: 4 }}>
+        <button type="submit" disabled={!canSubmit || loading} className="w-full py-4 bg-[#e30613] text-white font-black rounded-2xl hover:bg-red-700 transition-all shadow-lg shadow-red-500/20 disabled:opacity-50 uppercase text-xs tracking-widest mt-2">
           {loading ? "Se salvează..." : copy.btn}
         </button>
       </form>
 
-      <div className="lead-capture-privacy">
-        <span>🔒</span> Nu trimitem spam. Datele tale sunt în siguranță.
-      </div>
+      <p className="text-[10px] text-slate-400 text-center mt-4 flex items-center justify-center gap-1.5">
+        <i className="fas fa-lock text-[8px]"></i> Nu trimitem spam. Datele tale sunt în siguranță.
+      </p>
     </div>
   );
 }

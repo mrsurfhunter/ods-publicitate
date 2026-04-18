@@ -17,23 +17,20 @@ export default class ErrorBoundary extends Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{
-          maxWidth: 500, margin: "80px auto", padding: 32, textAlign: "center",
-          background: "var(--c-card)", borderRadius: "var(--radius)", border: "1px solid var(--c-border)",
-        }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>!</div>
-          <h2 style={{ fontFamily: "var(--font-heading)", fontSize: 20, fontWeight: 800, color: "var(--c-primary)", marginBottom: 8 }}>
-            A apărut o eroare
-          </h2>
-          <p style={{ fontSize: 14, color: "var(--c-muted)", marginBottom: 20 }}>
-            Ne cerem scuze. Reîncărcați pagina pentru a continua.
-          </p>
-          <button
-            className="btn btn-primary"
-            onClick={() => { this.setState({ hasError: false, error: null }); window.location.reload(); }}
-          >
-            Reîncarcă pagina
-          </button>
+        <div className="min-h-screen flex items-center justify-center bg-slate-50 p-8">
+          <div className="text-center max-w-md">
+            <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
+              <i className="fas fa-exclamation-triangle text-2xl text-[#e30613]"></i>
+            </div>
+            <h2 className="text-xl font-black text-slate-900 mb-2">A apărut o eroare</h2>
+            <p className="text-slate-500 mb-6 text-sm">{this.state.error?.message}</p>
+            <button
+              className="px-6 py-3 bg-[#e30613] text-white font-bold rounded-xl hover:bg-red-700 transition-all"
+              onClick={() => { this.setState({ hasError: false, error: null }); window.location.reload(); }}
+            >
+              Reîncarcă pagina
+            </button>
+          </div>
         </div>
       );
     }
