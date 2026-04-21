@@ -1,8 +1,8 @@
 const BENEFITS = [
-  { icon: "fas fa-users", color: "text-blue-600 bg-blue-100", title: "400.000+ sibieni lunar", desc: "Cea mai citită publicație din Sibiu, cu trafic auditat BRAT." },
-  { icon: "fas fa-search-plus", color: "text-emerald-600 bg-emerald-100", title: "Vizibilitate pe Google", desc: "Articolele rămân indexate permanent. Clienții te găsesc pe Google." },
-  { icon: "fas fa-share-alt", color: "text-purple-600 bg-purple-100", title: "Toate canalele, un pachet", desc: "Site + Facebook + Instagram + TikTok + Newsletter + Push." },
-  { icon: "fas fa-pen-nib", color: "text-amber-600 bg-amber-100", title: "Conținut profesional", desc: "Redacția noastră scrie articolul și creează postările. Tu doar aprobi." },
+  { icon: "fas fa-signal", color: "text-blue-600 bg-blue-100", title: "400.000+ sibieni lunar", desc: "Cea mai citită publicație din Sibiu, cu trafic auditat BRAT." },
+  { icon: "fas fa-magnifying-glass-chart", color: "text-emerald-600 bg-emerald-100", title: "Vizibilitate pe Google", desc: "Articolele rămân indexate permanent. Clienții te găsesc pe Google." },
+  { icon: "fas fa-layer-group", color: "text-purple-600 bg-purple-100", title: "Toate canalele, un pachet", desc: "Site + Facebook + Instagram + TikTok + Newsletter + Push." },
+  { icon: "fas fa-newspaper", color: "text-amber-600 bg-amber-100", title: "Conținut profesional", desc: "Redacția noastră scrie articolul și creează postările. Tu doar aprobi." },
 ];
 
 export default function TeaserCards({ onConsult }) {

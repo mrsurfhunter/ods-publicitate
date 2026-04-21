@@ -1,7 +1,7 @@
 const STEPS = [
-  { num: "1", icon: "fas fa-comments", title: "Răspunde la 4 întrebări", desc: "Spune-ne ce afacere ai, ce vrei și ce buget ai. Sub 1 minut." },
-  { num: "2", icon: "fas fa-robot", title: "Primești recomandarea AI", desc: "Algoritmul analizează nevoile tale și îți sugerează cel mai bun pachet." },
-  { num: "3", icon: "fas fa-rocket", title: "Alegi și publici", desc: "Confirmi pachetul, trimiți materialele și te promovăm." },
+  { num: "1", icon: "fas fa-list-check", title: "Răspunde la 4 întrebări", desc: "Spune-ne ce afacere ai, ce vrei și ce buget ai. Sub 1 minut." },
+  { num: "2", icon: "fas fa-chart-pie", title: "Primești recomandarea", desc: "Analizăm nevoile tale și îți sugerăm cel mai bun pachet." },
+  { num: "3", icon: "fas fa-arrow-trend-up", title: "Alegi și publici", desc: "Confirmi pachetul, trimiți materialele și te promovăm." },
 ];
 
 export default function HowItWorks() {

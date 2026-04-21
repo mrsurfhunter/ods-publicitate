@@ -20,7 +20,7 @@ export default function LandingView({ onConsult, onAnunturi, onCatalog }) {
         <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'repeating-linear-gradient(-45deg, transparent, transparent 40px, white 40px, white 41px)' }}></div>
         <div className="relative max-w-3xl mx-auto text-center px-4 sm:px-5 py-10 sm:py-16 md:py-24">
           <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-red-500/10 flex items-center justify-center mx-auto mb-5 sm:mb-8">
-            <i className="fas fa-bullhorn text-xl sm:text-2xl text-[#e30613]"></i>
+            <i className="fas fa-chart-line text-xl sm:text-2xl text-[#e30613]"></i>
           </div>
           <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black text-white uppercase tracking-tight mb-3 sm:mb-5 leading-[1.1]">
             Crește-ți Afacerea cu{" "}

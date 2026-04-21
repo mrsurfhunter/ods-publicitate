@@ -61,11 +61,11 @@ export default function ChatConsultant({ onFinish }) {
     <div className="max-w-4xl mx-auto px-3 sm:px-4 animate-fadeIn">
       <div className="flex items-center gap-4 mb-6 bg-blue-50 p-4 border-2 border-blue-100">
         <div className="w-12 h-12 bg-blue-600 flex items-center justify-center text-white">
-          <i className="fas fa-user-tie text-lg"></i>
+          <i className="fas fa-headset text-lg"></i>
         </div>
         <div>
           <h2 className="text-lg font-black text-slate-800 uppercase leading-none tracking-tight">Consultant Ora de Sibiu</h2>
-          <p className="text-[10px] text-blue-600 font-bold mt-1 uppercase tracking-widest">Recomandări personalizate cu AI</p>
+          <p className="text-[10px] text-blue-600 font-bold mt-1 uppercase tracking-widest">Recomandări personalizate</p>
         </div>
       </div>
 
@@ -110,7 +110,7 @@ export default function ChatConsultant({ onFinish }) {
               disabled={loading || !input.trim()}
               className="w-12 h-12 bg-[#e30613] text-white flex items-center justify-center hover:bg-red-700 transition-all disabled:opacity-50"
             >
-              <i className="fas fa-paper-plane"></i>
+              <i className="fas fa-arrow-up"></i>
             </button>
           </div>
         </div>

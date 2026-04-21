@@ -39,7 +39,7 @@ export default function LoginModal({ onClose, onLoggedIn }) {
 
         <div className="text-center mb-6">
           <div className="w-14 h-14 bg-blue-50 flex items-center justify-center mx-auto mb-4 border-2 border-blue-100">
-            <i className="fas fa-user-circle text-2xl text-blue-600"></i>
+            <i className="fas fa-right-to-bracket text-2xl text-blue-600"></i>
           </div>
           <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">Bine ai revenit!</h3>
           <p className="text-sm text-slate-500 mt-1">Introdu emailul cu care te-ai înregistrat</p>

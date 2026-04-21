@@ -76,7 +76,7 @@ export default function AnunturiView({ onBack, onConsult }) {
                 onClick={enhance}
                 disabled={ai || !text.trim() || words < 5}
               >
-                {ai ? <i className="fas fa-spinner animate-spin"></i> : <><i className="fas fa-wand-magic-sparkles"></i> Îmbunătățește cu AI</>}
+                {ai ? <i className="fas fa-spinner animate-spin"></i> : <><i className="fas fa-pen-to-square"></i> Corectează textul</>}
               </button>
               {aiOk === true && <span className="text-xs text-green-600 font-semibold flex items-center gap-1"><i className="fas fa-check"></i> Îmbunătățit!</span>}
               {aiOk === false && <span className="text-xs text-red-500">AI indisponibil</span>}

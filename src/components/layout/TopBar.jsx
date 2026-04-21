@@ -49,7 +49,7 @@ export default function TopBar({ myOrders, onHome, onOpenOrder, onLogin, onConsu
             <>
               {onDashboard && (
                 <button onClick={onDashboard} className="hidden sm:flex items-center gap-1.5 text-[11px] font-bold text-white/60 hover:text-white transition-colors">
-                  <i className="fas fa-th-large text-[10px]"></i> Dashboard
+                  <i className="fas fa-gauge-high text-[10px]"></i> Dashboard
                 </button>
               )}
               <div ref={dropRef} className="relative">

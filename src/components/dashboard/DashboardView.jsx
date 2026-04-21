@@ -7,9 +7,9 @@ import ImageUploader from "../shared/ImageUploader";
 
 const ANALYTICS = [
   { label: "Vizualizări Articole", value: "—", sub: "Se actualizează", icon: "fas fa-eye", color: "text-green-500" },
-  { label: "Reach Facebook", value: "—", sub: "Se actualizează", icon: "fas fa-users", color: "text-blue-400" },
-  { label: "Impresii Instagram", value: "—", sub: "Se actualizează", icon: "fas fa-heart", color: "text-pink-400" },
-  { label: "Vizualizări TikTok", value: "—", sub: "Se actualizează", icon: "fas fa-play", color: "text-cyan-400" },
+  { label: "Reach Facebook", value: "—", sub: "Se actualizează", icon: "fab fa-facebook-f", color: "text-blue-400" },
+  { label: "Impresii Instagram", value: "—", sub: "Se actualizează", icon: "fab fa-instagram", color: "text-pink-400" },
+  { label: "Vizualizări TikTok", value: "—", sub: "Se actualizează", icon: "fab fa-tiktok", color: "text-cyan-400" },
 ];
 
 export default function DashboardView({ initOrder, onBack }) {
@@ -95,7 +95,7 @@ export default function DashboardView({ initOrder, onBack }) {
           {!order.contentChoice ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <button className="p-6 bg-[#e30613] text-white text-left hover:bg-red-700 transition-all group border-2 border-red-700" onClick={() => upd({ contentChoice: "redactor", status: "review" })}>
-                <i className="fas fa-pen-nib text-lg mb-3 opacity-80"></i>
+                <i className="fas fa-file-pen text-lg mb-3 opacity-80"></i>
                 <div className="font-black text-sm mb-1">Vreau un redactor</div>
                 <div className="text-xs text-white/70">Veți fi contactat de un redactor</div>
               </button>
@@ -108,7 +108,7 @@ export default function DashboardView({ initOrder, onBack }) {
           ) : order.contentChoice === "redactor" ? (
             <div className="bg-blue-50 p-5 border-2 border-blue-200">
               <div className="flex items-center gap-2 mb-2">
-                <i className="fas fa-pen-nib text-blue-600"></i>
+                <i className="fas fa-file-pen text-blue-600"></i>
                 <span className="text-sm font-bold text-blue-700">Un redactor va scrie articolul</span>
               </div>
               <p className="text-sm text-slate-500">Veți fi contactat la numărul <strong className="text-slate-700">{order.phone}</strong> în următoarele 24h.</p>
@@ -192,9 +192,9 @@ export default function DashboardView({ initOrder, onBack }) {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
           {(stats ? [
             { label: "Vizualizări Articole", value: stats.views.toLocaleString("ro"), sub: `+14% vs. medie`, icon: "fas fa-eye", color: "text-green-500" },
-            { label: "Reach Facebook", value: stats.fbReach.toLocaleString("ro"), sub: `${stats.clicks} click-uri`, icon: "fas fa-users", color: "text-blue-400" },
-            { label: "Impresii Instagram", value: stats.igReach.toLocaleString("ro"), sub: `${stats.shares} interacțiuni`, icon: "fas fa-heart", color: "text-pink-400" },
-            { label: "Vizualizări TikTok", value: "—", sub: "Se actualizează", icon: "fas fa-play", color: "text-cyan-400" },
+            { label: "Reach Facebook", value: stats.fbReach.toLocaleString("ro"), sub: `${stats.clicks} click-uri`, icon: "fab fa-facebook-f", color: "text-blue-400" },
+            { label: "Impresii Instagram", value: stats.igReach.toLocaleString("ro"), sub: `${stats.shares} interacțiuni`, icon: "fab fa-instagram", color: "text-pink-400" },
+            { label: "Vizualizări TikTok", value: "—", sub: "Se actualizează", icon: "fab fa-tiktok", color: "text-cyan-400" },
           ] : ANALYTICS).map((m, i) => (
             <div key={i} className="bg-white/5 p-3 sm:p-5 border-2 border-white/10">
               <div className="text-slate-500 text-[9px] font-black uppercase mb-2">{m.label}</div>

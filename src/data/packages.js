@@ -129,9 +129,9 @@ export const CONSULT_STEPS = [
     options: [
       { id: "sub-700", label: "Sub 700 lei", icon: "\u{1F4B0}" },
       { id: "700-1500", label: "700 \u2013 1.500 lei", icon: "\u{1F4B3}" },
-      { id: "1500-2000", label: "1.500 \u2013 2.000 lei", icon: "\u{1F3AF}" },
-      { id: "peste-2000", label: "Peste 2.000 lei", icon: "\u{1F680}" },
-      { id: "nu-stiu", label: "Nu știu \u2014 recomandă-mi", icon: "\u{1F914}" },
+      { id: "1500-2000", label: "1.500 \u2013 2.000 lei", icon: "📊" },
+      { id: "peste-2000", label: "Peste 2.000 lei", icon: "💎" },
+      { id: "nu-stiu", label: "Nu știu \u2014 recomandă-mi", icon: "🤝" },
     ],
   },
   {
