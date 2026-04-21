@@ -63,7 +63,7 @@ export default function LoginModal({ onClose, onLoggedIn }) {
           <button
             type="submit"
             disabled={!email.trim() || loading}
-            className="w-full py-4 bg-[#e30613] text-white font-black hover:bg-red-700 transition-all disabled:opacity-50 uppercase text-xs tracking-widest border-2 border-red-700"
+            className="w-full py-4 bg-cta text-white font-black hover:bg-cta-dark transition-all disabled:opacity-50 uppercase text-xs tracking-widest border-2 border-cta-dark"
           >
             {loading ? <i className="fas fa-spinner animate-spin"></i> : "Intră în cont"}
           </button>

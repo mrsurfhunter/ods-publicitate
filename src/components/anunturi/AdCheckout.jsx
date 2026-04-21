@@ -54,7 +54,7 @@ export default function AdCheckout({ ad, onClose }) {
             </div>
             <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight mb-2">Anunț verificat și înregistrat!</h3>
             <p className="text-sm text-slate-500">Va fi publicat în max 24h de la confirmarea plății.</p>
-            <button className="mt-6 px-8 py-3.5 bg-[#e30613] text-white font-black hover:bg-red-700 transition-all uppercase text-xs tracking-widest border-2 border-red-700" onClick={onClose}>Închide</button>
+            <button className="mt-6 px-8 py-3.5 bg-cta text-white font-black hover:bg-cta-dark transition-all uppercase text-xs tracking-widest border-2 border-cta-dark" onClick={onClose}>Închide</button>
           </div>
         ) : (
           <div className="p-4 sm:p-6 md:p-8">
@@ -104,7 +104,7 @@ export default function AdCheckout({ ad, onClose }) {
                   </div>
                 </div>
 
-                <button className="w-full py-4 bg-[#e30613] text-white font-black hover:bg-red-700 transition-all uppercase text-xs tracking-widest disabled:opacity-50 border-2 border-red-700" onClick={() => { if (canGo) setStep(2); }} disabled={!canGo}>
+                <button className="w-full py-4 bg-cta text-white font-black hover:bg-cta-dark transition-all uppercase text-xs tracking-widest disabled:opacity-50 border-2 border-cta-dark" onClick={() => { if (canGo) setStep(2); }} disabled={!canGo}>
                   Continuă
                 </button>
               </div>
@@ -130,7 +130,7 @@ export default function AdCheckout({ ad, onClose }) {
                 </div>
                 <div className="flex gap-3">
                   <button className="flex-1 py-3.5 border-2 border-slate-200 text-slate-500 font-bold hover:bg-slate-50 transition-all text-sm" onClick={() => setStep(1)}>Înapoi</button>
-                  <button className="flex-[2] py-3.5 bg-[#e30613] text-white font-black hover:bg-red-700 transition-all uppercase text-xs tracking-widest border-2 border-red-700" onClick={submit}>Confirmă</button>
+                  <button className="flex-[2] py-3.5 bg-cta text-white font-black hover:bg-cta-dark transition-all uppercase text-xs tracking-widest border-2 border-cta-dark" onClick={submit}>Confirmă</button>
                 </div>
               </div>
             )}

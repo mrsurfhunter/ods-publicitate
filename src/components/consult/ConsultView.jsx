@@ -184,7 +184,7 @@ export default function ConsultView({ onResult, onBack }) {
                             onKeyDown={e => { if (e.key === 'Enter' && freeText.trim()) handleFreeTextSubmit(); }}
                           />
                           <button
-                            className="px-6 py-3 bg-[#e30613] text-white font-bold hover:bg-red-700 transition-all disabled:opacity-50 text-sm whitespace-nowrap"
+                            className="px-6 py-3 bg-cta text-white font-bold hover:bg-cta-dark transition-all disabled:opacity-50 text-sm whitespace-nowrap"
                             disabled={!freeText.trim()}
                             onClick={handleFreeTextSubmit}
                           >

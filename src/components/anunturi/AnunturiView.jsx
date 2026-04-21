@@ -137,7 +137,7 @@ export default function AnunturiView({ onBack, onConsult }) {
             </div>
 
             <button
-              className="w-full py-5 bg-[#e30613] hover:bg-red-700 text-white font-black border-2 border-red-700 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+              className="w-full py-5 bg-cta hover:bg-cta-dark text-white font-black border-2 border-cta-dark transition-all flex items-center justify-center gap-3 disabled:opacity-50"
               disabled={!canOrd}
               onClick={() => setAdCheckout({ cat: AD_CAT.find(c => c.id === cat), text, words, days, pr })}
             >

@@ -90,7 +90,7 @@ export default function PurchaseForm({ pkg, onClose, onDone }) {
           <div className="text-[10px] text-slate-500 font-bold uppercase">Total:</div>
           <div className="text-2xl font-black text-white">{total.toLocaleString("ro")} lei</div>
         </div>
-        <button className="w-full sm:w-auto px-8 py-3.5 bg-[#e30613] text-white font-black uppercase text-xs tracking-widest hover:bg-red-700 transition-all disabled:opacity-50 border-2 border-red-700" onClick={submit} disabled={!canSubmit}>
+        <button className="w-full sm:w-auto px-8 py-3.5 bg-cta text-white font-black uppercase text-xs tracking-widest hover:bg-cta-dark transition-all disabled:opacity-50 border-2 border-cta-dark" onClick={submit} disabled={!canSubmit}>
           {submitting ? <i className="fas fa-spinner animate-spin"></i> : pay === "card" ? "Plătește" : "Cumpără"}
         </button>
       </div>

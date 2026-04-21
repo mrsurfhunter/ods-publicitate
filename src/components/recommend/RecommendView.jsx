@@ -48,7 +48,7 @@ export default function RecommendView({ recommendation, onCatalog, onPurchased, 
             <div className="text-[10px] text-slate-400 font-medium">+ TVA</div>
           </div>
           {!isBuying && (
-            <button className="w-full sm:w-auto px-8 py-3.5 bg-[#e30613] text-white font-black uppercase text-xs tracking-widest hover:bg-red-700 transition-all border-2 border-red-700" onClick={() => setBuying(pkg.id)}>
+            <button className="w-full sm:w-auto px-8 py-3.5 bg-cta text-white font-black uppercase text-xs tracking-widest hover:bg-cta-dark transition-all border-2 border-cta-dark" onClick={() => setBuying(pkg.id)}>
               Alege acest pachet
             </button>
           )}

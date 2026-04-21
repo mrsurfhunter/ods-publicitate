@@ -94,7 +94,7 @@ export default function DashboardView({ initOrder, onBack }) {
           <h3 className="text-sm font-black text-slate-900 uppercase tracking-tight mb-4 sm:mb-5">Conținutul articolului</h3>
           {!order.contentChoice ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-              <button className="p-6 bg-[#e30613] text-white text-left hover:bg-red-700 transition-all group border-2 border-red-700" onClick={() => upd({ contentChoice: "redactor", status: "review" })}>
+              <button className="p-6 bg-cta text-white text-left hover:bg-cta-dark transition-all group border-2 border-cta-dark" onClick={() => upd({ contentChoice: "redactor", status: "review" })}>
                 <i className="fas fa-file-pen text-lg mb-3 opacity-80"></i>
                 <div className="font-black text-sm mb-1">Vreau un redactor</div>
                 <div className="text-xs text-white/70">Veți fi contactat de un redactor</div>

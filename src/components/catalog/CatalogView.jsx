@@ -54,7 +54,7 @@ function CatalogCard({ pkg, onPurchased, featured }) {
         {!buying ? (
           <button
             className={`w-full py-4 font-black uppercase text-xs tracking-widest transition-all ${
-              featured ? 'bg-[#e30613] text-white hover:bg-red-700 border-2 border-red-700' : 'bg-navy text-white hover:bg-navy-dark border-2 border-navy'
+              featured ? 'bg-cta text-white hover:bg-cta-dark border-2 border-cta-dark' : 'bg-cta text-white hover:bg-cta-dark border-2 border-cta-dark'
             }`}
             onClick={() => setBuying(true)}
           >

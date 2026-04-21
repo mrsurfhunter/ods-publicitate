@@ -72,7 +72,7 @@ export default function LeadCaptureStep({ onDone, source }) {
 
         {err && <p className="text-xs text-[#e30613] font-semibold">{err}</p>}
 
-        <button type="submit" disabled={!canSubmit || loading} className="w-full py-4 bg-[#e30613] text-white font-black hover:bg-red-700 transition-all disabled:opacity-50 uppercase text-xs tracking-widest mt-2 border-2 border-red-700">
+        <button type="submit" disabled={!canSubmit || loading} className="w-full py-4 bg-cta text-white font-black hover:bg-cta-dark transition-all disabled:opacity-50 uppercase text-xs tracking-widest mt-2 border-2 border-cta-dark">
           {loading ? "Se salvează..." : copy.btn}
         </button>
       </form>

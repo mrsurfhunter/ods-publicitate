@@ -19,9 +19,7 @@ export default function LandingView({ onConsult, onAnunturi, onCatalog }) {
       <div className="bg-navy relative overflow-hidden border-b-4 border-[#e30613]">
         <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'repeating-linear-gradient(-45deg, transparent, transparent 40px, white 40px, white 41px)' }}></div>
         <div className="relative max-w-3xl mx-auto text-center px-4 sm:px-5 py-10 sm:py-16 md:py-24">
-          <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-red-500/10 flex items-center justify-center mx-auto mb-5 sm:mb-8">
-            <i className="fas fa-chart-line text-xl sm:text-2xl text-[#e30613]"></i>
-          </div>
+          <img src="https://cdn.oradesibiu.ro/wp-content/uploads/2023/01/odsalbAsset-1.png" alt="Ora de Sibiu" className="h-10 sm:h-12 md:h-14 mx-auto mb-5 sm:mb-8" />
           <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black text-white uppercase tracking-tight mb-3 sm:mb-5 leading-[1.1]">
             Crește-ți Afacerea cu{" "}
             <span className="text-[#e30613]">Ora de Sibiu</span>
@@ -34,7 +32,7 @@ export default function LandingView({ onConsult, onAnunturi, onCatalog }) {
           <div className="flex flex-col sm:flex-row gap-3 justify-center items-center px-4">
             <button
               onClick={onConsult}
-              className="group w-full sm:w-auto inline-flex items-center justify-center px-7 py-4 sm:px-10 sm:py-5 text-sm sm:text-base font-black text-white uppercase tracking-wider bg-[#e30613] border-2 border-red-700 hover:bg-red-700 active:bg-red-800 transition-all"
+              className="group w-full sm:w-auto inline-flex items-center justify-center px-7 py-4 sm:px-10 sm:py-5 text-sm sm:text-base font-black text-white uppercase tracking-wider bg-cta border-2 border-cta-dark hover:bg-cta-dark transition-all"
             >
               Începe Promovarea <i className="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform text-xs"></i>
             </button>
@@ -92,13 +90,13 @@ export default function LandingView({ onConsult, onAnunturi, onCatalog }) {
       </div>
 
       {/* Final CTA */}
-      <div className="bg-[#e30613] py-10 sm:py-16 md:py-20 text-center px-4 sm:px-5">
+      <div className="bg-cta py-10 sm:py-16 md:py-20 text-center px-4 sm:px-5">
         <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white uppercase tracking-tight mb-4 sm:mb-6">Gata să începi?</h2>
-        <button onClick={onConsult} className="w-full sm:w-auto px-8 py-4 sm:px-10 sm:py-5 bg-white text-red-700 font-black uppercase text-xs sm:text-sm tracking-widest border-2 border-white hover:bg-slate-100 active:bg-slate-200 transition-all">
+        <button onClick={onConsult} className="w-full sm:w-auto px-8 py-4 sm:px-10 sm:py-5 bg-white text-cta-dark font-black uppercase text-xs sm:text-sm tracking-widest border-2 border-white hover:bg-slate-100 transition-all">
           Descoperă pachetul potrivit
         </button>
         <div className="mt-4 sm:mt-6">
-          <a href="https://wa.me/40746752240" target="_blank" rel="noopener" className="text-red-200/50 text-xs sm:text-sm font-medium hover:text-white transition-colors inline-flex items-center gap-1.5">
+          <a href="https://wa.me/40746752240" target="_blank" rel="noopener" className="text-white/50 text-xs sm:text-sm font-medium hover:text-white transition-colors inline-flex items-center gap-1.5">
             <i className="fab fa-whatsapp"></i> Sau scrie-ne pe WhatsApp
           </a>
         </div>

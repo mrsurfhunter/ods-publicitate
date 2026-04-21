@@ -25,7 +25,7 @@ export default function TeaserCards({ onConsult }) {
       </div>
       <div className="text-center mt-8 sm:mt-10 flex flex-col items-center gap-3">
         <p className="text-slate-400 text-sm">Pachete de la <span className="text-lg font-black text-navy">500 lei</span></p>
-        <button onClick={onConsult} className="w-full sm:w-auto px-7 py-3.5 bg-navy text-white font-black uppercase text-xs tracking-widest hover:bg-navy-dark transition-all border-2 border-navy">
+        <button onClick={onConsult} className="w-full sm:w-auto px-7 py-3.5 bg-cta text-white font-black uppercase text-xs tracking-widest hover:bg-cta-dark transition-all border-2 border-cta-dark">
           Descoperă pachetul potrivit →
         </button>
       </div>
