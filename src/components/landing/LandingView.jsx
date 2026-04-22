@@ -21,11 +21,10 @@ export default function LandingView({ onConsult, onAnunturi, onCatalog }) {
         <div className="relative max-w-3xl mx-auto text-center px-4 sm:px-5 py-10 sm:py-16 md:py-24">
           <img src="https://cdn.oradesibiu.ro/wp-content/uploads/2023/01/odsalbAsset-1.png" alt="Ora de Sibiu" className="h-10 sm:h-12 md:h-14 mx-auto mb-5 sm:mb-8" />
           <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black text-white uppercase tracking-tight mb-3 sm:mb-5 leading-[1.1]">
-            Crește-ți Afacerea cu{" "}
-            <span className="text-[#e30613]">Ora de Sibiu</span>
+            Publicitate care aduce clienți
           </h1>
           <p className="text-white/50 text-sm sm:text-base md:text-lg max-w-md mx-auto font-medium mb-6 sm:mb-10 leading-relaxed px-2">
-            Bannere, articole sponsorizate și promovare pe Social Media — totul într-un singur loc.
+            Articole, bannere și promovare pe Social Media — 400.000+ sibieni lunar, totul într-un singur loc.
           </p>
 
           {/* CTA Buttons */}

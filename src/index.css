@@ -6,12 +6,12 @@
   --color-brand-dark: #c50510;
   --color-navy: #0f3b6c;
   --color-navy-dark: #0a2a4e;
-  /* CTA color — change this ONE line to test other palettes:
-     Green (growth):  #059669 / #047857
-     Amber (urgency): #D97706 / #B45309
-     Blue (trust):    #2563EB / #1D4ED8  */
-  --color-cta: #059669;
-  --color-cta-dark: #047857;
+  /* CTA color — change these to test other palettes:
+     OdS Blue (trust): #0030bf / #001ca0  ← current
+     Amber (urgency):  #D97706 / #B45309
+     Green (growth):   #059669 / #047857  */
+  --color-cta: #0030bf;
+  --color-cta-dark: #001ca0;
 }
 
 @layer base {
