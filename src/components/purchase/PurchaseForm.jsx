@@ -43,28 +43,28 @@ export default function PurchaseForm({ pkg, onClose, onDone }) {
   };
 
   return (
-    <div className="border-t border-slate-100 p-4 sm:p-6 md:p-8 space-y-4">
+    <div className="border-t-2 border-slate-100 p-4 sm:p-6 md:p-8 space-y-4">
       <CUILookup value={f.cui} onChange={v => set("cui", v)} onData={hCUI} />
 
       <div>
         <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Companie</label>
-        <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 outline-none text-sm font-medium" value={f.company} onChange={e => set("company", e.target.value)} />
+        <input className="w-full p-4 bg-slate-50 border-2 border-slate-200 focus:border-slate-900 outline-none text-sm font-medium" value={f.company} onChange={e => set("company", e.target.value)} />
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Nume *</label>
-          <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 outline-none text-sm font-medium" value={f.name} onChange={e => set("name", e.target.value)} />
+          <input className="w-full p-4 bg-slate-50 border-2 border-slate-200 focus:border-slate-900 outline-none text-sm font-medium" value={f.name} onChange={e => set("name", e.target.value)} />
         </div>
         <div>
           <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Telefon *</label>
-          <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 outline-none text-sm font-medium" value={f.phone} onChange={e => set("phone", e.target.value)} />
+          <input className="w-full p-4 bg-slate-50 border-2 border-slate-200 focus:border-slate-900 outline-none text-sm font-medium" value={f.phone} onChange={e => set("phone", e.target.value)} />
         </div>
       </div>
 
       <div>
         <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Email *</label>
-        <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 outline-none text-sm font-medium" value={f.email} onChange={e => set("email", e.target.value)} />
+        <input className="w-full p-4 bg-slate-50 border-2 border-slate-200 focus:border-slate-900 outline-none text-sm font-medium" value={f.email} onChange={e => set("email", e.target.value)} />
       </div>
 
       {pkg.sub && (
@@ -85,12 +85,12 @@ export default function PurchaseForm({ pkg, onClose, onDone }) {
         ))}
       </div>
 
-      <div className="bg-slate-900 p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-3 mt-4 border-2 border-slate-700">
+      <div className="bg-slate-900 p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-3 mt-4 border-2 border-slate-900">
         <div className="text-center sm:text-left">
           <div className="text-[10px] text-slate-500 font-bold uppercase">Total:</div>
           <div className="text-2xl font-black text-white">{total.toLocaleString("ro")} lei</div>
         </div>
-        <button className="w-full sm:w-auto px-8 py-3.5 bg-cta text-white font-black uppercase text-xs tracking-widest hover:bg-cta-dark transition-all disabled:opacity-50 border-2 border-cta-dark" onClick={submit} disabled={!canSubmit}>
+        <button className="w-full sm:w-auto px-8 py-3.5 bg-brand text-white font-black uppercase text-xs tracking-widest hover:bg-brand-dark transition-all disabled:opacity-50 border-2 border-brand" onClick={submit} disabled={!canSubmit}>
           {submitting ? <i className="fas fa-spinner animate-spin"></i> : pay === "card" ? "Plătește" : "Cumpără"}
         </button>
       </div>

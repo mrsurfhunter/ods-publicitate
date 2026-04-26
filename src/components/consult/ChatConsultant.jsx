@@ -87,9 +87,9 @@ export default function ChatConsultant({ onFinish }) {
           {loading && (
             <div className="flex justify-start">
               <div className="bg-white p-4 border-2 border-slate-100 flex gap-2">
-                <div className="w-2 h-2 bg-[#e30613] animate-bounce"></div>
-                <div className="w-2 h-2 bg-[#e30613] animate-bounce [animation-delay:100ms]"></div>
-                <div className="w-2 h-2 bg-[#e30613] animate-bounce [animation-delay:200ms]"></div>
+                <div className="w-2 h-2 bg-brand animate-bounce"></div>
+                <div className="w-2 h-2 bg-brand animate-bounce [animation-delay:100ms]"></div>
+                <div className="w-2 h-2 bg-brand animate-bounce [animation-delay:200ms]"></div>
               </div>
             </div>
           )}
@@ -99,7 +99,7 @@ export default function ChatConsultant({ onFinish }) {
           <div className="flex gap-2">
             <input
               type="text"
-              className="flex-1 p-3 bg-slate-50 border-2 border-slate-200 outline-none focus:border-cta transition-all text-sm font-medium"
+              className="flex-1 p-3 bg-slate-50 border-2 border-slate-200 outline-none focus:border-slate-900 transition-all text-sm font-medium"
               placeholder="Scrie răspunsul tău aici..."
               value={input}
               onChange={e => setInput(e.target.value)}
@@ -108,7 +108,7 @@ export default function ChatConsultant({ onFinish }) {
             <button
               onClick={handleSend}
               disabled={loading || !input.trim()}
-              className="w-12 h-12 bg-cta text-white flex items-center justify-center hover:bg-cta-dark transition-all disabled:opacity-50"
+              className="w-12 h-12 bg-brand text-white flex items-center justify-center hover:bg-brand-dark border-2 border-brand transition-all disabled:opacity-50"
             >
               <i className="fas fa-arrow-up"></i>
             </button>

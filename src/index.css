@@ -28,6 +28,9 @@
   .animate-slideUp {
     animation: slideUp 0.35s ease-out forwards;
   }
+  .hero-pattern {
+    background-image: repeating-linear-gradient(-45deg, transparent, transparent 40px, white 40px, white 41px);
+  }
 }
 
 @keyframes fadeIn {

@@ -35,7 +35,7 @@ function ToastItem({ toast, onDismiss }) {
 
   return (
     <div
-      className={`px-5 py-3 rounded-xl border shadow-lg pointer-events-auto cursor-pointer font-semibold text-sm max-w-[360px] transition-all duration-300 ${STYLES[toast.type] || STYLES.info}`}
+      className={`px-5 py-3 border-2 shadow-lg pointer-events-auto cursor-pointer font-semibold text-sm max-w-[360px] transition-all duration-300 ${STYLES[toast.type] || STYLES.info}`}
       style={{ transform: visible ? "translateX(0)" : "translateX(100px)", opacity: visible ? 1 : 0 }}
       onClick={onDismiss}
     >

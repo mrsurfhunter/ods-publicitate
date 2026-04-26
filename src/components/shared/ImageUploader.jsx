@@ -23,7 +23,7 @@ export default function ImageUploader({ label, images, onChange, multi }) {
       <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">{label}</label>
       <div
         onClick={() => ref.current?.click()}
-        className="border-2 border-dashed border-slate-200 rounded-2xl cursor-pointer hover:border-red-200 transition-all bg-slate-50"
+        className="border-2 border-dashed border-slate-300 cursor-pointer hover:border-slate-900 hover:text-slate-900 transition-all bg-slate-50"
         style={{ padding: images.length > 0 ? 12 : 28 }}
       >
         {images.length === 0 && (
@@ -37,16 +37,16 @@ export default function ImageUploader({ label, images, onChange, multi }) {
         {images.length > 0 && (
           <div className="flex gap-2 flex-wrap">
             {images.map((img, i) => (
-              <div key={img.id} className="relative w-18 h-18 rounded-xl overflow-hidden border-2 border-slate-200 group">
+              <div key={img.id} className="relative w-18 h-18 overflow-hidden border-2 border-slate-200 group">
                 <img src={img.data} className="w-full h-full object-cover" alt="" />
                 <div
                   onClick={e => { e.stopPropagation(); onChange(images.filter((_, j) => j !== i)); }}
-                  className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/60 text-white flex items-center justify-center text-xs cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="absolute top-1 right-1 w-5 h-5 bg-black/60 text-white flex items-center justify-center text-xs cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
                 >×</div>
               </div>
             ))}
             {multi && (
-              <div className="w-18 h-18 rounded-xl border-2 border-dashed border-slate-200 flex items-center justify-center text-2xl text-slate-300">+</div>
+              <div className="w-18 h-18 border-2 border-dashed border-slate-200 flex items-center justify-center text-2xl text-slate-300">+</div>
             )}
           </div>
         )}

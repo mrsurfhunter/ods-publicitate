@@ -4,61 +4,46 @@ import { useAuth } from "../../context/AuthContext";
 import PurchaseForm from "../purchase/PurchaseForm";
 import LeadCaptureStep from "../auth/LeadCaptureStep";
 
-function CatalogCard({ pkg, onPurchased, featured }) {
+function CatalogCard({ pkg, onPurchased }) {
   const [buying, setBuying] = useState(false);
 
   return (
-    <div className={`bg-white overflow-hidden transition-all ${
-      featured ? 'border-2 border-[#e30613]' : 'border-2 border-slate-200'
-    }`}>
-      {featured && (
-        <div className="bg-[#e30613] text-white text-[10px] font-black text-center py-2 uppercase tracking-[2px]">
-          Cel mai popular
+    <div className={`bg-white border-2 ${pkg.pop ? 'border-brand' : 'border-slate-200'} relative`}>
+      {pkg.pop && (
+        <div className="absolute top-0 right-0 bg-brand text-white text-[10px] font-black px-3 py-1.5 uppercase tracking-[2px]">
+          ★ Cel mai popular
         </div>
       )}
-
-      <div className="p-4 sm:p-6 md:p-8">
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 sm:gap-4 mb-4 sm:mb-5">
-          <div>
-            <h3 className="text-xl font-black text-slate-900 tracking-tight">{pkg.name}</h3>
-            <p className="text-sm text-slate-500 mt-1">{pkg.headline}</p>
-          </div>
-          <div className="sm:text-right flex-shrink-0">
-            <div className="text-3xl font-black text-slate-900 leading-none">
-              {pkg.price.toLocaleString("ro")} <span className="text-base font-semibold text-slate-400">lei</span>
-            </div>
-            <div className="text-[11px] text-slate-400 font-medium mt-1">
-              {pkg.cat !== "oneTime" ? "/ lună + TVA" : "+ TVA (o dată)"}
-            </div>
-            {pkg.sub && <div className="text-xs text-green-600 font-bold mt-1">{pkg.sub.toLocaleString("ro")} lei la abonament</div>}
-          </div>
+      <div className="p-5 sm:p-6 md:p-7">
+        <div className="text-[11px] font-bold text-slate-400 uppercase tracking-[2px] mb-2">
+          {pkg.cat === 'monthly' ? 'Pachet lunar' : 'O singură comandă'}
         </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2 mb-4 sm:mb-6">
-          {pkg.inc.map((x, i) => (
-            <div key={i} className="flex items-start gap-2 text-sm">
+        <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mb-1">{pkg.name}</h3>
+        <p className="text-sm text-slate-500 mb-5">{pkg.headline}</p>
+        <div className="flex items-baseline gap-2 mb-5">
+          {pkg.sub && <span className="text-base text-slate-400 line-through font-bold">{pkg.price.toLocaleString("ro")}</span>}
+          <span className="text-3xl font-black text-slate-900">{(pkg.sub || pkg.price).toLocaleString("ro")} lei</span>
+          <span className="text-sm font-bold text-slate-500">{pkg.cat === 'monthly' ? '/lună' : ''}</span>
+        </div>
+        {pkg.sub && <div className="text-[10px] font-black text-brand uppercase tracking-wider mb-4">Reducere abonament</div>}
+        <div className="space-y-2 mb-5 border-t-2 border-slate-100 pt-4">
+          {pkg.inc.slice(0, 4).map((row, i) => (
+            <div key={i} className="flex gap-2 text-sm">
               <i className="fas fa-check text-green-500 text-xs mt-1 flex-shrink-0"></i>
-              <div>
-                <span className="font-semibold text-slate-800">{x.w}</span>
-                {x.d && <span className="text-slate-400"> — {x.d}</span>}
-              </div>
+              <span className="text-slate-700"><strong>{row.w}</strong>{row.d && <span className="text-slate-400"> · {row.d}</span>}</span>
             </div>
           ))}
+          {pkg.inc.length > 4 && <div className="text-xs font-bold text-slate-400 pl-5">+ {pkg.inc.length - 4} alte beneficii</div>}
         </div>
-      </div>
-
-      <div className={`px-4 sm:px-6 md:px-8 py-4 sm:py-5 border-t ${featured ? 'bg-red-50/30 border-red-100' : 'bg-slate-50 border-slate-100'}`}>
-        <div className="text-xs text-slate-400 mb-3 flex items-center gap-1.5">
-          <i className="far fa-calendar text-[10px]"></i> {pkg.delivery}
+        <div className="text-xs text-slate-500 mb-4 flex items-center gap-1.5">
+          <i className="fas fa-truck-fast text-slate-300"></i> {pkg.delivery}
         </div>
         {!buying ? (
           <button
-            className={`w-full py-4 font-black uppercase text-xs tracking-widest transition-all ${
-              featured ? 'bg-cta text-white hover:bg-cta-dark border-2 border-cta-dark' : 'bg-cta text-white hover:bg-cta-dark border-2 border-cta-dark'
-            }`}
+            className={`w-full ${pkg.pop ? 'bg-brand hover:bg-brand-dark border-2 border-brand' : 'bg-slate-900 hover:bg-black border-2 border-slate-900'} text-white font-bold px-6 py-3 text-sm uppercase tracking-wider transition-all`}
             onClick={() => setBuying(true)}
           >
-            Alege {pkg.name}
+            Comandă <i className="fas fa-arrow-right ml-2"></i>
           </button>
         ) : (
           <PurchaseForm pkg={pkg} onClose={() => setBuying(false)} onDone={onPurchased} />
@@ -70,12 +55,13 @@ function CatalogCard({ pkg, onPurchased, featured }) {
 
 export default function CatalogView({ onConsult, onPurchased }) {
   const { isAuthenticated } = useAuth();
+  const [filter, setFilter] = useState('all');
 
   if (!isAuthenticated) {
     return (
       <div className="max-w-xl mx-auto px-4 py-12 animate-fadeIn">
         <div className="text-center mb-8">
-          <div className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] mb-3">Pachete de promovare</div>
+          <div className="text-[11px] font-bold text-brand uppercase tracking-[2px] mb-3">Catalog complet</div>
           <h2 className="text-2xl md:text-3xl font-black text-slate-900 uppercase tracking-tight mb-3">Alege pachetul potrivit pentru afacerea ta</h2>
           <p className="text-slate-500 text-sm">Creează un cont gratuit pentru a vedea detaliile complete și a comanda.</p>
         </div>
@@ -89,19 +75,33 @@ export default function CatalogView({ onConsult, onPurchased }) {
     );
   }
 
+  const filtered = filter === 'all' ? PKG : PKG.filter(p => p.cat === filter);
+
   return (
-    <div className="max-w-3xl mx-auto px-3 sm:px-4 py-6 sm:py-8 md:py-12 animate-fadeIn">
-      <div className="text-center mb-10">
-        <div className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] mb-3">Pachete de promovare</div>
-        <h2 className="text-2xl md:text-3xl font-black text-slate-900 uppercase tracking-tight mb-3">Alege pachetul potrivit</h2>
-        <p className="text-slate-500 text-sm mb-4">Toate pachetele includ publicare pe oradesibiu.ro — cea mai citită publicație din Sibiu.</p>
-        <button className="px-6 py-2.5 text-xs font-bold text-slate-500 border-2 border-slate-200 hover:border-navy hover:text-navy transition-all" onClick={onConsult}>
-          Nu știi ce să alegi? Lasă-ne să te ajutăm →
-        </button>
+    <div className="animate-fadeIn">
+      <div className="bg-white border-b-2 border-slate-200">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+          <div className="text-[11px] font-bold text-brand uppercase tracking-[2px] mb-3">Catalog complet</div>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-4">Toate pachetele de publicitate</h1>
+          <p className="text-slate-500 text-base sm:text-lg max-w-2xl">
+            De la o postare unică pe Facebook până la pachetul Premium 360°. Alege singur sau{' '}
+            <button className="font-bold text-slate-900 underline" onClick={onConsult}>treci prin consultare</button>.
+          </p>
+          <div className="flex gap-2 mt-6 sm:mt-8 flex-wrap">
+            {[{ id: 'all', l: 'Toate' }, { id: 'oneTime', l: 'O singură comandă' }, { id: 'monthly', l: 'Pachete lunare' }].map(t => (
+              <button key={t.id} onClick={() => setFilter(t.id)}
+                className={`px-4 py-2 text-xs font-black uppercase tracking-wider border-2 transition-all ${
+                  filter === t.id ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-500 border-slate-200 hover:border-slate-900'
+                }`}>
+                {t.l}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
-      <div className="space-y-4 sm:space-y-5">
-        {PKG.map(p => (
-          <CatalogCard key={p.id} pkg={p} onPurchased={onPurchased} featured={p.pop} />
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10 grid lg:grid-cols-2 gap-4 sm:gap-5">
+        {filtered.map(p => (
+          <CatalogCard key={p.id} pkg={p} onPurchased={onPurchased} />
         ))}
       </div>
     </div>

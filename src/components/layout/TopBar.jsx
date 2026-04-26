@@ -22,13 +22,13 @@ export default function TopBar({ myOrders, onHome, onOpenOrder, onLogin, onConsu
     <header className="bg-navy sticky top-0 z-50 shadow-lg shadow-navy/20 noprint">
       <div className="max-w-6xl mx-auto h-14 sm:h-16 flex justify-between items-center px-3 sm:px-4 md:px-6">
         <div className="flex items-center gap-3 cursor-pointer" onClick={onHome}>
-          <img src="https://cdn.oradesibiu.ro/wp-content/uploads/2023/01/odsalbAsset-1.png" alt="Ora de Sibiu" className="h-6 sm:h-7" crossOrigin="anonymous" onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block'; }} />
-          <span className="text-sm font-black text-white tracking-tight hidden" style={{display:'none'}}>OdS</span>
+          <img src="https://cdn.oradesibiu.ro/wp-content/uploads/2023/01/odsalbAsset-1.png" alt="Ora de Sibiu" className="h-6 sm:h-7" onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'inline'; }} />
+          <span className="text-sm font-black text-white tracking-tight" style={{display:'none'}}>OdS</span>
           <div className="flex items-center gap-1.5 sm:gap-2">
             <span className="text-[9px] sm:text-[10px] font-black text-white/40 tracking-[2px] sm:tracking-[3px] uppercase border-l border-white/20 pl-1.5 sm:pl-2">
               Publicitate
             </span>
-            <span className="hidden md:inline-flex items-center gap-1.5 bg-[#e30613] text-white text-[9px] font-black px-3 py-1.5 uppercase tracking-wider">
+            <span className="hidden md:inline-flex items-center gap-1.5 bg-brand text-white text-[9px] font-black px-3 py-1.5 uppercase tracking-wider">
               Business Console
               <span className="w-1.5 h-1.5 bg-green-400 animate-pulse"></span>
             </span>
@@ -36,7 +36,7 @@ export default function TopBar({ myOrders, onHome, onOpenOrder, onLogin, onConsu
         </div>
 
         <div className="flex items-center gap-2 md:gap-4">
-          <div className="hidden md:flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-3 py-1.5">
+          <div className="hidden md:flex items-center gap-3 bg-white/5 border border-white/10 px-3 py-1.5">
             {STATS.map((s, i) => (
               <div key={i} className="flex items-center gap-1.5">
                 <i className={`${s.icon} text-[10px] ${s.color}`}></i>
@@ -54,7 +54,7 @@ export default function TopBar({ myOrders, onHome, onOpenOrder, onLogin, onConsu
               )}
               <div ref={dropRef} className="relative">
                 <div
-                  className="w-9 h-9 rounded-full bg-white/15 border-2 border-white/25 text-white flex items-center justify-center text-sm font-bold cursor-pointer hover:bg-white/25 transition-colors"
+                  className="w-9 h-9 bg-white/15 border-2 border-white/25 text-white flex items-center justify-center text-sm font-bold cursor-pointer hover:bg-white/25 transition-colors"
                   onClick={() => setDropOpen(!dropOpen)}
                 >
                   {(user.name || "U").charAt(0).toUpperCase()}

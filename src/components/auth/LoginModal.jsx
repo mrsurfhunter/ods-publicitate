@@ -50,7 +50,7 @@ export default function LoginModal({ onClose, onLoggedIn }) {
             <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Email</label>
             <input
               type="email"
-              className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 outline-none text-sm font-medium transition-all"
+              className="w-full p-4 bg-slate-50 border-2 border-slate-200 focus:border-slate-900 outline-none text-sm font-medium transition-all"
               value={email}
               onChange={e => { setEmail(e.target.value); setErr(""); }}
               placeholder="email@firma.ro"

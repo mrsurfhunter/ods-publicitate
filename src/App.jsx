@@ -26,6 +26,23 @@ function AppInner() {
 
   useEffect(() => { sld("ods-orders", []).then(setMyOrders); }, []);
 
+  useEffect(() => {
+    const handleHash = () => {
+      const hash = window.location.hash.replace("#", "");
+      if (hash === "anunturi") {
+        if (view === "landing") {
+          setTimeout(() => document.getElementById("anunturi")?.scrollIntoView({ behavior: "smooth" }), 100);
+        } else {
+          setView("landing");
+          setTimeout(() => document.getElementById("anunturi")?.scrollIntoView({ behavior: "smooth" }), 300);
+        }
+      }
+    };
+    handleHash();
+    window.addEventListener("hashchange", handleHash);
+    return () => window.removeEventListener("hashchange", handleHash);
+  }, [view]);
+
   const goHome = () => { setView("landing"); setDashOrder(null); setRecommendation(null); };
 
   const handleConsultResult = (result) => {

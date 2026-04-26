@@ -54,7 +54,7 @@ export default function AdCheckout({ ad, onClose }) {
             </div>
             <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight mb-2">Anunț verificat și înregistrat!</h3>
             <p className="text-sm text-slate-500">Va fi publicat în max 24h de la confirmarea plății.</p>
-            <button className="mt-6 px-8 py-3.5 bg-cta text-white font-black hover:bg-cta-dark transition-all uppercase text-xs tracking-widest border-2 border-cta-dark" onClick={onClose}>Închide</button>
+            <button className="mt-6 px-8 py-3.5 bg-brand text-white font-black hover:bg-brand-dark transition-all uppercase text-xs tracking-widest border-2 border-brand" onClick={onClose}>Închide</button>
           </div>
         ) : (
           <div className="p-4 sm:p-6 md:p-8">
@@ -65,16 +65,16 @@ export default function AdCheckout({ ad, onClose }) {
                 <CUILookup value={f.cui} onChange={val => set("cui", val)} onData={hCUI} />
                 <div>
                   <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Companie / Persoană</label>
-                  <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 outline-none text-sm font-medium" value={f.company} onChange={e => set("company", e.target.value)} />
+                  <input className="w-full p-4 bg-slate-50 border-2 border-slate-200 focus:border-slate-900 outline-none text-sm font-medium" value={f.company} onChange={e => set("company", e.target.value)} />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Nume *</label>
-                    <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 outline-none text-sm font-medium" value={f.name} onChange={e => set("name", e.target.value)} />
+                    <input className="w-full p-4 bg-slate-50 border-2 border-slate-200 focus:border-slate-900 outline-none text-sm font-medium" value={f.name} onChange={e => set("name", e.target.value)} />
                   </div>
                   <div>
                     <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Telefon *</label>
-                    <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 outline-none text-sm font-medium" value={f.phone} onChange={e => set("phone", e.target.value)} />
+                    <input className="w-full p-4 bg-slate-50 border-2 border-slate-200 focus:border-slate-900 outline-none text-sm font-medium" value={f.phone} onChange={e => set("phone", e.target.value)} />
                   </div>
                 </div>
 
@@ -93,10 +93,10 @@ export default function AdCheckout({ ad, onClose }) {
                     {!v.ok ? (
                       <div className="flex gap-2">
                         {!v.sent
-                          ? <button className="px-5 py-2.5 bg-slate-900 text-white text-xs font-bold hover:bg-black transition-all disabled:opacity-50" onClick={sendCode} disabled={!f.phone || f.phone.replace(/\D/g, "").length < 10}>Trimite cod</button>
+                          ? <button className="px-5 py-2.5 bg-slate-900 text-white text-xs font-bold hover:bg-black transition-all disabled:opacity-50 border-2 border-slate-900" onClick={sendCode} disabled={!f.phone || f.phone.replace(/\D/g, "").length < 10}>Trimite cod</button>
                           : <>
                             <input className="w-24 p-3 bg-white border-2 border-blue-200 outline-none text-center text-base font-black tracking-[4px]" value={v.code} onChange={e => sV(x => ({ ...x, code: e.target.value }))} maxLength={4} placeholder="····" />
-                            <button className="px-5 py-2.5 bg-slate-900 text-white text-xs font-bold hover:bg-black transition-all" onClick={() => sV(x => ({ ...x, ok: x.code === x.real }))}>OK</button>
+                            <button className="px-5 py-2.5 bg-slate-900 text-white text-xs font-bold hover:bg-black transition-all border-2 border-slate-900" onClick={() => sV(x => ({ ...x, ok: x.code === x.real }))}>OK</button>
                           </>
                         }
                       </div>
@@ -104,8 +104,8 @@ export default function AdCheckout({ ad, onClose }) {
                   </div>
                 </div>
 
-                <button className="w-full py-4 bg-cta text-white font-black hover:bg-cta-dark transition-all uppercase text-xs tracking-widest disabled:opacity-50 border-2 border-cta-dark" onClick={() => { if (canGo) setStep(2); }} disabled={!canGo}>
-                  Continuă
+                <button className="w-full py-4 bg-brand text-white font-black hover:bg-brand-dark transition-all uppercase text-xs tracking-widest disabled:opacity-50 border-2 border-brand" onClick={() => { if (canGo) setStep(2); }} disabled={!canGo}>
+                  Continuă <i className="fas fa-arrow-right ml-1"></i>
                 </button>
               </div>
             )}
@@ -130,7 +130,7 @@ export default function AdCheckout({ ad, onClose }) {
                 </div>
                 <div className="flex gap-3">
                   <button className="flex-1 py-3.5 border-2 border-slate-200 text-slate-500 font-bold hover:bg-slate-50 transition-all text-sm" onClick={() => setStep(1)}>Înapoi</button>
-                  <button className="flex-[2] py-3.5 bg-cta text-white font-black hover:bg-cta-dark transition-all uppercase text-xs tracking-widest border-2 border-cta-dark" onClick={submit}>Confirmă</button>
+                  <button className="flex-[2] py-3.5 bg-brand text-white font-black hover:bg-brand-dark transition-all uppercase text-xs tracking-widest border-2 border-brand" onClick={submit}>Confirmă</button>
                 </div>
               </div>
             )}

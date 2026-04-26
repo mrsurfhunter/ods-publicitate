@@ -55,19 +55,19 @@ export default function LeadCaptureStep({ onDone, source }) {
       <form onSubmit={handleSubmit} className="space-y-3">
         <div>
           <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Nume *</label>
-          <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 outline-none text-sm font-medium" value={f.name} onChange={e => set("name", e.target.value)} placeholder="Numele tău" autoFocus />
+          <input className="w-full p-4 bg-slate-50 border-2 border-slate-200 focus:border-slate-900 outline-none text-sm font-medium" value={f.name} onChange={e => set("name", e.target.value)} placeholder="Numele tău" autoFocus />
         </div>
         <div>
           <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Email *</label>
-          <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 outline-none text-sm font-medium" type="email" value={f.email} onChange={e => set("email", e.target.value)} placeholder="email@firma.ro" />
+          <input className="w-full p-4 bg-slate-50 border-2 border-slate-200 focus:border-slate-900 outline-none text-sm font-medium" type="email" value={f.email} onChange={e => set("email", e.target.value)} placeholder="email@firma.ro" />
         </div>
         <div>
           <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Telefon *</label>
-          <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 outline-none text-sm font-medium" value={f.phone} onChange={e => set("phone", e.target.value)} placeholder="07xx xxx xxx" />
+          <input className="w-full p-4 bg-slate-50 border-2 border-slate-200 focus:border-slate-900 outline-none text-sm font-medium" value={f.phone} onChange={e => set("phone", e.target.value)} placeholder="07xx xxx xxx" />
         </div>
         <div>
           <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Firmă <span className="font-normal normal-case tracking-normal">(opțional)</span></label>
-          <input className="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 outline-none text-sm font-medium" value={f.company} onChange={e => set("company", e.target.value)} placeholder="Numele firmei" />
+          <input className="w-full p-4 bg-slate-50 border-2 border-slate-200 focus:border-slate-900 outline-none text-sm font-medium" value={f.company} onChange={e => set("company", e.target.value)} placeholder="Numele firmei" />
         </div>
 
         {err && <p className="text-xs text-[#e30613] font-semibold">{err}</p>}

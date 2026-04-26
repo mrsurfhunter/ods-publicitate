@@ -19,14 +19,14 @@ export default function CUILookup({ value, onChange, onData }) {
       <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">CUI / Cod Fiscal</label>
       <div className="flex gap-2">
         <input
-          className="flex-1 p-4 bg-slate-50 border-2 border-transparent focus:border-red-100 rounded-2xl outline-none text-sm font-medium"
+          className="flex-1 p-4 bg-slate-50 border-2 border-slate-200 focus:border-slate-900 outline-none text-sm font-medium"
           value={value}
           onChange={e => { onChange(e.target.value); setStatus(null); }}
           placeholder="ex: 39899930"
           onKeyDown={e => e.key === "Enter" && go()}
         />
         <button
-          className="px-6 py-3 bg-[#e30613] text-white font-bold rounded-2xl hover:bg-red-700 transition-all text-xs disabled:opacity-50 whitespace-nowrap"
+          className="px-6 py-3 bg-brand text-white font-bold hover:bg-brand-dark transition-all text-xs disabled:opacity-50 whitespace-nowrap border-2 border-brand"
           onClick={go}
           disabled={loading}
         >

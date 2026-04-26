@@ -1,105 +1,142 @@
-import TeaserCards from "./TeaserCards";
-import HowItWorks from "./HowItWorks";
-
-const TRUST_MAIN = [
-  { v: "400k+", l: "vizitatori/lună" },
-  { v: "1.8M", l: "afișări/lună" },
+const STATS = [
+  { v: "1.5M", l: "Afișări/lună pe site" },
+  { v: "218.000", l: "Urmăritori Facebook" },
+  { v: "18.000", l: "Followers Instagram" },
+  { v: "24.000", l: "Urmăritori TikTok" },
 ];
 
-const TRUST_SOCIAL = [
-  { v: "218k", l: "Facebook", icon: "fab fa-facebook-f" },
-  { v: "18k", l: "Instagram", icon: "fab fa-instagram" },
-  { v: "24k", l: "TikTok", icon: "fab fa-tiktok" },
+const BENEFITS = [
+  { i: "fa-bolt", t: "Setup rapid", d: "Activ în 24-48h. Nu pierzi timp cu agenții, briefuri, propuneri." },
+  { i: "fa-eye", t: "Audiență reală", d: "1.5M afișări/lună, 260k+ urmăritori. Date BRAT, nu marketing." },
+  { i: "fa-chart-line", t: "Statistici clare", d: "Reach, click-uri, engagement. Vezi exact ce primești pentru bani." },
+  { i: "fa-headset", t: "Consultanță inclusă", d: "Te ajutăm să alegi pachetul potrivit. Fără presiune, fără upselling." },
+];
+
+const STEPS = [
+  { n: 1, t: "Răspunzi 4 întrebări", d: "Tipul afacerii, obiectivul, bugetul, durata. Durează 2 minute." },
+  { n: 2, t: "Primești 1 recomandare", d: "Pachetul ideal pentru tine. Cu preț, ce conține și de ce." },
+  { n: 3, t: "Plătești și pornești", d: "Card sau OP. Primești articol, banner, postări — în max 5 zile." },
 ];
 
 export default function LandingView({ onConsult, onAnunturi, onCatalog }) {
   return (
     <div className="animate-fadeIn">
-      {/* Hero */}
-      <div className="bg-navy relative overflow-hidden border-b-4 border-[#e30613]">
-        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'repeating-linear-gradient(-45deg, transparent, transparent 40px, white 40px, white 41px)' }}></div>
-        <div className="relative max-w-3xl mx-auto text-center px-4 sm:px-5 py-10 sm:py-16 md:py-24">
-          <img src="https://cdn.oradesibiu.ro/wp-content/uploads/2023/01/odsalbAsset-1.png" alt="Ora de Sibiu" className="h-10 sm:h-12 md:h-14 mx-auto mb-5 sm:mb-8" />
-          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black text-white uppercase tracking-tight mb-3 sm:mb-5 leading-[1.1]">
-            Publicitate care aduce clienți
+      {/* HERO */}
+      <section className="relative bg-navy text-white overflow-hidden">
+        <div className="absolute inset-0 hero-pattern opacity-[0.04]"></div>
+        <div className="absolute -top-32 -right-32 w-96 h-96 bg-brand/20 blur-3xl"></div>
+        <div className="relative max-w-6xl mx-auto px-4 md:px-6 pt-12 sm:pt-16 md:pt-24 pb-12 md:pb-20">
+          <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 px-3 py-1.5 mb-6 sm:mb-8">
+            <span className="w-1.5 h-1.5 bg-green-400 animate-pulse"></span>
+            <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[2px]">Cea mai citită publicație din Sibiu</span>
+          </div>
+          <h1 className="text-[34px] sm:text-5xl md:text-6xl lg:text-7xl font-black leading-[0.95] mb-6 tracking-tight">
+            Promovează-ți afacerea<br />
+            <span className="text-brand">unde sibienii urmăresc știrile.</span>
           </h1>
-          <p className="text-white/50 text-sm sm:text-base md:text-lg max-w-md mx-auto font-medium mb-6 sm:mb-10 leading-relaxed px-2">
-            Articole, bannere și promovare pe Social Media — 400.000+ sibieni lunar, totul într-un singur loc.
+          <p className="text-base sm:text-lg md:text-xl text-white/70 mb-8 sm:mb-10 max-w-2xl leading-relaxed">
+            Articole, bannere, postări pe Facebook & Instagram. <strong className="text-white">1.5 milioane de afișări lunare.</strong> Te ajutăm să alegi pachetul potrivit în 2 minute.
           </p>
-
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 justify-center items-center px-4">
-            <button
-              onClick={onConsult}
-              className="group w-full sm:w-auto inline-flex items-center justify-center px-7 py-4 sm:px-10 sm:py-5 text-sm sm:text-base font-black text-white uppercase tracking-wider bg-cta border-2 border-cta-dark hover:bg-cta-dark transition-all"
-            >
-              Începe Promovarea <i className="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform text-xs"></i>
+          <div className="flex flex-col sm:flex-row gap-3 mb-12 sm:mb-16">
+            <button onClick={onConsult} className="group bg-brand hover:bg-brand-dark text-white font-bold px-7 py-4 text-sm uppercase tracking-wider transition-all border-2 border-brand">
+              Începe Consultarea <i className="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
             </button>
-            <button
-              onClick={onAnunturi}
-              className="w-full sm:w-auto px-7 py-3.5 text-sm font-semibold text-white/50 border-2 border-white/20 hover:bg-white/5 hover:text-white/70 transition-all"
-            >
-              Mică Publicitate →
+            <button onClick={onCatalog} className="border-2 border-white/30 hover:border-white text-white font-bold px-7 py-4 text-sm uppercase tracking-wider transition-all">
+              Vezi toate pachetele
             </button>
           </div>
-
-          {/* Trust stats — 2 rows on mobile */}
-          <div className="mt-8 sm:mt-16">
-            <div className="flex justify-center items-center gap-4 sm:gap-6 md:gap-8 mb-4">
-              {TRUST_MAIN.map((s, i) => (
-                <div key={i} className="text-center">
-                  <div className="text-xl sm:text-2xl md:text-3xl font-black text-white leading-none">{s.v}</div>
-                  <div className="text-[10px] sm:text-xs text-white/40 font-medium mt-0.5">{s.l}</div>
-                </div>
-              ))}
-            </div>
-            <div className="flex justify-center items-center gap-5 sm:gap-6">
-              {TRUST_SOCIAL.map((s, i) => (
-                <div key={i} className="flex items-center gap-1.5">
-                  <i className={`${s.icon} text-white/30 text-xs`}></i>
-                  <span className="text-sm sm:text-base font-bold text-white/60">{s.v}</span>
-                </div>
-              ))}
-            </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-white/10 border border-white/10">
+            {STATS.map((s, i) => (
+              <div key={i} className="bg-navy p-4 sm:p-5">
+                <div className="text-2xl sm:text-3xl font-black mb-1">{s.v}</div>
+                <div className="text-[10px] sm:text-[11px] text-white/50 uppercase tracking-wider font-bold">{s.l}</div>
+              </div>
+            ))}
           </div>
-
-          <button className="text-white/25 text-xs sm:text-sm font-medium mt-5 hover:text-white/50 transition-colors" onClick={onCatalog}>
-            Vezi toate pachetele →
-          </button>
         </div>
-      </div>
+      </section>
 
-      {/* Social proof bar */}
-      <div className="bg-white border-b border-slate-100 py-3 sm:py-4 px-4">
-        <div className="flex justify-center items-center gap-4 sm:gap-8 flex-wrap">
-          {["17 ani experiență", "Trafic auditat BRAT", "Peste 1.000 clienți"].map((t, i) => (
-            <div key={i} className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-500">
-              <span className="w-1.5 h-1.5 bg-green-500 flex-shrink-0"></span>{t}
+      {/* TRUST STRIP */}
+      <section className="bg-slate-50 border-y-2 border-slate-200 py-6">
+        <div className="max-w-6xl mx-auto px-6 flex flex-wrap items-center justify-center gap-3 text-center">
+          <span className="text-sm sm:text-base font-bold text-slate-500">Peste <strong className="text-slate-700">1.000</strong> de afaceri au ales Ora de Sibiu pentru promovare prin</span>
+          <a href="https://oradesibiu.ro/advertorial" target="_blank" rel="noopener" className="text-sm sm:text-base font-black text-brand hover:underline uppercase tracking-wide">
+            Advertorial <i className="fas fa-arrow-up-right-from-square text-[10px] ml-1"></i>
+          </a>
+        </div>
+      </section>
+
+      {/* BENEFITS */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16 md:py-24">
+        <div className="max-w-2xl mb-8 sm:mb-12">
+          <div className="text-[11px] font-bold text-brand uppercase tracking-[2px] mb-3">De ce noi</div>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight">Publicitate digitală fără bătăi de cap.</h2>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-px bg-slate-200 border-2 border-slate-200">
+          {BENEFITS.map((b, i) => (
+            <div key={i} className="bg-white p-5 sm:p-6 hover:bg-slate-50 transition-colors">
+              <div className="w-10 h-10 bg-navy text-white flex items-center justify-center mb-4">
+                <i className={`fas ${b.i}`}></i>
+              </div>
+              <div className="font-black text-slate-900 mb-2">{b.t}</div>
+              <p className="text-sm text-slate-500 leading-relaxed">{b.d}</p>
             </div>
           ))}
         </div>
-      </div>
+      </section>
 
-      {/* Benefits */}
-      <TeaserCards onConsult={onConsult} />
-
-      {/* How it works */}
-      <div className="bg-white border-t border-b border-slate-100">
-        <HowItWorks />
-      </div>
-
-      {/* Final CTA */}
-      <div className="bg-cta py-10 sm:py-16 md:py-20 text-center px-4 sm:px-5">
-        <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white uppercase tracking-tight mb-4 sm:mb-6">Gata să începi?</h2>
-        <button onClick={onConsult} className="w-full sm:w-auto px-8 py-4 sm:px-10 sm:py-5 bg-white text-cta-dark font-black uppercase text-xs sm:text-sm tracking-widest border-2 border-white hover:bg-slate-100 transition-all">
-          Descoperă pachetul potrivit
-        </button>
-        <div className="mt-4 sm:mt-6">
-          <a href="https://wa.me/40746752240" target="_blank" rel="noopener" className="text-white/50 text-xs sm:text-sm font-medium hover:text-white transition-colors inline-flex items-center gap-1.5">
-            <i className="fab fa-whatsapp"></i> Sau scrie-ne pe WhatsApp
-          </a>
+      {/* HOW IT WORKS */}
+      <section className="bg-slate-900 text-white py-12 sm:py-16 md:py-24">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="max-w-2xl mb-8 sm:mb-12">
+            <div className="text-[11px] font-bold text-brand uppercase tracking-[2px] mb-3">Cum funcționează</div>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight">3 pași. Maxim 48 de ore.</h2>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6 md:gap-8">
+            {STEPS.map(s => (
+              <div key={s.n} className="border-l-4 border-brand pl-5 py-2">
+                <div className="text-5xl font-black text-brand/30 mb-2">0{s.n}</div>
+                <div className="text-xl font-black mb-2">{s.t}</div>
+                <p className="text-sm text-white/60 leading-relaxed">{s.d}</p>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      </section>
+
+      {/* SECONDARY ACTIONS */}
+      <section id="anunturi" className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16 md:py-24 scroll-mt-20">
+        <div className="grid md:grid-cols-2 gap-px bg-slate-200 border-2 border-slate-200">
+          <div className="bg-white p-6 sm:p-8 md:p-10">
+            <div className="text-[11px] font-bold text-brand uppercase tracking-[2px] mb-3">Mică publicitate</div>
+            <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 mb-3 tracking-tight">Ai nevoie de un anunț tip pierderi, decese, citații?</h3>
+            <p className="text-sm text-slate-500 mb-6 leading-relaxed">Anunțuri de mică publicitate, online + tipar dacă vrei. Comandă online, fără drumuri.</p>
+            <button onClick={onAnunturi} className="text-sm font-black text-brand hover:underline uppercase tracking-wider">
+              Comandă anunț <i className="fas fa-arrow-right ml-1"></i>
+            </button>
+          </div>
+          <div className="bg-navy text-white p-6 sm:p-8 md:p-10">
+            <div className="text-[11px] font-bold text-white/50 uppercase tracking-[2px] mb-3">Vorbește cu noi</div>
+            <h3 className="text-xl sm:text-2xl md:text-3xl font-black mb-3 tracking-tight">Ai întrebări sau cerințe speciale?</h3>
+            <p className="text-sm text-white/60 mb-6 leading-relaxed">Echipa noastră răspunde pe WhatsApp în max 30 minute, în programul de lucru.</p>
+            <a href="https://wa.me/40746752240" target="_blank" rel="noopener" className="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white font-bold px-6 py-3 text-sm uppercase tracking-wider border-2 border-green-600">
+              <i className="fab fa-whatsapp"></i> Scrie pe WhatsApp
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* FINAL CTA */}
+      <section className="bg-brand text-white py-12 sm:py-16 md:py-20 relative overflow-hidden">
+        <div className="absolute inset-0 hero-pattern opacity-[0.06]"></div>
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 text-center">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-black mb-4 tracking-tight">Începe în 2 minute.</h2>
+          <p className="text-base sm:text-lg md:text-xl text-white/80 mb-8">Nu trebuie să știi ce vrei. Te ajutăm noi să alegi.</p>
+          <button onClick={onConsult} className="w-full sm:w-auto bg-white text-brand hover:bg-slate-100 font-black px-8 py-4 text-sm uppercase tracking-wider border-2 border-white">
+            Începe Consultarea Gratuită <i className="fas fa-arrow-right ml-2"></i>
+          </button>
+        </div>
+      </section>
     </div>
   );
 }
