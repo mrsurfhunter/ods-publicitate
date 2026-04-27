@@ -648,7 +648,7 @@ app.post('/api/ads/generate', async (req, res) => {
   const openaiKey = process.env.OPENAI_API_KEY;
   if (!openaiKey) return res.status(503).json({ error: 'OpenAI not configured' });
 
-  const { businessName, industry, offer, tone, type, details, language } = req.body || {};
+  const { businessName, industry, offer, tone, type, details } = req.body || {};
   if (!businessName) return res.status(400).json({ error: 'Missing businessName' });
 
   const typeInstructions = {
@@ -678,7 +678,7 @@ ${toneMap[tone] || toneMap['professional']}
 
 Generează EXACT 3 variante diferite, separate prin "---".
 Fiecare variantă trebuie să fie complet diferită ca abordare (nu doar reformulări).
-Scrie în ${language === 'en' ? 'engleză' : 'română'}.
+Scrie în română.
 Nu include explicații, nu scrie "Varianta 1:", doar textele separate prin "---".`;
 
   const userMsg = `Afacere: ${businessName}

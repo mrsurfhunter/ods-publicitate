@@ -27,7 +27,6 @@ export default function AdCopyWriter({ businessName: initBiz }) {
     tone: "professional",
     type: "facebook",
     details: "",
-    language: "ro",
   });
   const [loading, setLoading] = useState(false);
   const [variants, setVariants] = useState([]);
@@ -145,19 +144,6 @@ export default function AdCopyWriter({ businessName: initBiz }) {
               </button>
             ))}
           </div>
-        </div>
-
-        {/* LANGUAGE TOGGLE */}
-        <div className="flex items-center gap-3">
-          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Limba:</label>
-          <button onClick={() => upd("language", "ro")}
-            className={`px-3 py-1.5 text-xs font-bold border-2 ${form.language === 'ro' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-500 border-slate-200'}`}>
-            Română
-          </button>
-          <button onClick={() => upd("language", "en")}
-            className={`px-3 py-1.5 text-xs font-bold border-2 ${form.language === 'en' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-500 border-slate-200'}`}>
-            English
-          </button>
         </div>
 
         {/* GENERATE */}
