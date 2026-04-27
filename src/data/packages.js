@@ -204,6 +204,18 @@ export const DEFAULT_ADDONS = [
   { id: "addon-eveniment-recap", name: "Recap Post-Eveniment", icon: "fa-newspaper",
     price: 600, sub: null, unit: "/articol", multi: false, qtyPricing: null,
     desc: "Articol recap cu galerie foto + distribuire social media. Publicat în 48h după eveniment.", active: true },
+  { id: "addon-google-ads", name: "Administrare Google Ads", icon: "fa-magnifying-glass-dollar",
+    price: 900, sub: 750, unit: "/lună", multi: false, qtyPricing: null,
+    desc: "Setup + administrare campanii Google Ads. Raportare lunară. Buget publicitar separat.", active: true },
+  { id: "addon-fb-ads", name: "Administrare Facebook Ads", icon: "fa-bullhorn",
+    price: 800, sub: 650, unit: "/lună", multi: false, qtyPricing: null,
+    desc: "Setup + administrare campanii Facebook & Instagram Ads. Raportare lunară. Buget publicitar separat.", active: true },
+  { id: "addon-fb-page", name: "Management Pagină Facebook", icon: "fa-thumbs-up",
+    price: 1200, sub: 1000, unit: "/lună", multi: false, qtyPricing: null,
+    desc: "Creare pagină + administrare completă: 12 postări/lună, moderare comentarii, raport lunar.", active: true },
+  { id: "addon-ig-profile", name: "Management Profil Instagram", icon: "fa-camera-retro",
+    price: 1200, sub: 1000, unit: "/lună", multi: false, qtyPricing: null,
+    desc: "Setup profil + administrare: 12 postări/lună, stories, hashtag strategy, raport lunar.", active: true },
 ];
 
 export function getAddonUnitPrice(addon, qty = 1) {

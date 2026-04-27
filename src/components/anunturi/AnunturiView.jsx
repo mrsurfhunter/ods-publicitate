@@ -4,7 +4,7 @@ import { callAI } from "../../utils/ai";
 import { calcAd } from "../../utils/pricing";
 import AdCheckout from "./AdCheckout";
 
-export default function AnunturiView({ onBack, onConsult }) {
+export default function AnunturiView({ onBack, onConsult, onPurchased }) {
   const [cat, setCat] = useState("");
   const [text, setText] = useState("");
   const [days, setDays] = useState(1);
@@ -168,7 +168,7 @@ export default function AnunturiView({ onBack, onConsult }) {
         )}
       </div>
 
-      {adCheckout && <AdCheckout ad={adCheckout} onClose={() => setAdCheckout(null)} />}
+      {adCheckout && <AdCheckout ad={adCheckout} onClose={() => setAdCheckout(null)} onDone={onPurchased} />}
     </div>
   );
 }

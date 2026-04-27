@@ -6,7 +6,7 @@ import { useToast } from "../shared/Toast";
 import { saveOrderToServer } from "../../utils/orders";
 import CUILookup from "../purchase/CUILookup";
 
-export default function AdCheckout({ ad, onClose }) {
+export default function AdCheckout({ ad, onClose, onDone }) {
   const { user, register, isAuthenticated } = useAuth();
   const toast = useToast();
   const [step, setStep] = useState(1);
@@ -41,6 +41,7 @@ export default function AdCheckout({ ad, onClose }) {
     }
 
     toast("Anunțul a fost înregistrat cu succes!", "success");
+    if (onDone) { onDone(order); return; }
     setStep(3);
   };
 

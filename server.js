@@ -266,6 +266,54 @@ app.post('/api/admin/ai/improve-text', async (req, res) => {
   }
 });
 
+// ── /api/articles/generate — Marina AI article writer ──
+app.post('/api/articles/generate', async (req, res) => {
+  const { topic, details, tone, businessName, titlesOnly } = req.body || {};
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) return res.status(503).json({ error: 'AI not configured' });
+  try {
+    const client = new Anthropic({ apiKey });
+    const toneMap = { professional: 'profesional și obiectiv', friendly: 'prietenos și cald', local: 'local, familiar, cu referințe la Sibiu' };
+
+    if (titlesOnly) {
+      const message = await client.messages.create({
+        model: 'claude-sonnet-4-20250514', max_tokens: 500,
+        system: 'Ești Marina, redactor la oradesibiu.ro. Generează EXACT 5 variante de titlu pentru un articol de promovare. Fiecare titlu pe un rând nou. SEO-friendly, 5-10 cuvinte, în română. Doar titlurile, fără numerotare sau alte explicații.',
+        messages: [{ role: 'user', content: `Afacere: ${businessName}\nSubiect: ${topic}\nDetalii: ${details || '-'}` }],
+      });
+      const text = message.content.map(b => b.text || '').join('\n').trim();
+      return res.json({ titles: text.split('\n').filter(t => t.trim()).map(t => t.replace(/^\d+[\.\)]\s*/, '').trim()).slice(0, 5) });
+    }
+
+    const message = await client.messages.create({
+      model: 'claude-sonnet-4-20250514', max_tokens: 2500,
+      system: `Ești Marina, redactor principal la oradesibiu.ro, cel mai citit site de știri din Sibiu. Scrii articole de promovare (advertoriale) pentru afaceri locale. Tonul tău este ${toneMap[tone] || toneMap.professional}. Articolele sunt optimizate SEO.
+
+Răspunde EXACT în acest format (respectă etichetele):
+TITLURI:
+[titlu 1]
+[titlu 2]
+[titlu 3]
+[titlu 4]
+[titlu 5]
+
+ARTICOL:
+[Articol complet: introducere captivantă (2-3 propoziții), 3-5 paragrafe cu informații relevante, concluzie cu CTA (invitație la acțiune). 400-800 cuvinte. NU pune titlu în articol.]`,
+      messages: [{ role: 'user', content: `Scrie un articol de promovare.\nAfacere: ${businessName}\nSubiect: ${topic}\nDetalii: ${details || 'Fără detalii suplimentare'}\nTon: ${tone}` }],
+    });
+    const text = message.content.map(b => b.text || '').join('\n').trim();
+    const match = text.match(/TITLURI:\n([\s\S]*?)\n\nARTICOL:\n([\s\S]*)/);
+    if (match) {
+      const titles = match[1].split('\n').filter(t => t.trim()).map(t => t.replace(/^\d+[\.\)]\s*/, '').trim()).slice(0, 5);
+      return res.json({ titles, article: match[2].trim() });
+    }
+    res.json({ titles: [], article: text });
+  } catch (e) {
+    console.error('Article generation error:', e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // ── /api/ai — generic AI proxy (text enhancement) ──
 app.post('/api/ai', async (req, res) => {
   const { system, user } = req.body || {};

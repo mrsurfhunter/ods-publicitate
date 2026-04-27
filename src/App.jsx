@@ -183,7 +183,7 @@ function AppInner() {
       )}
 
       {view === "anunturi" && (
-        <AnunturiView onBack={goHome} onConsult={() => setView("consult")} />
+        <AnunturiView onBack={goHome} onConsult={() => setView("consult")} onPurchased={handlePurchased} />
       )}
 
       {view === "dashboard" && dashOrder && (
