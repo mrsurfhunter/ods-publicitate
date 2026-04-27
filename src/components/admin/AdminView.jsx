@@ -136,7 +136,7 @@ function AiGenerateDialog({ type, adminKey, onGenerated, onClose }) {
                 {result.price && (
                   <div className="flex gap-2">
                     <span className="text-slate-400 w-16 flex-shrink-0">Preț:</span>
-                    <span className="font-bold text-slate-900">{result.price} lei{result.sub ? ` (abo: ${result.sub} lei)` : ''}</span>
+                    <span className="font-bold text-slate-900">{result.price} lei{result.sub ? ` (abonament: ${result.sub} lei)` : ''}</span>
                   </div>
                 )}
                 {result.headline && (
@@ -346,7 +346,7 @@ function PackageEditor({ packages, adminKey, onSave }) {
                 <span className="text-sm text-slate-400 ml-2">{pkg.id}</span>
               </div>
               <span className="text-sm font-black text-slate-900">{pkg.price?.toLocaleString("ro")} lei</span>
-              {pkg.sub && <span className="text-xs text-green-600 font-bold">(sub: {pkg.sub?.toLocaleString("ro")})</span>}
+              {pkg.sub && <span className="text-xs text-green-600 font-bold">(abonament: {pkg.sub?.toLocaleString("ro")})</span>}
               <span className={`text-[10px] font-bold uppercase ${pkg.active !== false ? 'text-green-600' : 'text-red-500'}`}>
                 {pkg.active !== false ? 'Activ' : 'Inactiv'}
               </span>
@@ -550,7 +550,7 @@ function AddonEditor({ addons, adminKey, onSave }) {
                     <input type="number" className="w-full p-2 bg-slate-50 border border-slate-200 text-sm" value={addon.price} onChange={e => update(idx, 'price', Number(e.target.value))} />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-black text-slate-500 uppercase mb-1">Preț abo</label>
+                    <label className="block text-[10px] font-black text-slate-500 uppercase mb-1">Preț abonament</label>
                     <input type="number" className="w-full p-2 bg-slate-50 border border-slate-200 text-sm" value={addon.sub || ''} onChange={e => update(idx, 'sub', e.target.value ? Number(e.target.value) : null)} placeholder="null" />
                   </div>
                 </div>
