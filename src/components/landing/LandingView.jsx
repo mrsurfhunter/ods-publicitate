@@ -24,9 +24,9 @@ export default function LandingView({ onConsult, onAnunturi, onCatalog }) {
 
   const stats = [
     ...STATIC_STATS,
-    { v: social ? formatCount(social.facebook.followers) : "218.000", l: "Urmăritori Facebook" },
-    { v: social ? formatCount(social.instagram.followers) : "18.000", l: "Followers Instagram" },
-    { v: social ? formatCount(social.tiktok.followers) : "24.000", l: "Urmăritori TikTok" },
+    { v: social ? formatCount(social.facebook.followers) : "220.000", l: "Urmăritori Facebook" },
+    { v: social ? formatCount(social.instagram.followers) : "18.609", l: "Followers Instagram" },
+    { v: social ? formatCount(social.tiktok.followers) : "25.000", l: "Urmăritori TikTok" },
   ];
 
   return (

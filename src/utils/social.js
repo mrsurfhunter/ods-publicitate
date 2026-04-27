@@ -3,9 +3,9 @@ const CACHE_KEY = "ods-social-stats";
 const CACHE_TTL = 3600000; // 1 hour
 
 const DEFAULTS = {
-  facebook: { followers: 218000, label: "Urmăritori Facebook" },
+  facebook: { followers: 220000, label: "Urmăritori Facebook" },
   instagram: { followers: 18609, label: "Followers Instagram" },
-  tiktok: { followers: 24000, label: "Urmăritori TikTok" },
+  tiktok: { followers: 25000, label: "Urmăritori TikTok" },
 };
 
 export async function fetchSocialStats() {
