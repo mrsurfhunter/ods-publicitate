@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PKG } from "../../data/packages";
+import { PKG, ADDONS } from "../../data/packages";
 import { useAuth } from "../../context/AuthContext";
 import PurchaseForm from "../purchase/PurchaseForm";
 import LeadCaptureStep from "../auth/LeadCaptureStep";
@@ -75,7 +75,8 @@ export default function CatalogView({ onConsult, onPurchased }) {
     );
   }
 
-  const filtered = filter === 'all' ? PKG : PKG.filter(p => p.cat === filter);
+  const filtered = filter === 'addons' ? [] : filter === 'all' ? PKG : PKG.filter(p => p.cat === filter);
+  const showAddons = filter === 'all' || filter === 'addons';
 
   return (
     <div className="animate-fadeIn">
@@ -84,11 +85,11 @@ export default function CatalogView({ onConsult, onPurchased }) {
           <div className="text-[11px] font-bold text-brand uppercase tracking-[2px] mb-3">Catalog complet</div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-4">Toate pachetele de publicitate</h1>
           <p className="text-slate-500 text-base sm:text-lg max-w-2xl">
-            De la o postare unică pe Facebook până la pachetul Premium 360°. Alege singur sau{' '}
+            De la o postare unică pe Facebook până la pachetul Enterprise. Alege singur sau{' '}
             <button className="font-bold text-slate-900 underline" onClick={onConsult}>treci prin consultare</button>.
           </p>
           <div className="flex gap-2 mt-6 sm:mt-8 flex-wrap">
-            {[{ id: 'all', l: 'Toate' }, { id: 'oneTime', l: 'O singură comandă' }, { id: 'monthly', l: 'Pachete lunare' }].map(t => (
+            {[{ id: 'all', l: 'Toate' }, { id: 'oneTime', l: 'O singură comandă' }, { id: 'monthly', l: 'Pachete lunare' }, { id: 'addons', l: 'Add-ons' }].map(t => (
               <button key={t.id} onClick={() => setFilter(t.id)}
                 className={`px-4 py-2 text-xs font-black uppercase tracking-wider border-2 transition-all ${
                   filter === t.id ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-500 border-slate-200 hover:border-slate-900'
@@ -99,10 +100,38 @@ export default function CatalogView({ onConsult, onPurchased }) {
           </div>
         </div>
       </div>
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10 grid lg:grid-cols-2 gap-4 sm:gap-5">
-        {filtered.map(p => (
-          <CatalogCard key={p.id} pkg={p} onPurchased={onPurchased} />
-        ))}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+        {filtered.length > 0 && (
+          <div className="grid lg:grid-cols-2 gap-4 sm:gap-5">
+            {filtered.map(p => (
+              <CatalogCard key={p.id} pkg={p} onPurchased={onPurchased} />
+            ))}
+          </div>
+        )}
+        {showAddons && (
+          <>
+            {filter === 'all' && <div className="text-[11px] font-bold text-slate-400 uppercase tracking-[2px] mt-10 mb-4">Add-ons</div>}
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+              {ADDONS.map(addon => (
+                <div key={addon.id} className="bg-white border-2 border-slate-200 p-5 sm:p-6">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 bg-slate-100 text-slate-600 flex items-center justify-center flex-shrink-0">
+                      <i className={`fas ${addon.icon}`}></i>
+                    </div>
+                    <h3 className="text-base font-black text-slate-900">{addon.name}</h3>
+                  </div>
+                  <p className="text-sm text-slate-500 mb-4 leading-relaxed">{addon.desc}</p>
+                  <div className="flex items-baseline gap-1.5 mb-2">
+                    {addon.sub && <span className="text-sm text-slate-400 line-through font-bold">{addon.price.toLocaleString("ro")}</span>}
+                    <span className="text-2xl font-black text-slate-900">{(addon.sub || addon.price).toLocaleString("ro")} lei</span>
+                    <span className="text-xs font-bold text-slate-500">{addon.unit}</span>
+                  </div>
+                  {addon.sub && <div className="text-[10px] font-black text-brand uppercase tracking-wider">Preț abonament</div>}
+                </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
