@@ -16,6 +16,7 @@ services:
       - WP_PASS=${WP_PASS}
       - FIRMEAPI_KEY=${FIRMEAPI_KEY}
       - CORS_ORIGIN=${CORS_ORIGIN}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
     volumes:
       - ods-data:/app/data
     healthcheck:

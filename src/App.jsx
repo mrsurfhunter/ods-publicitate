@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { ConfigProvider, useConfig } from "./context/ConfigContext";
 import { sld } from "./utils/storage";
 import { saveOrderToServer } from "./utils/orders";
 import TopBar from "./components/layout/TopBar";
@@ -11,13 +12,14 @@ import RecommendView from "./components/recommend/RecommendView";
 import CatalogView from "./components/catalog/CatalogView";
 import AnunturiView from "./components/anunturi/AnunturiView";
 import DashboardView from "./components/dashboard/DashboardView";
+import AdminView from "./components/admin/AdminView";
 import LoginModal from "./components/auth/LoginModal";
 import ErrorBoundary from "./components/shared/ErrorBoundary";
 import { ToastProvider } from "./components/shared/Toast";
-import { PKG } from "./data/packages";
 
 function AppInner() {
   const { user, isAuthenticated } = useAuth();
+  const { packages } = useConfig();
   const [view, setView] = useState("landing");
   const [recommendation, setRecommendation] = useState(null);
   const [dashOrder, setDashOrder] = useState(null);
@@ -37,16 +39,22 @@ function AppInner() {
           setTimeout(() => document.getElementById("anunturi")?.scrollIntoView({ behavior: "smooth" }), 300);
         }
       }
+      if (hash === "admin") {
+        setView("admin");
+      }
     };
     handleHash();
     window.addEventListener("hashchange", handleHash);
     return () => window.removeEventListener("hashchange", handleHash);
   }, [view]);
 
-  const goHome = () => { setView("landing"); setDashOrder(null); setRecommendation(null); };
+  const goHome = () => { setView("landing"); setDashOrder(null); setRecommendation(null); window.location.hash = ""; };
 
   const handleConsultResult = (result) => {
-    if (result) {
+    if (result?.tiers) {
+      setRecommendation(result);
+      setView("recommend");
+    } else if (result) {
       setRecommendation(result);
       setView("recommend");
     } else {
@@ -55,14 +63,16 @@ function AppInner() {
   };
 
   const handleChatFinish = (pkgId) => {
-    const pkg = PKG.find(p => p.id === pkgId);
+    const pkg = packages.find(p => p.id === pkgId);
     if (pkg) {
       setRecommendation({
-        primary: pkgId,
-        secondary: null,
-        reasoning: `Pe baza conversației, pachetul ${pkg.name} este cel mai potrivit pentru afacerea ta.`,
-        primaryBenefits: pkg.inc.slice(0, 4).map(x => x.w + (x.d ? " — " + x.d : "")),
-        secondaryBenefits: [],
+        tiers: [{
+          id: pkgId, tier: "recommended", label: "Recomandat pentru tine",
+          reasoning: `Pe baza conversației, ${pkg.name} este cel mai potrivit pentru afacerea ta.`,
+          benefits: pkg.inc.slice(0, 4).map(x => x.w + (x.d ? " — " + x.d : "")),
+          addons: [],
+        }],
+        summary: `Pe baza conversației, pachetul ${pkg.name} este cel mai potrivit pentru afacerea ta.`,
       });
       setView("recommend");
     }
@@ -94,14 +104,16 @@ function AppInner() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <TopBar
-        myOrders={myOrders}
-        onHome={goHome}
-        onOpenOrder={handleOpenOrder}
-        onLogin={() => setShowLogin(true)}
-        onConsult={() => setView("consult")}
-        onDashboard={myOrders.length > 0 ? () => { setDashOrder(myOrders[0]); setView("dashboard"); } : undefined}
-      />
+      {view !== "admin" && (
+        <TopBar
+          myOrders={myOrders}
+          onHome={goHome}
+          onOpenOrder={handleOpenOrder}
+          onLogin={() => setShowLogin(true)}
+          onConsult={() => setView("consult")}
+          onDashboard={myOrders.length > 0 ? () => { setDashOrder(myOrders[0]); setView("dashboard"); } : undefined}
+        />
+      )}
 
       {view === "landing" && (
         <LandingView
@@ -147,6 +159,10 @@ function AppInner() {
         <DashboardView initOrder={dashOrder} onBack={goHome} />
       )}
 
+      {view === "admin" && (
+        <AdminView onBack={goHome} />
+      )}
+
       {showFooter && <Footer />}
 
       {showLogin && (
@@ -160,9 +176,11 @@ export default function App() {
   return (
     <ErrorBoundary>
       <AuthProvider>
-        <ToastProvider>
-          <AppInner />
-        </ToastProvider>
+        <ConfigProvider>
+          <ToastProvider>
+            <AppInner />
+          </ToastProvider>
+        </ConfigProvider>
       </AuthProvider>
     </ErrorBoundary>
   );

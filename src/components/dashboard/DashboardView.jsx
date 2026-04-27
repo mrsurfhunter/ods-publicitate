@@ -1,18 +1,20 @@
 import { useState } from "react";
-import { PKG, ODS } from "../../data/packages";
+import { ODS } from "../../data/packages";
 import { sld, ssv } from "../../utils/storage";
 import { wpUploadImage, wpCreateDraft } from "../../utils/wordpress";
 import { useAuth } from "../../context/AuthContext";
+import { useConfig } from "../../context/ConfigContext";
 import ImageUploader from "../shared/ImageUploader";
 
 export default function DashboardView({ initOrder, onBack }) {
   const { user } = useAuth();
+  const { packages, addons } = useConfig();
   const [order, setOrder] = useState(initOrder);
   const [repostDay, setRD] = useState("");
   const [repostTime, setRT] = useState("orice");
   const [wpLoading, setWpL] = useState(false);
   const [wpMsg, setWpMsg] = useState(null);
-  const pkg = PKG.find(p => p.id === order.packageId);
+  const pkg = packages.find(p => p.id === order.packageId);
 
   const upd = async (changes) => {
     const u = { ...order, ...changes }; setOrder(u);
@@ -158,19 +160,20 @@ export default function DashboardView({ initOrder, onBack }) {
             </div>
           )}
 
-          {/* UPSELL */}
+          {/* UPSELL — real add-ons */}
           <div className="bg-brand text-white p-4 sm:p-6 md:p-8 border-2 border-red-700">
-            <h3 className="text-lg sm:text-xl font-black uppercase tracking-tight mb-3">Vrei și mai multă vizibilitate?</h3>
+            <h3 className="text-lg sm:text-xl font-black uppercase tracking-tight mb-3">Adaugă extra la campania ta</h3>
             <p className="text-red-100 font-medium mb-6 max-w-2xl text-sm">
-              Abonează-te pentru minim 3 luni și primești <span className="font-black text-white">20% reducere</span> la abonamentul plătit în avans.
+              Crește impactul campaniei cu postări suplimentare, boost Meta Ads sau video profesional.
             </p>
             <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3">
-              <button className="px-6 py-3 bg-white text-red-700 font-black uppercase text-xs tracking-widest hover:bg-slate-100 transition-all border-2 border-white">
-                Abonare 3 luni (-20%)
-              </button>
-              <button className="px-6 py-3 border-2 border-white text-white font-black uppercase text-xs tracking-widest hover:bg-white/10 transition-all">
-                Adaugă Postări
-              </button>
+              {addons.filter(a => a.active !== false).slice(0, 3).map(addon => (
+                <a key={addon.id} href={"https://wa.me/40746752240?text=Salut, vreau să adaug " + encodeURIComponent(addon.name) + " la comanda " + (order.id || "").toUpperCase()} target="_blank" rel="noopener"
+                  className="px-5 py-3 bg-white/10 border-2 border-white/30 text-white font-black uppercase text-xs tracking-widest hover:bg-white/20 transition-all flex items-center gap-2">
+                  <i className={`fas ${addon.icon}`}></i>
+                  {addon.name} — {addon.price.toLocaleString("ro")} lei{addon.unit}
+                </a>
+              ))}
             </div>
           </div>
         </div>

@@ -1,20 +1,35 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { callAI } from "../../utils/ai";
-import { PKG } from "../../data/packages";
-
-const SYSTEM_PROMPT = `Esti consultant media pentru Ora de Sibiu (oradesibiu.ro), cea mai citita publicatie din Sibiu.
-Ajuta clientul sa aleaga pachetul potrivit punand intrebari pe rand (cate una):
-1. Ce vrei sa promovezi?
-2. Care e publicul tinta?
-3. Ce te diferentiaza de concurenta?
-4. Ai materiale (foto/video)?
-
-Pachete disponibile: social-single (500 lei, 1 postare FB+IG), social-pack (700 lei/luna, 4 postari), mini-business (1200 lei/luna, articol + social), advertorial (1800 lei/luna, articol premium + social), banner (1800 lei/luna, 1.5M afisari), premium (3000 lei/luna, tot).
-
-Dupa ce ai suficiente informatii, recomanda un pachet specific mentionand ID-ul exact (ex: "social-pack" sau "advertorial").
-Fii concis, profesional si prietenos. Raspunde in romana. Max 2-3 propozitii per mesaj.`;
+import { useConfig } from "../../context/ConfigContext";
 
 export default function ChatConsultant({ onFinish }) {
+  const { packages, addons } = useConfig();
+
+  const systemPrompt = useMemo(() => {
+    const pkgList = packages.map(p =>
+      `${p.id} (${p.price} lei${p.sub ? ', ' + p.sub + ' la abo' : ''}, ${p.cat === 'monthly' ? 'lunar' : 'o dată'}): ${p.headline}`
+    ).join('\n');
+    const addonList = addons.map(a => `${a.id} (${a.price} lei${a.unit}): ${a.desc}`).join('\n');
+
+    return `Ești consultant media pentru Ora de Sibiu (oradesibiu.ro), cea mai citită publicație din Sibiu.
+Ajută clientul să aleagă pachetul potrivit punând întrebări pe rând (câte una):
+1. Ce vrei să promovezi?
+2. Care e publicul țintă?
+3. Ce te diferențiază de concurență?
+4. Ai materiale (foto/video)?
+
+Pachete disponibile:
+${pkgList}
+
+Add-ons disponibile (se adaugă la orice pachet):
+${addonList}
+
+Postările suplimentare (addon-post) au preț degresiv: 250 lei/1, 200 lei/buc la 2+, 150 lei/buc la 3+.
+
+După ce ai suficiente informații, recomandă un pachet specific menționând ID-ul exact (ex: "business" sau "articol-start").
+Fii concis, profesional și prietenos. Răspunde în română. Max 2-3 propoziții per mesaj.`;
+  }, [packages, addons]);
+
   const [messages, setMessages] = useState([
     { role: "assistant", text: "Bună! Cu ce te ocupi și ce vrei să obții — mai mulți clienți, vizibilitate sau promovarea unui eveniment?" }
   ]);
@@ -36,11 +51,11 @@ export default function ChatConsultant({ onFinish }) {
     setLoading(true);
 
     const history = updated.map(m => `${m.role === "user" ? "Client" : "Consultant"}: ${m.text}`).join("\n");
-    const response = await callAI(SYSTEM_PROMPT, history + "\nConsultant:");
+    const response = await callAI(systemPrompt, history + "\nConsultant:");
 
     if (response) {
       setMessages(prev => [...prev, { role: "assistant", text: response }]);
-      const pkgIds = PKG.map(p => p.id);
+      const pkgIds = packages.map(p => p.id);
       for (const id of pkgIds) {
         if (response.toLowerCase().includes(id)) {
           setSuggestedPkg(id);

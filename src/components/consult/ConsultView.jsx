@@ -4,7 +4,7 @@ import { callConsult } from "../../utils/ai";
 import { useAuth } from "../../context/AuthContext";
 import LeadCaptureStep from "../auth/LeadCaptureStep";
 
-const TOTAL_DOTS = 5;
+const TOTAL_DOTS = 6; // 5 questions + 1 lead capture
 const LEAD_STEP = 2;
 
 export default function ConsultView({ onResult, onBack }) {
