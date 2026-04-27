@@ -344,7 +344,8 @@ Reguli per tier:
 Reguli per tip afacere:
 - Restaurante/HoReCa → accent pe visual: Reels, Stories, poze meniu. Sugerează addon-video.
 - Servicii/Imobiliare → accent pe SEO: articole, prezență Google. Recomandă pachete cu articol.
-- Evenimente → one-time packages (social-single, boost-express) + addon-event.
+- Evenimente → OBLIGATORIU recomandă pachetele de eveniment (eveniment-start, eveniment-plus, eveniment-premium). Include evidențierea în recomandările de weekend. Sugerează addon-echipa și addon-livestream.
+- Lansări/Conferințe → eveniment-plus sau eveniment-premium + addon-echipa + addon-livestream.
 - Sănătate → conținut de încredere: articole profesionale, reputație.
 
 Reguli per obiectiv:
@@ -359,9 +360,14 @@ Reguli per materiale (hasContent):
 - have-all → orice pachet, menționează upload ușor în dashboard.
 
 Reguli per timeline:
-- urgent/once → one-time packages (social-single, boost-express). NU recomanda abonamente.
-- few-months → abonamente lunare, menționează prețul sub.
+- urgent/once → one-time packages (social-single, boost-express, sau pachete eveniment dacă e eveniment). NU recomanda abonamente.
+- few-months → abonamente lunare, menționează prețul abonament.
 - ongoing → abonamente pe termen lung, accent pe economie la abonament.
+
+Addon-uri speciale:
+- addon-echipa: prezență reporter+fotograf la eveniment, 500 lei (+20% weekend/după 17:00).
+- addon-livestream: transmisie live pe FB+YT Ora de Sibiu, 1000 lei/30 min, degresiv la 800 lei la 2+ blocuri (+20% weekend/după 17:00).
+- addon-eveniment-recap: articol recap post-eveniment cu galerie, 600 lei.
 
 Reguli importante:
 - EXACT 4 tiere, fiecare cu ID de pachet VALID.
@@ -381,7 +387,28 @@ function getValidIds() {
 function fallbackRecommendation({ businessType, goal, budget, timeline, hasContent }) {
   const cfg = readConfig();
   const pkgs = cfg.packages.filter(p => p.active !== false);
-  const ladder = pkgs.sort((a, b) => a.price - b.price);
+  const isEvent = businessType === 'eveniment';
+
+  // For events, use only event packages
+  const eventPkgs = pkgs.filter(p => p.id.startsWith('eveniment-')).sort((a, b) => a.price - b.price);
+  if (isEvent && eventPkgs.length >= 2) {
+    const genericBenefits = (pkg) => pkg.inc.slice(0, 3).map(x => x.w + (x.d ? ' — ' + x.d : ''));
+    const s = eventPkgs[0];
+    const r = eventPkgs[Math.min(1, eventPkgs.length - 1)];
+    const p = eventPkgs[Math.min(2, eventPkgs.length - 1)];
+    const m = eventPkgs[eventPkgs.length - 1];
+    return {
+      tiers: [
+        { id: s.id, tier: 'start', label: 'Bun pentru start', reasoning: `${s.name} oferă promovare de bază cu postări și evidențiere weekend.`, benefits: genericBenefits(s), addons: [] },
+        { id: r.id, tier: 'recommended', label: 'Recomandat pentru evenimentul tău', reasoning: `${r.name} include articol dedicat + campanie social completă + push notification.`, benefits: genericBenefits(r), addons: ['addon-echipa'] },
+        { id: p.id, tier: 'popular', label: 'Ales de 67% din organizatori', reasoning: `${p.name} asigură acoperire completă a evenimentului pe toate canalele.`, benefits: genericBenefits(p), addons: ['addon-echipa', 'addon-livestream'] },
+        { id: m.id, tier: 'max', label: 'Maximum impact', reasoning: `${m.name} include tot: articole, banner, push, newsletter + recap post-eveniment.`, benefits: genericBenefits(m), addons: ['addon-echipa', 'addon-livestream'] },
+      ],
+      summary: 'Pentru promovarea evenimentului, recomandăm pachete dedicate care includ evidențiere în recomandările de weekend și campanii pre/post eveniment.',
+    };
+  }
+
+  const ladder = pkgs.filter(p => !p.id.startsWith('eveniment-')).sort((a, b) => a.price - b.price);
 
   const isOnce = timeline === 'once' || timeline === 'urgent';
 
@@ -391,7 +418,7 @@ function fallbackRecommendation({ businessType, goal, budget, timeline, hasConte
   else if (budget === '1000-2000') centerIdx = Math.min(3, ladder.length - 1);
   else if (budget === '2000-3500') centerIdx = Math.min(5, ladder.length - 1);
   else if (budget === 'peste-3500') centerIdx = Math.min(6, ladder.length - 1);
-  else centerIdx = Math.min(4, ladder.length - 1); // nu-stiu → business
+  else centerIdx = Math.min(4, ladder.length - 1);
 
   if (isOnce && centerIdx > 1) centerIdx = 1;
 
@@ -410,7 +437,6 @@ function fallbackRecommendation({ businessType, goal, budget, timeline, hasConte
     const adds = [];
     if (hasContent === 'have-nothing') adds.push('addon-video');
     if (goal === 'more-clients' || goal === 'launch') adds.push('addon-boost');
-    if (businessType === 'eveniment') adds.push('addon-event');
     return adds.slice(0, 2);
   };
 

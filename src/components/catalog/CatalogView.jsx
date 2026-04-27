@@ -73,6 +73,11 @@ function AddonCard({ addon }) {
       {addon.sub && (
         <div className="text-[10px] font-bold text-brand mt-1">{addon.sub.toLocaleString("ro")} lei la abonament</div>
       )}
+      {addon.weekendExtra && (
+        <div className="text-[10px] font-bold text-amber-600 mt-1">
+          <i className="fas fa-clock mr-0.5"></i>+{addon.weekendExtra}% weekend / după ora 17
+        </div>
+      )}
       <div className="mt-4 text-[10px] text-slate-400 font-medium">
         <i className="fas fa-info-circle mr-1"></i> Se adaugă la orice pachet în momentul comenzii
       </div>
