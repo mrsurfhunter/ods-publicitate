@@ -643,6 +643,69 @@ app.post('/api/wp/draft', async (req, res) => {
   }
 });
 
+// ── Ad copy generation (GPT-4o-mini) ──
+app.post('/api/ads/generate', async (req, res) => {
+  const openaiKey = process.env.OPENAI_API_KEY;
+  if (!openaiKey) return res.status(503).json({ error: 'OpenAI not configured' });
+
+  const { businessName, industry, offer, tone, type, details, language } = req.body || {};
+  if (!businessName) return res.status(400).json({ error: 'Missing businessName' });
+
+  const typeInstructions = {
+    'facebook': 'Postare Facebook: 2-4 propoziții captivante, include un CTA (call-to-action) clar. Max 300 caractere per variantă. Include 2-3 emoji-uri relevante.',
+    'instagram': 'Caption Instagram: text captivant + 15-20 hashtag-uri relevante (mixte: populare + nișă + locale Sibiu). Max 2200 caractere. Include emoji-uri.',
+    'story': 'Text scurt pentru Story FB/IG: max 2 rânduri, impact maxim, text mare și vizibil. Include 1-2 emoji-uri.',
+    'article-title': 'Titlu articol publicitar: 5-8 cuvinte, SEO-friendly, captivant, include orașul Sibiu dacă e relevant. Generează 3 variante de titlu.',
+    'article-intro': 'Paragraf introductiv articol publicitar: 3-4 propoziții, informativ, SEO-optimizat, tonul unei publicații locale de calitate. 80-120 cuvinte.',
+    'google-ad': 'Text Google Ads: Headline (max 30 caractere) + Description (max 90 caractere). Format strict.',
+    'promo-sms': 'SMS promoțional: max 160 caractere, include oferta și CTA. Direct și concis.',
+  };
+
+  const toneMap = {
+    'professional': 'Ton profesional, serios, de încredere.',
+    'friendly': 'Ton prietenos, cald, conversațional.',
+    'urgent': 'Ton urgent, FOMO, ofertă limitată, acționează acum.',
+    'playful': 'Ton jucăuș, creativ, cu umor subtil.',
+    'luxury': 'Ton premium, exclusivist, de lux.',
+    'local': 'Ton local, comunitar, "de-ai noștri", accent pe Sibiu.',
+  };
+
+  const systemPrompt = `Ești cel mai bun copywriter din România, specializat pe publicitate locală în Sibiu.
+Scrii pentru publicația Ora de Sibiu (oradesibiu.ro) — cea mai citită publicație online din Sibiu.
+
+${typeInstructions[type] || typeInstructions['facebook']}
+${toneMap[tone] || toneMap['professional']}
+
+Generează EXACT 3 variante diferite, separate prin "---".
+Fiecare variantă trebuie să fie complet diferită ca abordare (nu doar reformulări).
+Scrie în ${language === 'en' ? 'engleză' : 'română'}.
+Nu include explicații, nu scrie "Varianta 1:", doar textele separate prin "---".`;
+
+  const userMsg = `Afacere: ${businessName}
+${industry ? `Industrie: ${industry}` : ''}
+${offer ? `Oferta/produsul: ${offer}` : ''}
+${details ? `Detalii: ${details}` : ''}`;
+
+  try {
+    const openai = new OpenAI({ apiKey: openaiKey });
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      max_tokens: 800,
+      temperature: 0.8,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userMsg },
+      ],
+    });
+    const raw = completion.choices[0]?.message?.content?.trim() || '';
+    const variants = raw.split(/\n*---\n*/).map(v => v.trim()).filter(Boolean);
+    res.json({ variants, model: 'gpt-4o-mini' });
+  } catch (e) {
+    console.error('Ad copy error:', e.message);
+    res.status(500).json({ error: 'Generation failed: ' + e.message });
+  }
+});
+
 // ── Banner generation (OpenAI GPT Image) ──
 const BANNER_CREDITS_FILE = path.join(__dirname, 'data', 'banner-credits.json');
 

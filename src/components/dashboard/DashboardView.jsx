@@ -6,6 +6,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useConfig } from "../../context/ConfigContext";
 import ImageUploader from "../shared/ImageUploader";
 import BannerGenerator from "./BannerGenerator";
+import AdCopyWriter from "./AdCopyWriter";
 
 export default function DashboardView({ initOrder, onBack }) {
   const { user } = useAuth();
@@ -160,6 +161,9 @@ export default function DashboardView({ initOrder, onBack }) {
               )}
             </div>
           )}
+
+          {/* AD COPY WRITER */}
+          <AdCopyWriter businessName={order.company || order.name} />
 
           {/* BANNER GENERATOR */}
           <BannerGenerator orderId={order.id} businessName={order.company || order.name} />
