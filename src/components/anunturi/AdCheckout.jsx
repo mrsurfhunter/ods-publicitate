@@ -27,7 +27,9 @@ export default function AdCheckout({ ad, onClose, onDone }) {
     const order = {
       id: gid(), ...f, packageId: "anunt-" + ad.cat.id,
       packageName: "Anunț: " + ad.cat.label + " (" + ad.days + "z)",
-      price: ad.pr.total, payMethod: pay, date: new Date().toISOString(),
+      price: ad.pr.total, tva, total,
+      payMethod: pay, date: new Date().toISOString(),
+      status: pay === "card" ? "pending" : "proforma",
       isAnunt: true, anuntText: ad.text, anuntDays: ad.days, anuntWords: ad.words,
       anuntCategory: ad.cat.id, verified: true, converted: false,
     };
@@ -38,6 +40,17 @@ export default function AdCheckout({ ad, onClose, onDone }) {
       register({ name: f.name, email: f.email, phone: f.phone, company: f.company, source: "anunturi" });
     } else if (isAuthenticated) {
       postLead({ ...user, source: "anunturi", converted: true });
+    }
+
+    if (pay === "card") {
+      try {
+        const r = await fetch("/api/checkout/create-session", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ order }),
+        });
+        const data = await r.json();
+        if (data.url) { window.location.href = data.url; return; }
+      } catch {}
     }
 
     toast("Anunțul a fost înregistrat cu succes!", "success");

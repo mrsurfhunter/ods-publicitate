@@ -81,13 +81,37 @@ export default function PurchaseForm({ pkg, suggestedAddons = [], onClose, onDon
       price: basePrice, addons: orderAddons, addonTotal,
       totalBeforeTax: subtotal, tva, total,
       payMethod: pay, date: new Date().toISOString(), subscription: f.sub,
-      status: "paid", contentChoice: null, articleTitle: "", articleText: "",
+      status: pay === "card" ? "pending" : "proforma",
+      contentChoice: null, articleTitle: "", articleText: "",
       featuredImg: null, gallery: [], reposts: [], wpDraftId: null, wpDraftUrl: null,
       stats: { views: 0, clicks: 0, shares: 0, fbReach: 0, igReach: 0 },
     };
     const ex = await sld("ods-orders", []);
     await ssv("ods-orders", [order, ...ex]);
     await saveOrderToServer(order);
+
+    if (pay === "card") {
+      try {
+        const r = await fetch("/api/checkout/create-session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ order }),
+        });
+        const data = await r.json();
+        if (data.url) {
+          window.location.href = data.url;
+          return;
+        }
+        toast("Plata cu cardul nu este disponibilă momentan. Folosește transfer bancar.", "error");
+        setSubmitting(false);
+        return;
+      } catch {
+        toast("Eroare la inițierea plății. Încercați din nou.", "error");
+        setSubmitting(false);
+        return;
+      }
+    }
+
     toast("Comanda a fost plasată cu succes!", "success");
     setSubmitting(false);
     onDone(order);

@@ -18,6 +18,17 @@ services:
       - FIRMEAPI_KEY=${FIRMEAPI_KEY}
       - CORS_ORIGIN=${CORS_ORIGIN}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      - APP_URL=${APP_URL}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_SECURE=${SMTP_SECURE:-false}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
+      - SMTP_FROM=${SMTP_FROM}
+      - NOTIFY_EMAIL=${NOTIFY_EMAIL}
+      - NOTIFY_WEBHOOK=${NOTIFY_WEBHOOK}
     volumes:
       - ods-data:/app/data
     healthcheck:

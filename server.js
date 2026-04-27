@@ -1,6 +1,8 @@
 import express from 'express';
 import Anthropic from '@anthropic-ai/sdk';
 import OpenAI from 'openai';
+import Stripe from 'stripe';
+import nodemailer from 'nodemailer';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
@@ -8,6 +10,8 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 
+// Stripe webhook needs raw body — must be before express.json()
+app.use('/api/checkout/webhook', express.raw({ type: 'application/json' }));
 app.use(express.json({ limit: '2mb' }));
 
 // Serve Vite build — hashed assets get long cache
@@ -896,6 +900,224 @@ app.post('/api/banners/purchase', (req, res) => {
   writeBannerCredits(credits);
   const freeRemaining = Math.max(0, FREE_BANNER_SETS + entry.paidSets - entry.setsUsed);
   res.json({ ok: true, paidSets: entry.paidSets, freeRemaining });
+});
+
+// ── Orders storage + notifications ──
+const ORDERS_FILE = path.join(__dirname, 'data', 'orders.json');
+
+function readOrders() {
+  if (!fs.existsSync(ORDERS_FILE)) return [];
+  try { return JSON.parse(fs.readFileSync(ORDERS_FILE, 'utf8')); } catch { return []; }
+}
+function writeOrders(orders) {
+  const dir = path.dirname(ORDERS_FILE);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders, null, 2));
+}
+
+async function notifyNewOrder(order) {
+  const cfg = readConfig();
+  const pkg = cfg.packages?.find(p => p.id === order.packageId);
+  const addonsText = (order.addons || []).map(a => `  • ${a.name} ×${a.qty} — ${a.unitPrice * a.qty} lei`).join('\n');
+
+  const subject = `🛒 Comandă nouă: ${order.packageName || pkg?.name || order.packageId} — ${order.company || order.name}`;
+  const text = `COMANDĂ NOUĂ PE PUBLICITATE.ORADESIBIU.RO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ID: ${order.id}
+Data: ${new Date(order.date).toLocaleString('ro-RO')}
+
+CLIENT
+Nume: ${order.name}
+Companie: ${order.company || '—'}
+CUI: ${order.cui || '—'}
+Telefon: ${order.phone}
+Email: ${order.email || '—'}
+
+PACHET
+${order.packageName || pkg?.name || order.packageId}
+Preț: ${(order.price || 0).toLocaleString('ro')} lei
+${addonsText ? 'Add-ons:\n' + addonsText : ''}
+${order.addonTotal ? 'Total add-ons: ' + order.addonTotal.toLocaleString('ro') + ' lei' : ''}
+TVA: ${(order.tva || Math.round((order.price || 0) * 0.19)).toLocaleString('ro')} lei
+TOTAL: ${(order.total || Math.round((order.price || 0) * 1.19)).toLocaleString('ro')} lei
+
+Plată: ${order.payMethod === 'card' ? 'Card (Stripe)' : 'Transfer bancar (proformă)'}
+${order.subscription ? 'Abonament: DA' : ''}
+${order.isAnunt ? '\nANUNȚ:\nCategorie: ' + (order.anuntCategory || '') + '\nZile: ' + (order.anuntDays || '') + '\nText: ' + (order.anuntText || '').substring(0, 300) : ''}
+${order.contentChoice ? 'Conținut: ' + ({ propriu: 'Trimite clientul', marina: 'Marina AI', redactie: 'Redacția ODS' }[order.contentChoice] || order.contentChoice) : ''}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
+
+  // Email notification
+  const smtpHost = process.env.SMTP_HOST;
+  const smtpUser = process.env.SMTP_USER;
+  const smtpPass = process.env.SMTP_PASS;
+  const notifyEmail = process.env.NOTIFY_EMAIL;
+
+  if (smtpHost && smtpUser && smtpPass && notifyEmail) {
+    try {
+      const transporter = nodemailer.createTransport({
+        host: smtpHost,
+        port: parseInt(process.env.SMTP_PORT || '587'),
+        secure: process.env.SMTP_SECURE === 'true',
+        auth: { user: smtpUser, pass: smtpPass },
+      });
+      await transporter.sendMail({
+        from: process.env.SMTP_FROM || smtpUser,
+        to: notifyEmail,
+        subject,
+        text,
+      });
+      console.log('Order notification email sent to', notifyEmail);
+    } catch (e) {
+      console.error('Email notification failed:', e.message);
+    }
+  }
+
+  // Webhook notification (n8n, Zapier, etc.)
+  const webhookUrl = process.env.NOTIFY_WEBHOOK;
+  if (webhookUrl) {
+    try {
+      await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ event: 'new_order', order, package: pkg || null, timestamp: new Date().toISOString() }),
+      });
+      console.log('Order webhook sent to', webhookUrl);
+    } catch (e) {
+      console.error('Webhook notification failed:', e.message);
+    }
+  }
+}
+
+app.post('/api/orders', async (req, res) => {
+  const order = req.body;
+  if (!order || !order.id) return res.status(400).json({ error: 'Invalid order' });
+  const orders = readOrders();
+  const existing = orders.findIndex(o => o.id === order.id);
+  if (existing >= 0) orders[existing] = order;
+  else orders.unshift(order);
+  writeOrders(orders);
+  notifyNewOrder(order).catch(() => {});
+  res.json({ ok: true });
+});
+
+app.get('/api/orders', (req, res) => {
+  const email = req.query.email;
+  const orders = readOrders();
+  if (email) return res.json(orders.filter(o => o.email === email));
+  res.json(orders);
+});
+
+app.get('/api/admin/orders', (req, res) => {
+  if (req.headers['x-admin-key'] !== process.env.ADMIN_PASSWORD) return res.status(401).json({ error: 'Unauthorized' });
+  res.json(readOrders());
+});
+
+app.put('/api/admin/orders/:id', (req, res) => {
+  if (req.headers['x-admin-key'] !== process.env.ADMIN_PASSWORD) return res.status(401).json({ error: 'Unauthorized' });
+  const orders = readOrders();
+  const idx = orders.findIndex(o => o.id === req.params.id);
+  if (idx < 0) return res.status(404).json({ error: 'Order not found' });
+  orders[idx] = { ...orders[idx], ...req.body };
+  writeOrders(orders);
+  res.json(orders[idx]);
+});
+
+// ── Stripe payment ──
+const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY) : null;
+
+app.post('/api/checkout/create-session', async (req, res) => {
+  if (!stripe) return res.status(503).json({ error: 'Stripe not configured' });
+  const { order } = req.body;
+  if (!order?.id) return res.status(400).json({ error: 'Missing order' });
+
+  const cfg = readConfig();
+  const pkg = cfg.packages?.find(p => p.id === order.packageId);
+  const lineItems = [];
+
+  lineItems.push({
+    price_data: {
+      currency: 'ron',
+      product_data: { name: order.packageName || pkg?.name || 'Pachet ODS' },
+      unit_amount: Math.round((order.price || 0) * 100),
+    },
+    quantity: 1,
+  });
+
+  if (order.addons?.length) {
+    for (const addon of order.addons) {
+      lineItems.push({
+        price_data: {
+          currency: 'ron',
+          product_data: { name: addon.name },
+          unit_amount: Math.round((addon.unitPrice || 0) * 100),
+        },
+        quantity: addon.qty || 1,
+      });
+    }
+  }
+
+  // Add TVA as a separate line
+  const tva = order.tva || Math.round((order.price || 0) * 0.19);
+  if (tva > 0) {
+    lineItems.push({
+      price_data: {
+        currency: 'ron',
+        product_data: { name: 'TVA (19%)' },
+        unit_amount: Math.round(tva * 100),
+      },
+      quantity: 1,
+    });
+  }
+
+  try {
+    const baseUrl = process.env.APP_URL || `${req.protocol}://${req.get('host')}`;
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: lineItems,
+      mode: 'payment',
+      customer_email: order.email || undefined,
+      metadata: { orderId: order.id },
+      success_url: `${baseUrl}/#dashboard?paid=1`,
+      cancel_url: `${baseUrl}/#catalog`,
+    });
+    res.json({ url: session.url, sessionId: session.id });
+  } catch (e) {
+    console.error('Stripe session error:', e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.post('/api/checkout/webhook', async (req, res) => {
+  if (!stripe) return res.status(503).end();
+  const sig = req.headers['stripe-signature'];
+  const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  if (!endpointSecret) return res.status(503).end();
+
+  let event;
+  try {
+    event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+  } catch (e) {
+    console.error('Stripe webhook signature failed:', e.message);
+    return res.status(400).send('Webhook Error');
+  }
+
+  if (event.type === 'checkout.session.completed') {
+    const session = event.data.object;
+    const orderId = session.metadata?.orderId;
+    if (orderId) {
+      const orders = readOrders();
+      const idx = orders.findIndex(o => o.id === orderId);
+      if (idx >= 0) {
+        orders[idx].status = 'paid';
+        orders[idx].stripeSessionId = session.id;
+        orders[idx].paidAt = new Date().toISOString();
+        writeOrders(orders);
+        console.log('Order', orderId, 'marked as paid via Stripe');
+      }
+    }
+  }
+  res.json({ received: true });
 });
 
 // ── Health check ──
