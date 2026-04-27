@@ -1,12 +1,12 @@
 import { useState } from "react";
 
 const AD_TYPES = [
-  { id: "facebook", l: "Postare Facebook", icon: "fa-brands fa-facebook", desc: "2-4 propoziții + CTA" },
-  { id: "instagram", l: "Caption Instagram", icon: "fa-brands fa-instagram", desc: "Text + 15-20 hashtag-uri" },
+  { id: "facebook", l: "Postare Facebook", icon: "fa-thumbs-up", desc: "2-4 propoziții + CTA" },
+  { id: "instagram", l: "Caption Instagram", icon: "fa-camera-retro", desc: "Text + 15-20 hashtag-uri" },
   { id: "story", l: "Text Story", icon: "fa-mobile-screen", desc: "Max 2 rânduri, impact" },
   { id: "article-title", l: "Titlu Articol", icon: "fa-heading", desc: "SEO, 5-8 cuvinte" },
   { id: "article-intro", l: "Intro Articol", icon: "fa-paragraph", desc: "3-4 propoziții SEO" },
-  { id: "google-ad", l: "Google Ads", icon: "fa-brands fa-google", desc: "Headline + Description" },
+  { id: "google-ad", l: "Google Ads", icon: "fa-magnifying-glass-dollar", desc: "Headline + Description" },
   { id: "promo-sms", l: "SMS Promo", icon: "fa-comment-sms", desc: "Max 160 caractere" },
 ];
 
@@ -91,7 +91,7 @@ export default function AdCopyWriter({ businessName: initBiz }) {
                     ? 'bg-blue-600 text-white border-blue-600'
                     : 'bg-white text-slate-600 border-slate-200 hover:border-blue-400'
                 }`}>
-                <i className={`${t.icon.startsWith('fa-brands') ? t.icon : 'fas ' + t.icon} text-sm mb-1`}></i>
+                <i className={`fas ${t.icon} text-sm mb-1`}></i>
                 <div className="text-xs font-bold">{t.l}</div>
                 <div className={`text-[10px] ${form.type === t.id ? 'text-blue-100' : 'text-slate-400'}`}>{t.desc}</div>
               </button>
