@@ -5,6 +5,7 @@ import { wpUploadImage, wpCreateDraft } from "../../utils/wordpress";
 import { useAuth } from "../../context/AuthContext";
 import { useConfig } from "../../context/ConfigContext";
 import ImageUploader from "../shared/ImageUploader";
+import BannerGenerator from "./BannerGenerator";
 
 export default function DashboardView({ initOrder, onBack }) {
   const { user } = useAuth();
@@ -159,6 +160,9 @@ export default function DashboardView({ initOrder, onBack }) {
               )}
             </div>
           )}
+
+          {/* BANNER GENERATOR */}
+          <BannerGenerator orderId={order.id} businessName={order.company || order.name} />
 
           {/* UPSELL — real add-ons */}
           <div className="bg-brand text-white p-4 sm:p-6 md:p-8 border-2 border-red-700">

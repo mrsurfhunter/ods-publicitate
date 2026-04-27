@@ -1,5 +1,6 @@
 import express from 'express';
 import Anthropic from '@anthropic-ai/sdk';
+import OpenAI from 'openai';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
@@ -640,6 +641,124 @@ app.post('/api/wp/draft', async (req, res) => {
     console.error('WP draft error:', e.message);
     res.json({ success: false, error: e.message });
   }
+});
+
+// ── Banner generation (OpenAI GPT Image) ──
+const BANNER_CREDITS_FILE = path.join(__dirname, 'data', 'banner-credits.json');
+
+function readBannerCredits() {
+  try {
+    if (fs.existsSync(BANNER_CREDITS_FILE)) return JSON.parse(fs.readFileSync(BANNER_CREDITS_FILE, 'utf8'));
+  } catch {}
+  return {};
+}
+
+function writeBannerCredits(data) {
+  const dir = path.dirname(BANNER_CREDITS_FILE);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(BANNER_CREDITS_FILE, JSON.stringify(data, null, 2));
+}
+
+const FREE_BANNER_SETS = 1;
+
+app.get('/api/banners/credits/:orderId', (req, res) => {
+  const credits = readBannerCredits();
+  const entry = credits[req.params.orderId] || { setsUsed: 0, paidSets: 0 };
+  const freeRemaining = Math.max(0, FREE_BANNER_SETS - entry.setsUsed + entry.paidSets);
+  res.json({ setsUsed: entry.setsUsed, paidSets: entry.paidSets, freeRemaining, pricePerSet: 10 });
+});
+
+app.post('/api/banners/generate', async (req, res) => {
+  const openaiKey = process.env.OPENAI_API_KEY;
+  if (!openaiKey) return res.status(503).json({ error: 'OpenAI not configured' });
+
+  const { orderId, businessName, offer, tagline, colors, style, format, imageDescription } = req.body || {};
+  if (!orderId || !businessName) return res.status(400).json({ error: 'Missing orderId or businessName' });
+
+  const credits = readBannerCredits();
+  const entry = credits[orderId] || { setsUsed: 0, paidSets: 0, history: [] };
+  const totalAllowed = FREE_BANNER_SETS + entry.paidSets;
+  if (entry.setsUsed >= totalAllowed) {
+    return res.status(402).json({ error: 'No credits remaining', needPayment: true, pricePerSet: 10 });
+  }
+
+  const sizes = {
+    'square': '1024x1024',
+    'story': '1024x1792',
+    'landscape': '1792x1024',
+  };
+  const size = sizes[format] || '1024x1024';
+
+  const basePrompt = `Professional advertising banner for "${businessName}".
+${offer ? `Promoting: ${offer}.` : ''}
+${tagline ? `Main text on banner: "${tagline}"` : ''}
+${colors ? `Brand colors: ${colors}.` : ''}
+Style: ${style || 'modern, clean, professional'}.
+${imageDescription ? `Include visual elements: ${imageDescription}.` : ''}
+Requirements: Clean design suitable for social media advertising. Text must be legible. Professional marketing look. Romanian market. No watermarks.`;
+
+  const openai = new OpenAI({ apiKey: openaiKey });
+  const banners = [];
+  const variations = [
+    basePrompt + ' Layout: bold and impactful with large text.',
+    basePrompt + ' Layout: elegant and minimal with plenty of white space.',
+    basePrompt + ' Layout: dynamic with diagonal elements and vibrant energy.',
+  ];
+
+  try {
+    const results = await Promise.all(
+      variations.map(prompt =>
+        openai.images.generate({
+          model: 'gpt-image-1',
+          prompt,
+          n: 1,
+          size,
+          quality: 'medium',
+        }).catch(e => {
+          console.error('Banner generation error:', e.message);
+          return null;
+        })
+      )
+    );
+
+    for (const result of results) {
+      if (result?.data?.[0]?.b64_json) {
+        banners.push('data:image/png;base64,' + result.data[0].b64_json);
+      } else if (result?.data?.[0]?.url) {
+        banners.push(result.data[0].url);
+      }
+    }
+
+    if (banners.length === 0) {
+      return res.status(500).json({ error: 'All banner generations failed' });
+    }
+
+    entry.setsUsed++;
+    entry.history.push({
+      date: new Date().toISOString(),
+      businessName, offer, format, count: banners.length,
+    });
+    credits[orderId] = entry;
+    writeBannerCredits(credits);
+
+    const freeRemaining = Math.max(0, FREE_BANNER_SETS + entry.paidSets - entry.setsUsed);
+    res.json({ banners, setsUsed: entry.setsUsed, freeRemaining });
+  } catch (e) {
+    console.error('Banner generation error:', e.message);
+    res.status(500).json({ error: 'Generation failed: ' + e.message });
+  }
+});
+
+app.post('/api/banners/purchase', (req, res) => {
+  const { orderId } = req.body || {};
+  if (!orderId) return res.status(400).json({ error: 'Missing orderId' });
+  const credits = readBannerCredits();
+  const entry = credits[orderId] || { setsUsed: 0, paidSets: 0, history: [] };
+  entry.paidSets++;
+  credits[orderId] = entry;
+  writeBannerCredits(credits);
+  const freeRemaining = Math.max(0, FREE_BANNER_SETS + entry.paidSets - entry.setsUsed);
+  res.json({ ok: true, paidSets: entry.paidSets, freeRemaining });
 });
 
 // ── Health check ──

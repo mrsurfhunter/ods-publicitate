@@ -10,6 +10,7 @@ services:
       - NODE_ENV=production
       - PORT=3001
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
       - AI_MODEL=${AI_MODEL:-claude-sonnet-4-20250514}
       - WP_URL=${WP_URL:-https://www.oradesibiu.ro}
       - WP_USER=${WP_USER}
