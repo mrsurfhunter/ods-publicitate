@@ -217,12 +217,12 @@ export function getAddonUnitPrice(addon, qty = 1) {
 }
 
 export const AD_CAT = [
-  { id: "aviz-mediu", label: "Aviz de mediu", icon: "\u{1F33F}" },
-  { id: "pierderi", label: "Pierderi / Găsiri", icon: "\u{1F50D}" },
-  { id: "decese", label: "Decese / Comemorări", icon: "\u{1F56F}️" },
-  { id: "autorizatii", label: "Autorizații / Licitații", icon: "\u{1F4CB}" },
-  { id: "citare", label: "Citări / Somări", icon: "⚖️" },
-  { id: "diverse", label: "Diverse", icon: "\u{1F4CC}" },
+  { id: "aviz-mediu", label: "Aviz de mediu", icon: "fa-leaf" },
+  { id: "pierderi", label: "Pierderi / Găsiri", icon: "fa-magnifying-glass" },
+  { id: "decese", label: "Decese / Comemorări", icon: "fa-cross" },
+  { id: "autorizatii", label: "Autorizații / Licitații", icon: "fa-file-lines" },
+  { id: "citare", label: "Citări / Somări", icon: "fa-scale-balanced" },
+  { id: "diverse", label: "Diverse", icon: "fa-thumbtack" },
 ];
 
 export const CONSULT_STEPS = [

@@ -58,7 +58,7 @@ export default function AdCheckout({ ad, onClose }) {
           </div>
         ) : (
           <div className="p-4 sm:p-6 md:p-8">
-            <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight mb-5">{ad.cat.icon} {ad.cat.label}</h3>
+            <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight mb-5"><i className={`fas ${ad.cat.icon} mr-2 text-slate-400`}></i>{ad.cat.label}</h3>
 
             {step === 1 && (
               <div className="space-y-4">

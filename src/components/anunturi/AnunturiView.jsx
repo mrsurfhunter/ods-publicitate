@@ -51,7 +51,7 @@ export default function AnunturiView({ onBack, onConsult }) {
                 <button key={c.id} className={`p-4 border-2 text-left transition-all ${
                   cat === c.id ? 'border-slate-900 bg-slate-50' : 'border-slate-200 bg-white hover:border-slate-400'
                 }`} onClick={() => setCat(c.id)}>
-                  <div className="text-2xl mb-2">{c.icon}</div>
+                  <div className="w-9 h-9 bg-slate-100 text-slate-600 flex items-center justify-center mb-2"><i className={`fas ${c.icon}`}></i></div>
                   <div className={`text-sm font-bold ${cat === c.id ? 'text-slate-900' : 'text-slate-700'}`}>{c.label}</div>
                 </button>
               ))}
