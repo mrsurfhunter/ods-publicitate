@@ -1,16 +1,20 @@
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
+import { fetchSocialStats, formatCount } from "../../utils/social";
 
-const STATS = [
-  { icon: "fab fa-facebook-f", val: "218k", color: "text-blue-400" },
-  { icon: "fab fa-instagram", val: "18k", color: "text-pink-400" },
-  { icon: "fab fa-tiktok", val: "24k", color: "text-cyan-400" },
+const STAT_META = [
+  { key: "facebook", icon: "fab fa-facebook-f", color: "text-blue-400" },
+  { key: "instagram", icon: "fab fa-instagram", color: "text-pink-400" },
+  { key: "tiktok", icon: "fab fa-tiktok", color: "text-cyan-400" },
 ];
 
 export default function TopBar({ myOrders, onHome, onOpenOrder, onLogin, onConsult, onDashboard }) {
   const { user, isAuthenticated, logout } = useAuth();
   const [dropOpen, setDropOpen] = useState(false);
+  const [social, setSocial] = useState(null);
   const dropRef = useRef();
+
+  useEffect(() => { fetchSocialStats().then(setSocial); }, []);
 
   useEffect(() => {
     const close = (e) => { if (dropRef.current && !dropRef.current.contains(e.target)) setDropOpen(false); };
@@ -37,10 +41,12 @@ export default function TopBar({ myOrders, onHome, onOpenOrder, onLogin, onConsu
 
         <div className="flex items-center gap-2 md:gap-4">
           <div className="hidden md:flex items-center gap-3 bg-white/5 border border-white/10 px-3 py-1.5">
-            {STATS.map((s, i) => (
+            {STAT_META.map((s, i) => (
               <div key={i} className="flex items-center gap-1.5">
                 <i className={`${s.icon} text-[10px] ${s.color}`}></i>
-                <span className="text-[10px] font-bold text-white/70">{s.val}</span>
+                <span className="text-[10px] font-bold text-white/70">
+                  {social ? formatCount(social[s.key].followers) : "—"}
+                </span>
               </div>
             ))}
           </div>

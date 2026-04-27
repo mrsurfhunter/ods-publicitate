@@ -1,8 +1,8 @@
-const STATS = [
+import { useState, useEffect } from "react";
+import { fetchSocialStats, formatCount } from "../../utils/social";
+
+const STATIC_STATS = [
   { v: "1.5M", l: "Afișări/lună pe site" },
-  { v: "218.000", l: "Urmăritori Facebook" },
-  { v: "18.000", l: "Followers Instagram" },
-  { v: "24.000", l: "Urmăritori TikTok" },
 ];
 
 const BENEFITS = [
@@ -19,6 +19,16 @@ const STEPS = [
 ];
 
 export default function LandingView({ onConsult, onAnunturi, onCatalog }) {
+  const [social, setSocial] = useState(null);
+  useEffect(() => { fetchSocialStats().then(setSocial); }, []);
+
+  const stats = [
+    ...STATIC_STATS,
+    { v: social ? formatCount(social.facebook.followers) : "218.000", l: "Urmăritori Facebook" },
+    { v: social ? formatCount(social.instagram.followers) : "18.000", l: "Followers Instagram" },
+    { v: social ? formatCount(social.tiktok.followers) : "24.000", l: "Urmăritori TikTok" },
+  ];
+
   return (
     <div className="animate-fadeIn">
       {/* HERO */}
@@ -46,7 +56,7 @@ export default function LandingView({ onConsult, onAnunturi, onCatalog }) {
             </button>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-white/10 border border-white/10">
-            {STATS.map((s, i) => (
+            {stats.map((s, i) => (
               <div key={i} className="bg-navy p-4 sm:p-5">
                 <div className="text-2xl sm:text-3xl font-black mb-1">{s.v}</div>
                 <div className="text-[10px] sm:text-[11px] text-white/50 uppercase tracking-wider font-bold">{s.l}</div>
