@@ -21,15 +21,22 @@ const CONFIG_FILE = path.join(__dirname, 'data', 'platform-config.json');
 
 const CONFIG_DEFAULT = path.join(__dirname, 'platform-config.default.json');
 
-// Seed config on first run: try default file, then write inline fallback
-if (!fs.existsSync(CONFIG_FILE)) {
+// Seed config on first run or when config has 0 packages (Docker volume issue)
+function needsSeed() {
+  if (!fs.existsSync(CONFIG_FILE)) return true;
+  try {
+    const cfg = JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8'));
+    return !cfg.packages || cfg.packages.length === 0;
+  } catch { return true; }
+}
+
+if (needsSeed()) {
   const dir = path.dirname(CONFIG_FILE);
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
   if (fs.existsSync(CONFIG_DEFAULT)) {
     fs.copyFileSync(CONFIG_DEFAULT, CONFIG_FILE);
     console.log('Seeded platform config from default file');
   } else {
-    // Inline minimal seed so the app works even without the default file
     const seed = {
       packages: [
         { id: "social-single", name: "Postare Singulară", cat: "oneTime", price: 300, sub: null, color: "#F59E0B", headline: "O postare profesională pe Facebook și Instagram", inc: [{ w: "1 postare Facebook", d: "220.000+ urmăritori" }, { w: "1 postare Instagram", d: "18.000+ urmăritori" }, { w: "1 story Facebook + Instagram", d: "Format vertical" }, { w: "Link direct", d: "Site, FB, telefon sau WhatsApp" }], delivery: "Publicare în maxim 24h", hasArticle: false, active: true },
@@ -140,6 +147,122 @@ app.delete('/api/admin/promotions/:id', (req, res) => {
   cfg.promotions = (cfg.promotions || []).filter(p => p.id !== req.params.id);
   writeConfig(cfg);
   res.json({ ok: true });
+});
+
+// ── Admin AI: generate package from description ──
+app.post('/api/admin/ai/generate-package', async (req, res) => {
+  if (!adminAuth(req, res)) return;
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) return res.status(503).json({ error: 'AI not configured' });
+
+  const { prompt } = req.body || {};
+  if (!prompt) return res.status(400).json({ error: 'Missing prompt' });
+
+  const cfg = readConfig();
+  const existingNames = cfg.packages.map(p => p.name).join(', ');
+
+  try {
+    const client = new Anthropic({ apiKey });
+    const message = await client.messages.create({
+      model: process.env.AI_MODEL || 'claude-sonnet-4-20250514',
+      max_tokens: 600,
+      temperature: 0.5,
+      system: `Ești asistent admin pentru platforma de publicitate Ora de Sibiu. Generezi pachete de publicitate.
+Pachete existente: ${existingNames}
+Răspunde EXCLUSIV în JSON valid, fără markdown/backticks:
+{
+  "id": "slug-unic",
+  "name": "Nume Pachet",
+  "cat": "monthly" sau "oneTime",
+  "price": 1000,
+  "sub": 800 sau null,
+  "color": "#hex",
+  "headline": "O propoziție scurtă despre pachet",
+  "inc": [{"w": "Ce include", "d": "Detaliu"}, ...],
+  "delivery": "Termen livrare",
+  "hasArticle": true/false,
+  "active": true
+}
+Reguli: ID unic (slug), preț realist (300-5000 lei), 4-6 rânduri inc[], culoare hex diferită de cele existente.`,
+      messages: [{ role: 'user', content: prompt }],
+    });
+    let raw = message.content.map(b => b.text || '').join('\n').trim();
+    raw = raw.replace(/^```json?\s*/i, '').replace(/\s*```$/i, '');
+    const pkg = JSON.parse(raw);
+    if (!pkg.id || !pkg.name || !pkg.price) throw new Error('Invalid package');
+    res.json(pkg);
+  } catch (e) {
+    console.error('AI generate-package error:', e.message);
+    res.status(500).json({ error: 'AI generation failed: ' + e.message });
+  }
+});
+
+// ── Admin AI: generate addon from description ──
+app.post('/api/admin/ai/generate-addon', async (req, res) => {
+  if (!adminAuth(req, res)) return;
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) return res.status(503).json({ error: 'AI not configured' });
+
+  const { prompt } = req.body || {};
+  if (!prompt) return res.status(400).json({ error: 'Missing prompt' });
+
+  try {
+    const client = new Anthropic({ apiKey });
+    const message = await client.messages.create({
+      model: process.env.AI_MODEL || 'claude-sonnet-4-20250514',
+      max_tokens: 400,
+      temperature: 0.5,
+      system: `Ești asistent admin pentru platforma de publicitate Ora de Sibiu. Generezi add-on-uri de publicitate.
+Răspunde EXCLUSIV în JSON valid, fără markdown/backticks:
+{
+  "id": "addon-slug",
+  "name": "Nume Add-on",
+  "icon": "fa-icon-name",
+  "price": 300,
+  "sub": null,
+  "unit": "/unitate",
+  "multi": true/false,
+  "qtyPricing": null sau [{"min":1,"price":300},{"min":2,"price":250}],
+  "desc": "Descriere scurtă",
+  "active": true
+}
+Reguli: ID cu prefix addon-, preț realist, icon FontAwesome valid (fa-*).`,
+      messages: [{ role: 'user', content: prompt }],
+    });
+    let raw = message.content.map(b => b.text || '').join('\n').trim();
+    raw = raw.replace(/^```json?\s*/i, '').replace(/\s*```$/i, '');
+    const addon = JSON.parse(raw);
+    if (!addon.id || !addon.name || !addon.price) throw new Error('Invalid addon');
+    res.json(addon);
+  } catch (e) {
+    console.error('AI generate-addon error:', e.message);
+    res.status(500).json({ error: 'AI generation failed: ' + e.message });
+  }
+});
+
+// ── Admin AI: improve text (headline, description, etc.) ──
+app.post('/api/admin/ai/improve-text', async (req, res) => {
+  if (!adminAuth(req, res)) return;
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) return res.status(503).json({ error: 'AI not configured' });
+
+  const { text, field, context } = req.body || {};
+  if (!text) return res.status(400).json({ error: 'Missing text' });
+
+  try {
+    const client = new Anthropic({ apiKey });
+    const message = await client.messages.create({
+      model: process.env.AI_MODEL || 'claude-sonnet-4-20250514',
+      max_tokens: 200,
+      system: `Ești copywriter pentru Ora de Sibiu, publicație online din Sibiu. Îmbunătățești texte de marketing pentru pachete de publicitate. Răspunde DOAR cu textul îmbunătățit, fără ghilimele, fără explicații. Maxim 1-2 propoziții. Tonul: profesional, concis, persuasiv.`,
+      messages: [{ role: 'user', content: `Îmbunătățește acest ${field || 'text'} pentru pachetul "${context || 'publicitate'}": "${text}"` }],
+    });
+    const improved = message.content.map(b => b.text || '').join('\n').trim();
+    res.json({ text: improved });
+  } catch (e) {
+    console.error('AI improve-text error:', e.message);
+    res.status(500).json({ error: e.message });
+  }
 });
 
 // ── /api/ai — generic AI proxy (text enhancement) ──
