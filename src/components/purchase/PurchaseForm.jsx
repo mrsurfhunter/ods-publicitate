@@ -118,13 +118,19 @@ export default function PurchaseForm({ pkg, suggestedAddons = [], onClose, onDon
         <input className="w-full p-4 bg-slate-50 border-2 border-slate-200 focus:border-slate-900 outline-none text-sm font-medium" value={f.email} onChange={e => set("email", e.target.value)} />
       </div>
 
-      {pkg.sub && (
+      {pkg.sub && pkg.subType === 'annual' ? (
+        <button className={`w-full p-3 text-left text-sm font-bold border-2 transition-all ${f.sub ? 'bg-green-50 border-green-400 text-green-700' : 'bg-white border-slate-200 text-green-600 hover:border-green-400'}`} onClick={() => set("sub", !f.sub)}>
+          {f.sub
+            ? <><i className="fas fa-check-circle mr-1"></i> Abonament anual: {pkg.sub.toLocaleString("ro")} lei/an — max {pkg.subMaxEvents || 5} evenimente</>
+            : <><i className="fas fa-calendar-check mr-1"></i> Abonament anual? {pkg.sub.toLocaleString("ro")} lei/an pentru max {pkg.subMaxEvents || 5} evenimente (economie {(pkg.price * (pkg.subMaxEvents || 5) - pkg.sub).toLocaleString("ro")} lei)</>}
+        </button>
+      ) : pkg.sub ? (
         <button className="text-sm font-bold text-green-600 hover:text-green-700 transition-colors" onClick={() => set("sub", !f.sub)}>
           {f.sub
             ? `✓ Abonament: ${pkg.sub.toLocaleString("ro")} lei/lună`
             : `→ Economisești ${((pkg.price - pkg.sub) * 3).toLocaleString("ro")} lei la abonament`}
         </button>
-      )}
+      ) : null}
 
       {/* ADD-ONS SECTION */}
       {activeAddons.length > 0 && (

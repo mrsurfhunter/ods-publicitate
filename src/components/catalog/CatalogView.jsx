@@ -20,12 +20,21 @@ function CatalogCard({ pkg, onPurchased }) {
         </div>
         <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mb-1">{pkg.name}</h3>
         <p className="text-sm text-slate-500 mb-5">{pkg.headline}</p>
-        <div className="flex items-baseline gap-2 mb-5">
-          {pkg.sub && <span className="text-base text-slate-400 line-through font-bold">{pkg.price.toLocaleString("ro")}</span>}
-          <span className="text-3xl font-black text-slate-900">{(pkg.sub || pkg.price).toLocaleString("ro")} lei</span>
+        <div className="flex items-baseline gap-2 mb-1">
+          {pkg.sub && pkg.subType !== 'annual' && <span className="text-base text-slate-400 line-through font-bold">{pkg.price.toLocaleString("ro")}</span>}
+          <span className="text-3xl font-black text-slate-900">{(pkg.sub && pkg.subType !== 'annual' ? pkg.sub : pkg.price).toLocaleString("ro")} lei</span>
           <span className="text-sm font-bold text-slate-500">{pkg.cat === 'monthly' ? '/lună' : ''}</span>
         </div>
-        {pkg.sub && <div className="text-[10px] font-black text-brand uppercase tracking-wider mb-4">Reducere abonament</div>}
+        {pkg.sub && pkg.subType !== 'annual' && <div className="text-[10px] font-black text-brand uppercase tracking-wider mb-4">Reducere abonament</div>}
+        {pkg.sub && pkg.subType === 'annual' && (
+          <div className="mb-4 mt-2 p-3 bg-green-50 border-2 border-green-200">
+            <div className="text-xs font-black text-green-700">
+              <i className="fas fa-calendar-check mr-1"></i>
+              Abonament anual: {pkg.sub.toLocaleString("ro")} lei/an
+            </div>
+            <div className="text-[10px] text-green-600 mt-0.5">{pkg.subNote || `Maxim ${pkg.subMaxEvents || 5} evenimente/an — economisești ${(pkg.price * (pkg.subMaxEvents || 5) - pkg.sub).toLocaleString("ro")} lei`}</div>
+          </div>
+        )}
         <div className="space-y-2 mb-5 border-t-2 border-slate-100 pt-4">
           {pkg.inc.slice(0, 4).map((row, i) => (
             <div key={i} className="flex gap-2 text-sm">

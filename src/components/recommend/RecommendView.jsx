@@ -43,16 +43,21 @@ function TierCard({ tier, pkg, addons, isBuying, onBuy, onPurchased }) {
         <h3 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight mb-2">{pkg.name}</h3>
 
         <div className="flex items-baseline gap-1.5 mb-1">
-          {pkg.sub && (
+          {pkg.sub && pkg.subType !== 'annual' && (
             <span className="text-sm text-slate-400 line-through font-bold">{pkg.price.toLocaleString("ro")}</span>
           )}
           <span className="text-2xl sm:text-3xl font-black text-slate-900">
-            {(pkg.sub || pkg.price).toLocaleString("ro")}
+            {(pkg.sub && pkg.subType !== 'annual' ? pkg.sub : pkg.price).toLocaleString("ro")}
           </span>
           <span className="text-xs font-bold text-slate-500">lei{pkg.cat === "monthly" ? "/lună" : ""}</span>
         </div>
-        {pkg.sub && (
+        {pkg.sub && pkg.subType !== 'annual' && (
           <div className="text-[10px] font-black text-brand uppercase tracking-wider mb-3">La abonament</div>
+        )}
+        {pkg.sub && pkg.subType === 'annual' && (
+          <div className="text-[10px] font-black text-green-600 uppercase tracking-wider mb-3">
+            <i className="fas fa-calendar-check mr-0.5"></i> {pkg.sub.toLocaleString("ro")} lei/an — max {pkg.subMaxEvents || 5} ev.
+          </div>
         )}
         <div className="text-[10px] text-slate-400 font-medium mb-4">+ TVA</div>
 

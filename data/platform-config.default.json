@@ -95,7 +95,7 @@
       "name": "Eveniment Plus",
       "cat": "oneTime",
       "price": 1800,
-      "sub": null,
+      "sub": 5000,
       "color": "#BE123C",
       "headline": "Articol dedicat + campanie social media completă + push notification pentru evenimentul tău",
       "inc": [
@@ -126,7 +126,10 @@
       ],
       "delivery": "Campanie activă 7 zile înainte",
       "hasArticle": true,
-      "active": true
+      "active": true,
+      "subType": "annual",
+      "subNote": "Abonament anual — maxim 5 evenimente/an",
+      "subMaxEvents": 5
     },
     {
       "id": "eveniment-premium",
@@ -592,5 +595,5 @@
     }
   ],
   "promotions": [],
-  "updatedAt": "2026-04-27T13:00:00.000Z"
+  "updatedAt": "2026-04-27T14:00:00.000Z"
 }
