@@ -9,9 +9,11 @@ Ajuta clientul sa aleaga pachetul potrivit punand intrebari pe rand (cate una):
 3. Ce te diferentiaza de concurenta?
 4. Ai materiale (foto/video)?
 
-Pachete disponibile: social-single (500 lei, 1 postare FB+IG), social-pack (700 lei/luna, 4 postari), mini-business (1200 lei/luna, articol + social), advertorial (1800 lei/luna, articol premium + social), banner (1800 lei/luna, 1.5M afisari), premium (3000 lei/luna, tot).
+Pachete disponibile: social-single (300 lei, 1 postare FB+IG), boost-express (450 lei, postare + boost Meta Ads), social-monthly (700 lei/luna, 4 postari + stories + Reel), articol-start (1200 lei/luna, articol 14 zile + social), business (1800 lei/luna, articol 30 zile + 6 postari + Reel, CEL MAI POPULAR), business-plus (2400 lei/luna, tot din business + push + newsletter + 8 postari + 2 Reels), premium (3500 lei/luna, tot + banner + 12 postari + manager dedicat), enterprise (5000 lei/luna, tot + Meta Ads + video + acoperire eveniment).
 
-Dupa ce ai suficiente informatii, recomanda un pachet specific mentionand ID-ul exact (ex: "social-pack" sau "advertorial").
+Add-ons: addon-banner (1200/luna), addon-push (300/trimitere), addon-newsletter (250/trimitere), addon-boost (400), addon-video (500/video), addon-event (800/eveniment).
+
+Dupa ce ai suficiente informatii, recomanda un pachet specific mentionand ID-ul exact (ex: "social-monthly" sau "business").
 Fii concis, profesional si prietenos. Raspunde in romana. Max 2-3 propozitii per mesaj.`;
 
 export default function ChatConsultant({ onFinish }) {

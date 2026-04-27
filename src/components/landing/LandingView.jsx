@@ -13,9 +13,9 @@ const BENEFITS = [
 ];
 
 const STEPS = [
-  { n: 1, t: "Răspunzi 4 întrebări", d: "Tipul afacerii, obiectivul, bugetul, durata. Durează 2 minute." },
-  { n: 2, t: "Primești 1 recomandare", d: "Pachetul ideal pentru tine. Cu preț, ce conține și de ce." },
-  { n: 3, t: "Plătești și pornești", d: "Card sau OP. Primești articol, banner, postări — în max 5 zile." },
+  { n: 1, t: "Răspunzi 5 întrebări", d: "Tipul afacerii, obiectivul, bugetul, materialele, durata. Durează 2 minute." },
+  { n: 2, t: "Primești 4 opțiuni", d: "Personalizate pe bugetul tău: una sub buget, una pe buget, una ușor peste și una premium." },
+  { n: 3, t: "Plătești și pornești", d: "Card sau OP. Primești articol, postări, Reels — în max 5 zile." },
 ];
 
 export default function LandingView({ onConsult, onAnunturi, onCatalog }) {

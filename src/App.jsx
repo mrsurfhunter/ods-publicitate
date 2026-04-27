@@ -46,7 +46,7 @@ function AppInner() {
   const goHome = () => { setView("landing"); setDashOrder(null); setRecommendation(null); };
 
   const handleConsultResult = (result) => {
-    if (result) {
+    if (result?.tiers) {
       setRecommendation(result);
       setView("recommend");
     } else {
@@ -58,11 +58,10 @@ function AppInner() {
     const pkg = PKG.find(p => p.id === pkgId);
     if (pkg) {
       setRecommendation({
-        primary: pkgId,
-        secondary: null,
-        reasoning: `Pe baza conversației, pachetul ${pkg.name} este cel mai potrivit pentru afacerea ta.`,
-        primaryBenefits: pkg.inc.slice(0, 4).map(x => x.w + (x.d ? " — " + x.d : "")),
-        secondaryBenefits: [],
+        tiers: [{ id: pkgId, tier: "recommended", label: "Recomandat pentru tine",
+          reasoning: `Pe baza conversației, ${pkg.name} este cel mai potrivit.`,
+          benefits: pkg.inc.slice(0, 4).map(x => x.w), addons: [] }],
+        summary: `Pe baza conversației, pachetul ${pkg.name} este cel mai potrivit pentru afacerea ta.`,
       });
       setView("recommend");
     }

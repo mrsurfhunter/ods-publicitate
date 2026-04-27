@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PKG, ODS } from "../../data/packages";
+import { PKG, ADDONS, ODS } from "../../data/packages";
 import { sld, ssv } from "../../utils/storage";
 import { wpUploadImage, wpCreateDraft } from "../../utils/wordpress";
 import { useAuth } from "../../context/AuthContext";
@@ -158,19 +158,19 @@ export default function DashboardView({ initOrder, onBack }) {
             </div>
           )}
 
-          {/* UPSELL */}
+          {/* UPSELL — ADD-ONS */}
           <div className="bg-brand text-white p-4 sm:p-6 md:p-8 border-2 border-red-700">
             <h3 className="text-lg sm:text-xl font-black uppercase tracking-tight mb-3">Vrei și mai multă vizibilitate?</h3>
             <p className="text-red-100 font-medium mb-6 max-w-2xl text-sm">
-              Abonează-te pentru minim 3 luni și primești <span className="font-black text-white">20% reducere</span> la abonamentul plătit în avans.
+              Adaugă servicii extra la campania ta pentru impact maxim.
             </p>
             <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3">
-              <button className="px-6 py-3 bg-white text-red-700 font-black uppercase text-xs tracking-widest hover:bg-slate-100 transition-all border-2 border-white">
-                Abonare 3 luni (-20%)
-              </button>
-              <button className="px-6 py-3 border-2 border-white text-white font-black uppercase text-xs tracking-widest hover:bg-white/10 transition-all">
-                Adaugă Postări
-              </button>
+              {ADDONS.slice(0, 3).map(addon => (
+                <a key={addon.id} href={"https://wa.me/40746752240?text=Salut, vreau să adaug " + encodeURIComponent(addon.name) + " la comanda " + (order.id || "").toUpperCase()} target="_blank" rel="noopener"
+                  className="px-5 py-3 bg-white text-red-700 font-black uppercase text-xs tracking-widest hover:bg-slate-100 transition-all border-2 border-white text-center">
+                  {addon.name} — {addon.price.toLocaleString("ro")} lei{addon.unit}
+                </a>
+              ))}
             </div>
           </div>
         </div>
