@@ -69,7 +69,28 @@ function AddonCard({ addon }) {
         <i className={`fas ${addon.icon}`}></i>
       </div>
       <h3 className="text-lg font-black text-slate-900 tracking-tight mb-1">{addon.name}</h3>
-      <p className="text-sm text-slate-500 mb-4 leading-relaxed">{addon.desc}</p>
+      <p className="text-sm text-slate-500 mb-3 leading-relaxed">{addon.desc}</p>
+
+      {addon.inc && addon.inc.length > 0 && (
+        <div className="space-y-1.5 mb-4">
+          {addon.inc.map((item, i) => (
+            <div key={i} className="flex gap-2">
+              <div className="w-4 h-4 bg-green-500 text-white flex items-center justify-center flex-shrink-0 mt-0.5">
+                <i className="fas fa-check text-[7px]"></i>
+              </div>
+              <span className="text-xs text-slate-600 leading-relaxed">{item}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {addon.workflow && (
+        <div className="bg-blue-50 border-2 border-blue-200 p-3 mb-4">
+          <div className="text-[10px] font-black text-blue-700 uppercase tracking-widest mb-1">Cum funcționează</div>
+          <p className="text-xs text-blue-800 leading-relaxed">{addon.workflow}</p>
+        </div>
+      )}
+
       <div className="flex items-baseline gap-1.5">
         <span className="text-2xl font-black text-slate-900">{addon.price.toLocaleString("ro")}</span>
         <span className="text-sm font-bold text-slate-500">lei{addon.unit}</span>
@@ -85,6 +106,11 @@ function AddonCard({ addon }) {
       {addon.weekendExtra && (
         <div className="text-[10px] font-bold text-amber-600 mt-1">
           <i className="fas fa-clock mr-0.5"></i>+{addon.weekendExtra}% weekend / după ora 17
+        </div>
+      )}
+      {addon.note && (
+        <div className="mt-2 p-2 bg-amber-50 border border-amber-200 text-[10px] font-bold text-amber-700">
+          <i className="fas fa-exclamation-circle mr-1"></i>{addon.note}
         </div>
       )}
       <div className="mt-4 text-[10px] text-slate-400 font-medium">

@@ -602,20 +602,39 @@
       "unit": "/lună",
       "multi": false,
       "qtyPricing": null,
-      "desc": "Setup + administrare campanii Google Ads. Raportare lunară. Buget publicitar separat.",
-      "active": true
+      "desc": "Administrăm campaniile tale Google Ads: setup, optimizare săptămânală, raport lunar cu rezultate.",
+      "active": true,
+      "note": "Buget publicitar separat — recomandat minim 500 lei/lună",
+      "inc": [
+        "Setup cont + cercetare cuvinte cheie locale",
+        "Creare campanii Search + Display",
+        "Optimizare bids și cuvinte cheie de 2-3x/săptămână",
+        "Tracking conversii (apeluri, formulare, direcții)",
+        "Raport lunar: afișări, click-uri, cost/conversie, cuvinte cheie top"
+      ],
+      "workflow": "Tu ne spui ce servicii/produse promovezi + bugetul lunar. Noi setăm campaniile, le optimizăm săptămânal și îți trimitem raport la final de lună cu rezultate și recomandări."
     },
     {
       "id": "addon-fb-ads",
-      "name": "Administrare Facebook Ads",
+      "name": "Administrare Facebook & Instagram Ads",
       "icon": "fa-bullhorn",
       "price": 800,
       "sub": 650,
       "unit": "/lună",
       "multi": false,
       "qtyPricing": null,
-      "desc": "Setup + administrare campanii Facebook & Instagram Ads. Raportare lunară. Buget publicitar separat.",
-      "active": true
+      "desc": "Campanii plătite pe Facebook și Instagram: audiențe, retargeting, A/B testing, raportare.",
+      "active": true,
+      "note": "Buget publicitar separat — recomandat minim 400 lei/lună",
+      "inc": [
+        "Setup Meta Pixel + Business Manager",
+        "Cercetare audiențe (zonă Sibiu + 20km, interese, demografice)",
+        "2-4 campanii active/lună (awareness + conversie)",
+        "A/B testing creatives (minim 2 variante/campanie)",
+        "Retargeting vizitatori site + audiențe lookalike",
+        "Raport lunar: reach, CPM, CPC, conversii"
+      ],
+      "workflow": "Tu ne trimiți poze produse/servicii + detalii oferte. Noi creăm reclamele, setăm audiențele, testăm variantele și optimizăm. Aprobi reclamele înainte de lansare."
     },
     {
       "id": "addon-fb-page",
@@ -626,8 +645,17 @@
       "unit": "/lună",
       "multi": false,
       "qtyPricing": null,
-      "desc": "Creare pagină + administrare completă: 12 postări/lună, moderare comentarii, raport lunar.",
-      "active": true
+      "desc": "Administrare completă a paginii de Facebook: postări, comunitate, raportare.",
+      "active": true,
+      "inc": [
+        "Creare pagină (dacă nu există) + setup complet",
+        "12 postări/lună (3/săptămână) — mix: promoții, tips, behind-the-scenes",
+        "Design grafic postări în Canva (pe identitatea ta vizuală)",
+        "Moderare comentarii și mesaje (răspuns în 4-6h, L-V)",
+        "Calendar editorial săptămânal trimis pentru aprobare",
+        "Raport lunar: reach, engagement, creștere urmăritori"
+      ],
+      "workflow": "Ne trimiți 10-15 poze/lună de la afacere (telefon e OK) + info promoții/noutăți. Noi scriem textele, facem design-ul, programăm postările. Aprobi calendarul săptămânal pe WhatsApp."
     },
     {
       "id": "addon-ig-profile",
@@ -638,10 +666,19 @@
       "unit": "/lună",
       "multi": false,
       "qtyPricing": null,
-      "desc": "Setup profil + administrare: 12 postări/lună, stories, hashtag strategy, raport lunar.",
-      "active": true
+      "desc": "Administrare completă profil Instagram: postări, Stories, Reels, hashtag strategy.",
+      "active": true,
+      "inc": [
+        "Setup profil business + optimizare bio și highlights",
+        "12 postări/lună pe feed (estetică grid consistentă)",
+        "3-5 Stories/săptămână (poll-uri, behind-the-scenes, oferte zilnice)",
+        "2-4 Reels/lună (editate din clipuri trimise de tine)",
+        "Strategie hashtag-uri locale (#sibiu #sibiului + nișă)",
+        "Raport lunar: creștere followers, reach, engagement, top Reels"
+      ],
+      "workflow": "Ne trimiți clipuri scurte (15-30 sec) + poze de la afacere. Noi edităm Reels-urile, scriem captions, planificăm Stories. Calendar de conținut aprobat săptămânal."
     }
   ],
   "promotions": [],
-  "updatedAt": "2026-04-27T19:43:25.922Z"
+  "updatedAt": "2026-04-27T19:48:54.935Z"
 }
