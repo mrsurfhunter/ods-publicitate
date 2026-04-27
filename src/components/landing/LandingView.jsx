@@ -84,12 +84,14 @@ export default function LandingView({ onConsult, onAnunturi, onCatalog }) {
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-px bg-slate-200 border-2 border-slate-200">
           {BENEFITS.map((b, i) => (
-            <div key={i} className="bg-white p-5 sm:p-6 hover:bg-slate-50 transition-colors">
-              <div className="w-10 h-10 bg-navy text-white flex items-center justify-center mb-4">
+            <div key={i} className="bg-white p-5 sm:p-6 hover:bg-slate-50 transition-colors flex items-start gap-4">
+              <div className="w-10 h-10 bg-navy text-white flex items-center justify-center flex-shrink-0">
                 <i className={`fas ${b.i}`}></i>
               </div>
-              <div className="font-black text-slate-900 mb-2">{b.t}</div>
-              <p className="text-sm text-slate-500 leading-relaxed">{b.d}</p>
+              <div>
+                <div className="font-black text-slate-900 mb-1">{b.t}</div>
+                <p className="text-sm text-slate-500 leading-relaxed">{b.d}</p>
+              </div>
             </div>
           ))}
         </div>
