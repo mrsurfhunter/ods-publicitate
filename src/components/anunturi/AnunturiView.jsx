@@ -48,10 +48,10 @@ export default function AnunturiView({ onBack, onConsult }) {
             <div className="text-[11px] font-bold text-slate-400 uppercase tracking-[2px] mb-4">1 · Categorie</div>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3">
               {AD_CAT.map(c => (
-                <button key={c.id} className={`p-4 border-2 text-left transition-all ${
+                <button key={c.id} className={`p-3 sm:p-4 border-2 text-left transition-all flex items-center gap-3 ${
                   cat === c.id ? 'border-slate-900 bg-slate-50' : 'border-slate-200 bg-white hover:border-slate-400'
                 }`} onClick={() => setCat(c.id)}>
-                  <div className="w-9 h-9 bg-slate-100 text-slate-600 flex items-center justify-center mb-2"><i className={`fas ${c.icon}`}></i></div>
+                  <div className="w-9 h-9 bg-slate-100 text-slate-600 flex items-center justify-center flex-shrink-0"><i className={`fas ${c.icon}`}></i></div>
                   <div className={`text-sm font-bold ${cat === c.id ? 'text-slate-900' : 'text-slate-700'}`}>{c.label}</div>
                 </button>
               ))}
