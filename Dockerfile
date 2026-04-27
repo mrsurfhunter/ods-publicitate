@@ -22,8 +22,9 @@ RUN npm ci --omit=dev
 COPY server.js ./
 COPY --from=build /app/dist ./dist
 
-# Persistent lead data directory
+# Persistent data directory — seed with default config
 RUN mkdir -p /app/data
+COPY data/platform-config.json /app/data/platform-config.default.json
 VOLUME ["/app/data"]
 
 EXPOSE 3001

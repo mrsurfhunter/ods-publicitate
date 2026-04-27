@@ -19,6 +19,16 @@ app.use(express.static(path.join(__dirname, 'dist')));
 // ── Platform config (packages, addons, promotions) ──
 const CONFIG_FILE = path.join(__dirname, 'data', 'platform-config.json');
 
+const CONFIG_DEFAULT = path.join(__dirname, 'data', 'platform-config.default.json');
+
+// Seed config from default on first run (Docker volume is empty initially)
+if (!fs.existsSync(CONFIG_FILE) && fs.existsSync(CONFIG_DEFAULT)) {
+  const dir = path.dirname(CONFIG_FILE);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  fs.copyFileSync(CONFIG_DEFAULT, CONFIG_FILE);
+  console.log('Seeded platform config from default');
+}
+
 function readConfig() {
   try {
     if (fs.existsSync(CONFIG_FILE)) return JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8'));
