@@ -17,11 +17,12 @@ export default function AnunturiView({ onBack, onConsult }) {
   const canOrd = cat && words >= 3 && words <= 1200;
 
   const enhance = async () => {
-    if (!text.trim() || !cat) return;
+    if (!text.trim()) return;
     setAi(true); setAiOk(null);
+    const catLabel = AD_CAT.find(c => c.id === cat)?.label || "";
     const r = await callAI(
-      "Ești redactor oradesibiu.ro. Îmbunătățește anunțul. Corectează greșeli. NU inventa. DOAR textul. Română.",
-      "Tip: " + (AD_CAT.find(c => c.id === cat)?.label || "") + "\n\n" + text
+      "Ești redactor la oradesibiu.ro. Redactează anunțul de mică publicitate: corectează greșelile, îmbunătățește formularea, păstrează sensul. NU inventa informații noi. Returnează DOAR textul redactat, fără explicații. Limba română.",
+      (catLabel ? "Categorie: " + catLabel + "\n\n" : "") + text
     );
     setAi(false);
     if (r) { setText(r); setAiOk(true); } else setAiOk(false);
@@ -76,11 +77,11 @@ export default function AnunturiView({ onBack, onConsult }) {
               <button
                 className="flex items-center gap-2 px-4 py-2.5 bg-slate-900 text-white text-xs font-bold hover:bg-black transition-all disabled:opacity-50 border-2 border-slate-900"
                 onClick={enhance}
-                disabled={ai || !text.trim() || words < 5}
+                disabled={ai || !text.trim() || words < 3}
               >
-                {ai ? <i className="fas fa-spinner animate-spin"></i> : <><i className="fas fa-pen-to-square"></i> Corectează textul</>}
+                {ai ? <i className="fas fa-spinner animate-spin"></i> : <><i className="fas fa-wand-magic-sparkles"></i> Redactează</>}
               </button>
-              {aiOk === true && <span className="text-xs text-green-600 font-semibold flex items-center gap-1"><i className="fas fa-check"></i> Îmbunătățit!</span>}
+              {aiOk === true && <span className="text-xs text-green-600 font-semibold flex items-center gap-1"><i className="fas fa-check"></i> Redactat!</span>}
               {aiOk === false && <span className="text-xs text-red-500">AI indisponibil</span>}
             </div>
           </div>
