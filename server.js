@@ -19,14 +19,43 @@ app.use(express.static(path.join(__dirname, 'dist')));
 // ── Platform config (packages, addons, promotions) ──
 const CONFIG_FILE = path.join(__dirname, 'data', 'platform-config.json');
 
-const CONFIG_DEFAULT = path.join(__dirname, 'data', 'platform-config.default.json');
+const CONFIG_DEFAULT = path.join(__dirname, 'platform-config.default.json');
 
-// Seed config from default on first run (Docker volume is empty initially)
-if (!fs.existsSync(CONFIG_FILE) && fs.existsSync(CONFIG_DEFAULT)) {
+// Seed config on first run: try default file, then write inline fallback
+if (!fs.existsSync(CONFIG_FILE)) {
   const dir = path.dirname(CONFIG_FILE);
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-  fs.copyFileSync(CONFIG_DEFAULT, CONFIG_FILE);
-  console.log('Seeded platform config from default');
+  if (fs.existsSync(CONFIG_DEFAULT)) {
+    fs.copyFileSync(CONFIG_DEFAULT, CONFIG_FILE);
+    console.log('Seeded platform config from default file');
+  } else {
+    // Inline minimal seed so the app works even without the default file
+    const seed = {
+      packages: [
+        { id: "social-single", name: "Postare Singulară", cat: "oneTime", price: 300, sub: null, color: "#F59E0B", headline: "O postare profesională pe Facebook și Instagram", inc: [{ w: "1 postare Facebook", d: "220.000+ urmăritori" }, { w: "1 postare Instagram", d: "18.000+ urmăritori" }, { w: "1 story Facebook + Instagram", d: "Format vertical" }, { w: "Link direct", d: "Site, FB, telefon sau WhatsApp" }], delivery: "Publicare în maxim 24h", hasArticle: false, active: true },
+        { id: "boost-express", name: "Boost Express", cat: "oneTime", price: 450, sub: null, color: "#F97316", headline: "Postare + boost Meta Ads cu reach garantat 5.000+", inc: [{ w: "1 postare Facebook + Instagram", d: "Design profesional" }, { w: "1 story pe ambele platforme", d: "Format vertical" }, { w: "Boost Meta Ads inclus", d: "50 lei buget, reach 5.000+" }, { w: "Raport performanță", d: "Reach, click-uri, engagement" }], delivery: "Activ în 24-48h", hasArticle: false, active: true },
+        { id: "social-monthly", name: "Social Lunar", cat: "monthly", price: 700, sub: 600, color: "#3B82F6", headline: "Prezență constantă pe rețelele Ora de Sibiu", inc: [{ w: "4 postări/lună Facebook", d: "Reach organic garantat" }, { w: "4 postări/lună Instagram", d: "Feed + Stories" }, { w: "2 story-uri/lună", d: "Format vertical" }, { w: "1 Reel/TikTok pe lună", d: "Video scurt" }, { w: "Raport lunar", d: "Reach, engagement, click-uri" }], delivery: "Prima postare în max 24h", hasArticle: false, active: true },
+        { id: "articol-start", name: "Articol Start", cat: "monthly", price: 1200, sub: 1000, color: "#8B5CF6", headline: "Articol publicitar pe site + promovare social media", inc: [{ w: "1 articol publicitar pe site", d: "Prima pagină 14 zile" }, { w: "2 postări/lună FB + IG", d: "Promovare articol" }, { w: "1 story/lună", d: "Facebook + Instagram" }], delivery: "Publicat în max 5 zile", hasArticle: true, active: true },
+        { id: "business", name: "Business", cat: "monthly", price: 1800, sub: 1500, color: "#059669", pop: true, headline: "Articol profesional + promovare completă pe toate canalele", inc: [{ w: "1 articol advertorial profesional", d: "Prima pagină 30 zile" }, { w: "6 postări/lună FB + IG", d: "Design profesional" }, { w: "2 story-uri/lună", d: "Facebook + Instagram" }, { w: "1 Reel/TikTok pe lună", d: "Video scurt" }, { w: "Programare + aprobare", d: "Tu decizi când apare" }, { w: "Raport lunar", d: "Toate canalele" }], delivery: "Gata în 3-5 zile", hasArticle: true, active: true },
+        { id: "business-plus", name: "Business Plus", cat: "monthly", price: 2400, sub: 2000, color: "#0EA5E9", headline: "Tot din Business + push + newsletter + mai mult conținut", inc: [{ w: "Tot ce include Business", d: "Articol 30 zile + social" }, { w: "8 postări/lună FB + IG", d: "Dublu conținut" }, { w: "3 story-uri/lună", d: "Facebook + Instagram" }, { w: "2 Reels/TikTok", d: "Video scurt" }, { w: "Push notification", d: "15.000 abonați" }, { w: "Newsletter mention", d: "600 abonați" }], delivery: "Setup în 5 zile", hasArticle: true, active: true },
+        { id: "premium", name: "Premium 360°", cat: "monthly", price: 3500, sub: 2800, color: "#7C3AED", headline: "Pachet complet: articol + banner + social + push + newsletter + manager dedicat", inc: [{ w: "Tot ce include Business Plus", d: "Articol + social + push + newsletter" }, { w: "Banner 300×250 pe site", d: "~1.5M afișări/lună" }, { w: "12 postări/lună FB + IG", d: "Triplu conținut" }, { w: "4 story-uri + 4 Reels/lună", d: "Video content" }, { w: "Calendar editorial", d: "Planificare lunară" }, { w: "Manager dedicat", d: "Contact direct" }], delivery: "Setup în 5 zile", hasArticle: true, active: true },
+        { id: "enterprise", name: "Enterprise", cat: "monthly", price: 5000, sub: 4200, color: "#DC2626", headline: "Tot ce oferim, personalizat pentru afacerea ta", inc: [{ w: "Tot ce include Premium 360°", d: "Complet" }, { w: "4 articole/lună", d: "Conținut editorial constant" }, { w: "Meta Ads 500 lei inclus", d: "Campanie gestionată" }, { w: "1 video profesional/lună", d: "Filmat și editat" }, { w: "Acoperire eveniment", d: "Reporter + fotograf" }, { w: "Strategie lunară", d: "Planificare cu echipa" }], delivery: "Setup în 7 zile", hasArticle: true, active: true },
+      ],
+      addons: [
+        { id: "addon-post", name: "Postare suplimentară FB+IG", icon: "fa-pen-to-square", price: 250, sub: null, unit: "/postare", multi: true, qtyPricing: [{ min: 1, price: 250 }, { min: 2, price: 200 }, { min: 3, price: 150 }], desc: "Postare profesională pe Facebook și Instagram", active: true },
+        { id: "addon-banner", name: "Banner pe Site", icon: "fa-rectangle-ad", price: 1200, sub: 1000, unit: "/lună", multi: false, qtyPricing: null, desc: "Banner 300×250, ~1.5M afișări/lună", active: true },
+        { id: "addon-push", name: "Push Notification", icon: "fa-bell", price: 300, sub: null, unit: "/trimitere", multi: true, qtyPricing: null, desc: "Notificare push către 15.000 abonați", active: true },
+        { id: "addon-newsletter", name: "Newsletter Mention", icon: "fa-envelope", price: 250, sub: null, unit: "/trimitere", multi: true, qtyPricing: null, desc: "Menționare sponsorizată în newsletter", active: true },
+        { id: "addon-boost", name: "Meta Ads Boost", icon: "fa-rocket", price: 400, sub: null, unit: "", multi: true, qtyPricing: null, desc: "Campanie Meta Ads gestionată (200 lei buget + 200 management)", active: true },
+        { id: "addon-video", name: "Video Reel/TikTok", icon: "fa-video", price: 500, sub: null, unit: "/video", multi: true, qtyPricing: null, desc: "Video scurt filmat și editat", active: true },
+        { id: "addon-event", name: "Acoperire Eveniment", icon: "fa-camera", price: 800, sub: null, unit: "/eveniment", multi: false, qtyPricing: null, desc: "Reporter + fotograf, articol live, galerie", active: true },
+      ],
+      promotions: [],
+      updatedAt: new Date().toISOString(),
+    };
+    fs.writeFileSync(CONFIG_FILE, JSON.stringify(seed, null, 2));
+    console.log('Seeded platform config from inline defaults');
+  }
 }
 
 function readConfig() {
