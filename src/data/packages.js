@@ -270,13 +270,16 @@ export function getAddonUnitPrice(addon, qty = 1) {
 }
 
 export const AD_CAT = [
+  { id: "imobiliare", label: "Imobiliare (vânzări / închirieri)", icon: "fa-house", allowImages: true, maxImages: 6, freeImages: 3, hint: "Adaugă până la 6 poze ale proprietății. Primele 3 sunt gratuite, +20 lei/imagine în plus." },
   { id: "aviz-mediu", label: "Aviz de mediu", icon: "fa-leaf" },
-  { id: "pierderi", label: "Pierderi / Găsiri", icon: "fa-magnifying-glass" },
-  { id: "decese", label: "Decese / Comemorări", icon: "fa-cross" },
+  { id: "pierderi", label: "Pierderi / Găsiri", icon: "fa-magnifying-glass", allowImages: true, maxImages: 2, freeImages: 1, hint: "Poză cu obiectul/animalul pierdut (opțional, prima e gratuită)." },
+  { id: "decese", label: "Decese / Comemorări", icon: "fa-cross", allowImages: true, maxImages: 1, freeImages: 1, hint: "Fotografie cu persoana decedată (opțional, gratuită)." },
   { id: "autorizatii", label: "Autorizații / Licitații", icon: "fa-file-lines" },
   { id: "citare", label: "Citări / Somări", icon: "fa-scale-balanced" },
   { id: "diverse", label: "Diverse", icon: "fa-thumbtack" },
 ];
+
+export const AD_IMAGE_PRICE = 20;
 
 export const CONSULT_STEPS = [
   {
@@ -294,44 +297,22 @@ export const CONSULT_STEPS = [
     ],
   },
   {
-    id: "goal",
-    question: "Ce vrei să obții?",
-    options: [
-      { id: "more-clients", label: "Vreau mai mulți clienți", icon: "fa-chart-line" },
-      { id: "brand", label: "Să fiu cunoscut în Sibiu", icon: "fa-star" },
-      { id: "event", label: "Promovez un eveniment sau o ofertă", icon: "fa-bullhorn" },
-      { id: "seo", label: "Să apar pe Google când caută lumea", icon: "fa-magnifying-glass" },
-      { id: "launch", label: "Lansez ceva nou", icon: "fa-rocket" },
-      { id: "reputation", label: "Vreau reputație / încredere", icon: "fa-shield-halved" },
-    ],
-  },
-  {
     id: "budget",
     question: "Ce buget ai în minte?",
     options: [
+      { id: "nu-stiu", label: "Nu știu — recomandă-mi", icon: "fa-handshake" },
       { id: "sub-500", label: "Sub 500 lei", icon: "fa-coins" },
       { id: "500-1000", label: "500 – 1.000 lei", icon: "fa-credit-card" },
       { id: "1000-2000", label: "1.000 – 2.000 lei", icon: "fa-chart-bar" },
       { id: "2000-3500", label: "2.000 – 3.500 lei", icon: "fa-gem" },
       { id: "peste-3500", label: "Peste 3.500 lei", icon: "fa-crown" },
-      { id: "nu-stiu", label: "Nu știu — recomandă-mi", icon: "fa-handshake" },
-    ],
-  },
-  {
-    id: "hasContent",
-    question: "Ai materiale pregătite?",
-    options: [
-      { id: "have-all", label: "Am tot — texte, poze, video", icon: "fa-check-double" },
-      { id: "have-photos", label: "Am poze, dar nu texte", icon: "fa-images" },
-      { id: "have-nothing", label: "Nu am nimic pregătit", icon: "fa-circle-xmark" },
-      { id: "not-sure", label: "Nu sunt sigur", icon: "fa-question" },
     ],
   },
   {
     id: "timeline",
     question: "Cât de des vrei să te promovezi?",
     options: [
-      { id: "urgent", label: "Urgent — am nevoie săptămâna asta", icon: "fa-bolt" },
+      { id: "urgent", label: "Urgent — săptămâna asta", icon: "fa-bolt" },
       { id: "once", label: "O singură dată", icon: "fa-calendar-check" },
       { id: "few-months", label: "Câteva luni", icon: "fa-calendar" },
       { id: "ongoing", label: "Pe termen lung", icon: "fa-infinity" },

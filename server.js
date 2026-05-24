@@ -3,6 +3,8 @@ import Anthropic from '@anthropic-ai/sdk';
 import OpenAI from 'openai';
 import Stripe from 'stripe';
 import nodemailer from 'nodemailer';
+import twilio from 'twilio';
+import crypto from 'crypto';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
@@ -644,6 +646,189 @@ app.get('/api/leads/check', (req, res) => {
   res.json({ exists: !!found, name: found?.name || null });
 });
 
+// ── /api/auth/otp/* — Twilio Verify SMS OTP ──
+const twilioClient = (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN)
+  ? twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN)
+  : null;
+const VERIFY_SID = process.env.TWILIO_VERIFY_SID || '';
+
+function normalizePhone(raw) {
+  if (!raw) return '';
+  const digits = String(raw).replace(/\D/g, '');
+  if (digits.startsWith('40')) return '+' + digits;
+  if (digits.startsWith('0') && digits.length === 10) return '+4' + digits;
+  if (digits.length === 9) return '+40' + digits;
+  return raw.startsWith('+') ? raw : '+' + digits;
+}
+
+app.post('/api/auth/otp/send', async (req, res) => {
+  if (!twilioClient || !VERIFY_SID) {
+    return res.status(503).json({ error: 'OTP nu este configurat pe server' });
+  }
+  const phone = normalizePhone(req.body?.phone);
+  if (!/^\+\d{10,15}$/.test(phone)) {
+    return res.status(400).json({ error: 'Numar de telefon invalid' });
+  }
+  try {
+    await twilioClient.verify.v2.services(VERIFY_SID).verifications.create({
+      to: phone, channel: 'sms',
+    });
+    res.json({ ok: true, phone });
+  } catch (e) {
+    console.error('OTP send error:', e?.message);
+    res.status(500).json({ error: 'Eroare la trimitere SMS. Verifica numarul.' });
+  }
+});
+
+app.post('/api/auth/otp/verify', async (req, res) => {
+  if (!twilioClient || !VERIFY_SID) {
+    return res.status(503).json({ error: 'OTP nu este configurat pe server' });
+  }
+  const phone = normalizePhone(req.body?.phone);
+  const code = String(req.body?.code || '').trim();
+  if (!phone || !/^\d{4,8}$/.test(code)) {
+    return res.status(400).json({ error: 'Date invalide' });
+  }
+  try {
+    const check = await twilioClient.verify.v2.services(VERIFY_SID).verificationChecks.create({
+      to: phone, code,
+    });
+    if (check.status === 'approved') {
+      const leads = readLeads();
+      let lead = leads.find(l => l.phone === phone);
+      if (!lead) {
+        lead = {
+          id: Date.now().toString(36),
+          name: '', email: '', phone, company: '',
+          source: 'otp', createdAt: new Date().toISOString(),
+          phoneVerified: true,
+          ip: req.ip, ua: req.get('user-agent') || '',
+          updatedAt: new Date().toISOString(),
+        };
+        leads.unshift(lead);
+      } else {
+        lead.phoneVerified = true;
+        lead.updatedAt = new Date().toISOString();
+      }
+      writeLeads(leads);
+      return res.json({ ok: true, user: { id: lead.id, phone: lead.phone, name: lead.name, email: lead.email, company: lead.company } });
+    }
+    res.status(400).json({ error: 'Cod incorect sau expirat' });
+  } catch (e) {
+    console.error('OTP verify error:', e?.message);
+    res.status(500).json({ error: 'Eroare la verificare' });
+  }
+});
+
+// ── /api/orders/brief — client trimite detalii pentru redactie ──
+const BRIEFS_FILE = path.join(__dirname, 'data', 'briefs.json');
+
+function readBriefs() {
+  try {
+    if (fs.existsSync(BRIEFS_FILE)) return JSON.parse(fs.readFileSync(BRIEFS_FILE, 'utf8'));
+  } catch { /* ignore */ }
+  return [];
+}
+function writeBriefs(b) {
+  const dir = path.dirname(BRIEFS_FILE);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(BRIEFS_FILE, JSON.stringify(b, null, 2));
+}
+
+app.post('/api/orders/brief', async (req, res) => {
+  const { orderId, subject, points, contactPref, customer } = req.body || {};
+  if (!orderId || !subject || !points) return res.status(400).json({ error: 'Missing fields' });
+
+  const briefs = readBriefs();
+  const entry = {
+    id: Date.now().toString(36),
+    orderId, subject, points, contactPref: contactPref || 'oricand',
+    customer: customer || {},
+    status: 'pending',
+    aiDraft: null, aiDraftError: null,
+    createdAt: new Date().toISOString(),
+  };
+
+  // AI draft in background (don't block response)
+  (async () => {
+    try {
+      if (!process.env.ANTHROPIC_API_KEY) return;
+      const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+      const message = await client.messages.create({
+        model: 'claude-sonnet-4-20250514', max_tokens: 2500,
+        system: `Ești redactor la oradesibiu.ro. Scrii un draft de advertorial pe baza informațiilor primite de la client. Tonul este profesional și prietenos. 400-700 cuvinte. Răspunde EXACT în acest format:
+TITLU: [un singur titlu, 5-10 cuvinte, SEO-friendly]
+
+ARTICOL:
+[articol complet, 3-5 paragrafe, cu CTA final]`,
+        messages: [{ role: 'user', content: `Afacere: ${customer?.company || customer?.name || '-'}\nSubiect: ${subject}\nPuncte cheie:\n${points}` }],
+      });
+      const text = message.content.map(b => b.text || '').join('\n').trim();
+      const m = text.match(/TITLU:\s*(.+?)\n+ARTICOL:\n([\s\S]*)/);
+      const draft = m ? { title: m[1].trim(), article: m[2].trim() } : { title: '', article: text };
+      const list = readBriefs();
+      const idx = list.findIndex(b => b.id === entry.id);
+      if (idx >= 0) { list[idx].aiDraft = draft; list[idx].status = 'draft-ready'; writeBriefs(list); }
+    } catch (e) {
+      const list = readBriefs();
+      const idx = list.findIndex(b => b.id === entry.id);
+      if (idx >= 0) { list[idx].aiDraftError = e.message; writeBriefs(list); }
+    }
+  })();
+
+  briefs.unshift(entry);
+  writeBriefs(briefs);
+
+  // Notify admin
+  try {
+    if (process.env.SMTP_HOST && process.env.NOTIFY_EMAIL) {
+      const t = nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port: Number(process.env.SMTP_PORT || 587),
+        secure: process.env.SMTP_SECURE === 'true',
+        auth: process.env.SMTP_USER ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS } : undefined,
+      });
+      await t.sendMail({
+        from: process.env.SMTP_FROM || process.env.SMTP_USER,
+        to: process.env.NOTIFY_EMAIL,
+        subject: `[Brief nou] ${subject}`,
+        text: `Client: ${customer?.name || '-'} (${customer?.phone || '-'}, ${customer?.email || '-'})
+Companie: ${customer?.company || '-'}
+Preferință contact: ${contactPref || 'oricand'}
+
+SUBIECT:
+${subject}
+
+PUNCTE CHEIE:
+${points}
+
+Order ID: ${orderId}
+Brief ID: ${entry.id}
+
+AI generează draftul în background. Vezi în panoul admin la /#admin.`,
+      });
+    }
+  } catch (e) { console.error('Brief notify error:', e.message); }
+
+  // Webhook (n8n)
+  try {
+    if (process.env.NOTIFY_WEBHOOK) {
+      fetch(process.env.NOTIFY_WEBHOOK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'brief', brief: entry }),
+      }).catch(() => {});
+    }
+  } catch { /* ignore */ }
+
+  res.json({ ok: true, briefId: entry.id });
+});
+
+app.get('/api/admin/briefs', (req, res) => {
+  if (req.get('x-admin-key') !== process.env.ADMIN_PASSWORD) return res.status(401).json({ error: 'Unauthorized' });
+  res.json(readBriefs());
+});
+
 // ── /api/wp/* — WordPress proxy (credentials stay server-side) ──
 
 function wpAuth() {
@@ -902,6 +1087,183 @@ app.post('/api/banners/purchase', (req, res) => {
   res.json({ ok: true, paidSets: entry.paidSets, freeRemaining });
 });
 
+// ── FGO Invoicing (config from platform-config or env) ──
+const FGO_API_LIVE = 'https://api.fgo.ro/v1';
+const FGO_API_TEST = 'https://api-testuat.fgo.ro/v1';
+
+function getFgoConfig() {
+  const cfg = readConfig();
+  const fgo = cfg.fgo || {};
+  return {
+    cui: fgo.cui || process.env.FGO_CUI || '',
+    key: fgo.privateKey || process.env.FGO_PRIVATE_KEY || '',
+    serie: fgo.serie || process.env.FGO_SERIE || 'OSB',
+    testMode: fgo.testMode !== undefined ? fgo.testMode : (process.env.FGO_API_URL || '').includes('testuat'),
+    enabled: fgo.enabled !== undefined ? fgo.enabled : !!(fgo.cui || process.env.FGO_CUI),
+    platform: process.env.APP_URL || 'https://publicitate.oradesibiu.ro',
+  };
+}
+
+function fgoHash(cui, key, extraValue = '') {
+  return crypto.createHash('sha1')
+    .update(cui + key + extraValue)
+    .digest('hex').toUpperCase();
+}
+
+async function fgoEmitFactura(order, tipFactura = 'Factura') {
+  const fgo = getFgoConfig();
+  if (!fgo.enabled || !fgo.cui || !fgo.key) return null;
+
+  const apiUrl = fgo.testMode ? FGO_API_TEST : FGO_API_LIVE;
+  const cfg = readConfig();
+  const pkg = cfg.packages?.find(p => p.id === order.packageId);
+  const clientName = order.company || order.name || 'Client';
+  const isCompany = !!(order.cui && order.cui.length >= 2);
+
+  const continut = [];
+
+  continut.push({
+    Denumire: `Servicii publicitate online — ${order.packageName || pkg?.name || order.packageId}`,
+    NrProduse: 1,
+    UM: 'BUC',
+    CotaTVA: 21,
+    PretUnitar: order.price || 0,
+  });
+
+  if (order.addons?.length) {
+    for (const addon of order.addons) {
+      continut.push({
+        Denumire: addon.name || addon.id,
+        NrProduse: addon.qty || 1,
+        UM: 'BUC',
+        CotaTVA: 21,
+        PretUnitar: addon.unitPrice || 0,
+      });
+    }
+  }
+
+  const body = {
+    CodUnic: fgo.cui,
+    Hash: fgoHash(fgo.cui, fgo.key, clientName),
+    Serie: fgo.serie,
+    Valuta: 'RON',
+    TipFactura: tipFactura,
+    DataEmitere: new Date().toISOString().slice(0, 10),
+    PlatformaUrl: fgo.platform,
+    Client: {
+      Denumire: clientName,
+      CodUnic: order.cui || '',
+      Email: order.email || '',
+      Telefon: order.phone || '',
+      Tara: 'RO',
+      Judet: order.judet || 'Sibiu',
+      Localitate: order.localitate || '',
+      Adresa: order.address || '',
+      Tip: isCompany ? 'PJ' : 'PF',
+    },
+    Continut: continut,
+  };
+
+  try {
+    const r = await fetch(`${apiUrl}/factura/emitere`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const data = await r.json();
+    if (data.Success) {
+      console.log(`FGO[${fgo.testMode ? 'TEST' : 'LIVE'}] ${tipFactura} #${data.Factura?.Serie}-${data.Factura?.Numar} emisa pentru comanda ${order.id}`);
+      return {
+        serie: data.Factura?.Serie,
+        numar: data.Factura?.Numar,
+        link: data.Factura?.Link,
+        linkPlata: data.Factura?.LinkPlata,
+        tip: tipFactura,
+        testMode: fgo.testMode,
+      };
+    }
+    console.error('FGO emitere failed:', data.Message);
+    return null;
+  } catch (e) {
+    console.error('FGO emitere error:', e.message);
+    return null;
+  }
+}
+
+async function fgoGetStatus(serie, numar) {
+  const fgo = getFgoConfig();
+  if (!fgo.enabled || !fgo.cui || !fgo.key) return null;
+  const apiUrl = fgo.testMode ? FGO_API_TEST : FGO_API_LIVE;
+  try {
+    const r = await fetch(`${apiUrl}/factura/getstatus`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        CodUnic: fgo.cui,
+        Hash: fgoHash(fgo.cui, fgo.key, numar),
+        Serie: serie,
+        Numar: numar,
+        PlatformaUrl: fgo.platform,
+      }),
+    });
+    return await r.json();
+  } catch (e) {
+    console.error('FGO getstatus error:', e.message);
+    return null;
+  }
+}
+
+// Admin: get/update FGO settings
+app.get('/api/admin/fgo', (req, res) => {
+  if (!adminAuth(req, res)) return;
+  const cfg = readConfig();
+  const fgo = cfg.fgo || {};
+  res.json({
+    cui: fgo.cui || process.env.FGO_CUI || '',
+    serie: fgo.serie || process.env.FGO_SERIE || 'OSB',
+    testMode: fgo.testMode !== undefined ? fgo.testMode : true,
+    enabled: fgo.enabled !== undefined ? fgo.enabled : false,
+    hasKey: !!(fgo.privateKey || process.env.FGO_PRIVATE_KEY),
+  });
+});
+
+app.put('/api/admin/fgo', (req, res) => {
+  if (!adminAuth(req, res)) return;
+  const cfg = readConfig();
+  const prev = cfg.fgo || {};
+  cfg.fgo = {
+    ...prev,
+    cui: req.body.cui ?? prev.cui,
+    privateKey: req.body.privateKey ?? prev.privateKey,
+    serie: req.body.serie ?? prev.serie,
+    testMode: req.body.testMode ?? prev.testMode,
+    enabled: req.body.enabled ?? prev.enabled,
+  };
+  writeConfig(cfg);
+  res.json({ ok: true, testMode: cfg.fgo.testMode, enabled: cfg.fgo.enabled });
+});
+
+app.post('/api/admin/fgo/test', async (req, res) => {
+  if (!adminAuth(req, res)) return;
+  const fgo = getFgoConfig();
+  if (!fgo.cui || !fgo.key) return res.status(400).json({ error: 'FGO nu este configurat (lipsește CUI sau cheia privată)' });
+  const apiUrl = fgo.testMode ? FGO_API_TEST : FGO_API_LIVE;
+  try {
+    const r = await fetch(`${apiUrl}/nomenclator/tipfactura`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    const data = await r.json();
+    if (Array.isArray(data)) {
+      res.json({ ok: true, mode: fgo.testMode ? 'TEST' : 'LIVE', types: data.length });
+    } else {
+      res.json({ ok: false, error: 'Răspuns neașteptat de la FGO', data });
+    }
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
 // ── Orders storage + notifications ──
 const ORDERS_FILE = path.join(__dirname, 'data', 'orders.json');
 
@@ -913,6 +1275,219 @@ function writeOrders(orders) {
   const dir = path.dirname(ORDERS_FILE);
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders, null, 2));
+}
+
+function getTransporter() {
+  const smtpHost = process.env.SMTP_HOST;
+  const smtpUser = process.env.SMTP_USER;
+  const smtpPass = process.env.SMTP_PASS;
+  if (!smtpHost || !smtpUser || !smtpPass) return null;
+  return nodemailer.createTransport({
+    host: smtpHost,
+    port: parseInt(process.env.SMTP_PORT || '587'),
+    secure: process.env.SMTP_SECURE === 'true',
+    auth: { user: smtpUser, pass: smtpPass },
+  });
+}
+
+function emailLayout(content) {
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f1f5f9;font-family:Arial,Helvetica,sans-serif">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9;padding:24px 0">
+<tr><td align="center">
+<table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#fff;border:2px solid #e2e8f0">
+  <tr><td style="background:#0f3b6c;padding:20px 28px">
+    <table width="100%"><tr>
+      <td style="color:#fff;font-size:20px;font-weight:900;letter-spacing:1px">ORA DE SIBIU</td>
+      <td align="right" style="color:#94a3b8;font-size:11px;letter-spacing:1px">PUBLICITATE</td>
+    </tr></table>
+  </td></tr>
+  <tr><td style="padding:28px">${content}</td></tr>
+  <tr><td style="background:#f8fafc;padding:20px 28px;border-top:2px solid #e2e8f0">
+    <p style="margin:0;font-size:11px;color:#94a3b8;text-align:center">
+      Ora de Sibiu — publicitate.oradesibiu.ro<br>
+      Acest email a fost trimis automat. Nu răspunde la acest mesaj.<br>
+      Pentru asistență: <a href="mailto:redactie@oradesibiu.ro" style="color:#0f3b6c">redactie@oradesibiu.ro</a>
+    </p>
+  </td></tr>
+</table>
+</td></tr></table></body></html>`;
+}
+
+function orderItemsHtml(order) {
+  const cfg = readConfig();
+  const pkg = cfg.packages?.find(p => p.id === order.packageId);
+  let rows = `<tr>
+    <td style="padding:8px 0;border-bottom:1px solid #e2e8f0;font-size:14px;color:#334155">${order.packageName || pkg?.name || order.packageId}</td>
+    <td align="right" style="padding:8px 0;border-bottom:1px solid #e2e8f0;font-size:14px;font-weight:700;color:#0f172a">${(order.price || 0).toLocaleString('ro')} lei</td>
+  </tr>`;
+  if (order.addons?.length) {
+    for (const a of order.addons) {
+      rows += `<tr>
+        <td style="padding:6px 0;border-bottom:1px solid #f1f5f9;font-size:13px;color:#64748b">&nbsp;&nbsp;+ ${a.name} ×${a.qty}</td>
+        <td align="right" style="padding:6px 0;border-bottom:1px solid #f1f5f9;font-size:13px;color:#64748b">${(a.unitPrice * a.qty).toLocaleString('ro')} lei</td>
+      </tr>`;
+    }
+  }
+  const tva = order.tva || Math.round((order.price || 0) * 0.21);
+  const total = order.total || Math.round((order.price || 0) * 1.19);
+  rows += `<tr>
+    <td style="padding:6px 0;font-size:12px;color:#94a3b8">TVA (21%)</td>
+    <td align="right" style="padding:6px 0;font-size:12px;color:#94a3b8">${tva.toLocaleString('ro')} lei</td>
+  </tr>
+  <tr>
+    <td style="padding:12px 0;font-size:18px;font-weight:900;color:#0f172a;border-top:2px solid #0f3b6c">TOTAL</td>
+    <td align="right" style="padding:12px 0;font-size:18px;font-weight:900;color:#0f172a;border-top:2px solid #0f3b6c">${total.toLocaleString('ro')} lei</td>
+  </tr>`;
+  return `<table width="100%" cellpadding="0" cellspacing="0">${rows}</table>`;
+}
+
+function bankDetailsHtml(order) {
+  const total = order.total || Math.round((order.price || 0) * 1.19);
+  return `<div style="background:#eff6ff;border:2px solid #bfdbfe;padding:20px;margin:16px 0">
+    <p style="margin:0 0 12px;font-size:12px;font-weight:700;color:#1e40af;text-transform:uppercase;letter-spacing:1px">Date pentru transfer bancar</p>
+    <table cellpadding="0" cellspacing="0" width="100%">
+      <tr><td style="padding:4px 0;font-size:13px;color:#64748b;width:120px">Beneficiar:</td><td style="padding:4px 0;font-size:13px;font-weight:700;color:#0f172a">ODS MEDIA SRL</td></tr>
+      <tr><td style="padding:4px 0;font-size:13px;color:#64748b">IBAN:</td><td style="padding:4px 0;font-size:13px;font-weight:700;color:#0f172a;letter-spacing:0.5px">${process.env.BANK_IBAN || 'RO00XXXX0000000000000000'}</td></tr>
+      <tr><td style="padding:4px 0;font-size:13px;color:#64748b">Bancă:</td><td style="padding:4px 0;font-size:13px;font-weight:700;color:#0f172a">${process.env.BANK_NAME || 'Banca Transilvania'}</td></tr>
+      <tr><td style="padding:4px 0;font-size:13px;color:#64748b">Sumă:</td><td style="padding:4px 0;font-size:13px;font-weight:700;color:#e30613">${total.toLocaleString('ro')} lei</td></tr>
+      <tr><td style="padding:4px 0;font-size:13px;color:#64748b">Referință:</td><td style="padding:4px 0;font-size:13px;font-weight:700;color:#0f172a">ODS-${order.id}</td></tr>
+    </table>
+    <p style="margin:12px 0 0;font-size:11px;color:#64748b">Menționează referința ODS-${order.id} în descrierea plății.</p>
+  </div>`;
+}
+
+function buildClientEmail(order, type, extra) {
+  const name = order.name?.split(' ')[0] || order.name || 'Client';
+  const appUrl = process.env.APP_URL || 'https://publicitate.oradesibiu.ro';
+
+  if (type === 'order-confirm') {
+    const isProforma = order.payMethod !== 'card';
+    return {
+      subject: `Comanda #ODS-${order.id} a fost înregistrată`,
+      html: emailLayout(`
+        <h2 style="margin:0 0 8px;font-size:22px;color:#0f172a">Mulțumim, ${escapeHtml(name)}!</h2>
+        <p style="margin:0 0 20px;font-size:14px;color:#64748b">Comanda ta a fost înregistrată cu succes.</p>
+        <div style="background:#f8fafc;border:2px solid #e2e8f0;padding:16px;margin:0 0 16px">
+          <p style="margin:0 0 4px;font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:1px">Comanda #ODS-${escapeHtml(order.id)}</p>
+          <p style="margin:0;font-size:12px;color:#94a3b8">${new Date(order.date).toLocaleDateString('ro-RO', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+        </div>
+        ${orderItemsHtml(order)}
+        ${isProforma ? bankDetailsHtml(order) : `<div style="background:#f0fdf4;border:2px solid #bbf7d0;padding:16px;margin:16px 0">
+          <p style="margin:0;font-size:14px;color:#166534"><strong>Plata cu cardul:</strong> vei fi redirecționat către pagina de plată securizată Stripe.</p>
+        </div>`}
+        ${order.fgoProforma?.link ? `<div style="margin:16px 0;text-align:center">
+          <a href="${escapeHtml(order.fgoProforma.link)}" style="display:inline-block;padding:12px 28px;background:#0f3b6c;color:#fff;font-weight:900;font-size:12px;text-decoration:none;text-transform:uppercase;letter-spacing:1px;border:2px solid #0f3b6c">Descarcă proforma PDF</a>
+        </div>` : ''}
+        ${order.isAnunt ? `<div style="background:#f8fafc;border:2px solid #e2e8f0;padding:16px;margin:16px 0">
+          <p style="margin:0 0 8px;font-size:12px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:1px">Anunțul tău</p>
+          <p style="margin:0;font-size:13px;color:#334155;font-style:italic">${escapeHtml((order.anuntText || '').substring(0, 300))}${(order.anuntText || '').length > 300 ? '...' : ''}</p>
+        </div>` : ''}
+        <div style="margin:20px 0;text-align:center">
+          <a href="${appUrl}/#dashboard" style="display:inline-block;padding:14px 32px;background:#e30613;color:#fff;font-weight:900;font-size:13px;text-decoration:none;text-transform:uppercase;letter-spacing:1px;border:2px solid #e30613">Vezi comanda în dashboard</a>
+        </div>
+        <p style="margin:16px 0 0;font-size:13px;color:#64748b">Echipa Ora de Sibiu îți va confirma comanda în cel mai scurt timp.</p>
+      `),
+    };
+  }
+
+  if (type === 'payment-confirmed') {
+    return {
+      subject: `Plata confirmată — Comanda #ODS-${order.id}`,
+      html: emailLayout(`
+        <div style="text-align:center;margin:0 0 20px">
+          <div style="display:inline-block;width:56px;height:56px;background:#f0fdf4;border:2px solid #bbf7d0;line-height:56px;font-size:24px;text-align:center">✓</div>
+        </div>
+        <h2 style="margin:0 0 8px;font-size:22px;color:#0f172a;text-align:center">Plata a fost confirmată!</h2>
+        <p style="margin:0 0 20px;font-size:14px;color:#64748b;text-align:center">Comanda #ODS-${escapeHtml(order.id)} a fost plătită. Echipa noastră va începe lucrul.</p>
+        ${orderItemsHtml(order)}
+        ${order.fgoFactura?.link ? `<div style="margin:16px 0;text-align:center">
+          <a href="${escapeHtml(order.fgoFactura.link)}" style="display:inline-block;padding:12px 28px;background:#0f3b6c;color:#fff;font-weight:900;font-size:12px;text-decoration:none;text-transform:uppercase;letter-spacing:1px;border:2px solid #0f3b6c">Descarcă factura PDF</a>
+        </div>` : ''}
+        <div style="background:#f0fdf4;border:2px solid #bbf7d0;padding:16px;margin:16px 0">
+          <p style="margin:0;font-size:14px;color:#166534"><strong>Ce urmează?</strong></p>
+          <ul style="margin:8px 0 0;padding-left:20px;font-size:13px;color:#334155">
+            ${order.isAnunt
+              ? '<li>Anunțul tău va fi verificat și publicat în max 24h.</li>'
+              : `<li>Echipa de redacție preia comanda.</li>
+                 <li>Vei fi notificat pe email la fiecare etapă.</li>
+                 <li>Poți urmări progresul în dashboard.</li>`}
+          </ul>
+        </div>
+        <div style="margin:20px 0;text-align:center">
+          <a href="${appUrl}/#dashboard" style="display:inline-block;padding:14px 32px;background:#e30613;color:#fff;font-weight:900;font-size:13px;text-decoration:none;text-transform:uppercase;letter-spacing:1px;border:2px solid #e30613">Deschide dashboard</a>
+        </div>
+      `),
+    };
+  }
+
+  if (type === 'status-review') {
+    return {
+      subject: `Comanda #ODS-${order.id} este în lucru`,
+      html: emailLayout(`
+        <h2 style="margin:0 0 8px;font-size:22px;color:#0f172a">Bună, ${escapeHtml(name)}!</h2>
+        <p style="margin:0 0 20px;font-size:14px;color:#64748b">Am început lucrul la comanda ta.</p>
+        <div style="background:#fefce8;border:2px solid #fde68a;padding:16px;margin:0 0 16px">
+          <p style="margin:0;font-size:14px;color:#854d0e"><strong>Status:</strong> În lucru</p>
+          <p style="margin:8px 0 0;font-size:13px;color:#92400e">${order.isAnunt ? 'Anunțul tău este în curs de verificare.' : 'Echipa de redacție lucrează la conținutul tău.'}</p>
+        </div>
+        <p style="margin:0 0 4px;font-size:12px;color:#94a3b8">Pachet: <strong style="color:#0f172a">${escapeHtml(order.packageName || order.packageId)}</strong></p>
+        <p style="margin:0;font-size:12px;color:#94a3b8">ID comandă: <strong style="color:#0f172a">#ODS-${escapeHtml(order.id)}</strong></p>
+        <div style="margin:20px 0;text-align:center">
+          <a href="${appUrl}/#dashboard" style="display:inline-block;padding:14px 32px;background:#0f3b6c;color:#fff;font-weight:900;font-size:13px;text-decoration:none;text-transform:uppercase;letter-spacing:1px;border:2px solid #0f3b6c">Urmărește progresul</a>
+        </div>
+      `),
+    };
+  }
+
+  if (type === 'status-published') {
+    const link = extra?.link || extra?.wpUrl;
+    return {
+      subject: `${order.isAnunt ? 'Anunțul' : 'Articolul'} tău a fost publicat! — #ODS-${order.id}`,
+      html: emailLayout(`
+        <div style="text-align:center;margin:0 0 20px">
+          <div style="display:inline-block;width:56px;height:56px;background:#f0fdf4;border:2px solid #bbf7d0;line-height:56px;font-size:24px;text-align:center">🎉</div>
+        </div>
+        <h2 style="margin:0 0 8px;font-size:22px;color:#0f172a;text-align:center">${order.isAnunt ? 'Anunțul' : 'Articolul'} tău este live!</h2>
+        <p style="margin:0 0 20px;font-size:14px;color:#64748b;text-align:center">Comanda #ODS-${escapeHtml(order.id)} a fost publicată pe oradesibiu.ro.</p>
+        ${link ? `<div style="margin:20px 0;text-align:center">
+          <a href="${escapeHtml(link)}" style="display:inline-block;padding:14px 32px;background:#e30613;color:#fff;font-weight:900;font-size:13px;text-decoration:none;text-transform:uppercase;letter-spacing:1px;border:2px solid #e30613">Vezi publicarea</a>
+        </div>` : ''}
+        <div style="background:#f0fdf4;border:2px solid #bbf7d0;padding:16px;margin:16px 0">
+          <p style="margin:0;font-size:14px;color:#166534"><strong>Ce poți face acum:</strong></p>
+          <ul style="margin:8px 0 0;padding-left:20px;font-size:13px;color:#334155">
+            <li>Distribuie link-ul pe rețelele tale sociale</li>
+            <li>Monitorizează statisticile în dashboard</li>
+            ${!order.isAnunt ? '<li>Programează postările pe social media</li>' : ''}
+          </ul>
+        </div>
+        <div style="margin:20px 0;text-align:center">
+          <a href="${appUrl}/#dashboard" style="display:inline-block;padding:14px 32px;background:#0f3b6c;color:#fff;font-weight:900;font-size:13px;text-decoration:none;text-transform:uppercase;letter-spacing:1px;border:2px solid #0f3b6c">Deschide dashboard</a>
+        </div>
+      `),
+    };
+  }
+
+  return null;
+}
+
+async function sendClientEmail(order, type, extra) {
+  if (!order.email) return;
+  const transporter = getTransporter();
+  if (!transporter) return;
+  const email = buildClientEmail(order, type, extra);
+  if (!email) return;
+  try {
+    await transporter.sendMail({
+      from: process.env.SMTP_FROM || process.env.SMTP_USER,
+      to: order.email,
+      subject: email.subject,
+      html: email.html,
+    });
+    console.log(`Client email [${type}] sent to ${order.email}`);
+  } catch (e) {
+    console.error(`Client email [${type}] failed for ${order.email}:`, e.message);
+  }
 }
 
 async function notifyNewOrder(order) {
@@ -938,7 +1513,7 @@ ${order.packageName || pkg?.name || order.packageId}
 Preț: ${(order.price || 0).toLocaleString('ro')} lei
 ${addonsText ? 'Add-ons:\n' + addonsText : ''}
 ${order.addonTotal ? 'Total add-ons: ' + order.addonTotal.toLocaleString('ro') + ' lei' : ''}
-TVA: ${(order.tva || Math.round((order.price || 0) * 0.19)).toLocaleString('ro')} lei
+TVA: ${(order.tva || Math.round((order.price || 0) * 0.21)).toLocaleString('ro')} lei
 TOTAL: ${(order.total || Math.round((order.price || 0) * 1.19)).toLocaleString('ro')} lei
 
 Plată: ${order.payMethod === 'card' ? 'Card (Stripe)' : 'Transfer bancar (proformă)'}
@@ -947,31 +1522,25 @@ ${order.isAnunt ? '\nANUNȚ:\nCategorie: ' + (order.anuntCategory || '') + '\nZi
 ${order.contentChoice ? 'Conținut: ' + ({ propriu: 'Trimite clientul', marina: 'Marina AI', redactie: 'Redacția ODS' }[order.contentChoice] || order.contentChoice) : ''}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
 
-  // Email notification
-  const smtpHost = process.env.SMTP_HOST;
-  const smtpUser = process.env.SMTP_USER;
-  const smtpPass = process.env.SMTP_PASS;
+  // Admin email notification
   const notifyEmail = process.env.NOTIFY_EMAIL;
-
-  if (smtpHost && smtpUser && smtpPass && notifyEmail) {
+  const transporter = getTransporter();
+  if (transporter && notifyEmail) {
     try {
-      const transporter = nodemailer.createTransport({
-        host: smtpHost,
-        port: parseInt(process.env.SMTP_PORT || '587'),
-        secure: process.env.SMTP_SECURE === 'true',
-        auth: { user: smtpUser, pass: smtpPass },
-      });
       await transporter.sendMail({
-        from: process.env.SMTP_FROM || smtpUser,
+        from: process.env.SMTP_FROM || process.env.SMTP_USER,
         to: notifyEmail,
         subject,
         text,
       });
-      console.log('Order notification email sent to', notifyEmail);
+      console.log('Admin notification email sent to', notifyEmail);
     } catch (e) {
-      console.error('Email notification failed:', e.message);
+      console.error('Admin email notification failed:', e.message);
     }
   }
+
+  // Client confirmation email
+  await sendClientEmail(order, 'order-confirm');
 
   // Webhook notification (n8n, Zapier, etc.)
   const webhookUrl = process.env.NOTIFY_WEBHOOK;
@@ -996,9 +1565,22 @@ app.post('/api/orders', async (req, res) => {
   const existing = orders.findIndex(o => o.id === order.id);
   if (existing >= 0) orders[existing] = order;
   else orders.unshift(order);
+
+  // FGO: proforma for bank transfer, wait for payment for card
+  if (order.payMethod === 'proforma' || order.payMethod !== 'card') {
+    const fgo = await fgoEmitFactura(order, 'Proforma');
+    if (fgo) {
+      const idx2 = orders.findIndex(o => o.id === order.id);
+      if (idx2 >= 0) {
+        orders[idx2].fgoProforma = fgo;
+        order.fgoProforma = fgo;
+      }
+    }
+  }
+
   writeOrders(orders);
   notifyNewOrder(order).catch(() => {});
-  res.json({ ok: true });
+  res.json({ ok: true, fgoProforma: order.fgoProforma || null });
 });
 
 app.get('/api/orders', (req, res) => {
@@ -1013,14 +1595,36 @@ app.get('/api/admin/orders', (req, res) => {
   res.json(readOrders());
 });
 
-app.put('/api/admin/orders/:id', (req, res) => {
+app.put('/api/admin/orders/:id', async (req, res) => {
   if (req.headers['x-admin-key'] !== process.env.ADMIN_PASSWORD) return res.status(401).json({ error: 'Unauthorized' });
   const orders = readOrders();
   const idx = orders.findIndex(o => o.id === req.params.id);
   if (idx < 0) return res.status(404).json({ error: 'Order not found' });
-  orders[idx] = { ...orders[idx], ...req.body };
+  const prev = orders[idx];
+  const updated = { ...prev, ...req.body };
+  orders[idx] = updated;
   writeOrders(orders);
-  res.json(orders[idx]);
+
+  // Send client emails on status change + FGO fiscal invoice on payment
+  if (prev.status !== updated.status) {
+    if (updated.status === 'paid') {
+      if (!updated.fgoFactura) {
+        const fgo = await fgoEmitFactura(updated, 'Factura');
+        if (fgo) {
+          updated.fgoFactura = fgo;
+          orders[idx] = updated;
+          writeOrders(orders);
+        }
+      }
+      sendClientEmail(updated, 'payment-confirmed').catch(() => {});
+    } else if (updated.status === 'in-review' || updated.status === 'review') {
+      sendClientEmail(updated, 'status-review').catch(() => {});
+    } else if (updated.status === 'published') {
+      sendClientEmail(updated, 'status-published', { link: updated.wpDraftUrl || updated.articleUrl }).catch(() => {});
+    }
+  }
+
+  res.json(updated);
 });
 
 // ── Stripe payment ──
@@ -1058,12 +1662,12 @@ app.post('/api/checkout/create-session', async (req, res) => {
   }
 
   // Add TVA as a separate line
-  const tva = order.tva || Math.round((order.price || 0) * 0.19);
+  const tva = order.tva || Math.round((order.price || 0) * 0.21);
   if (tva > 0) {
     lineItems.push({
       price_data: {
         currency: 'ron',
-        product_data: { name: 'TVA (19%)' },
+        product_data: { name: 'TVA (21%)' },
         unit_amount: Math.round(tva * 100),
       },
       quantity: 1,
@@ -1112,8 +1716,13 @@ app.post('/api/checkout/webhook', async (req, res) => {
         orders[idx].status = 'paid';
         orders[idx].stripeSessionId = session.id;
         orders[idx].paidAt = new Date().toISOString();
+        if (!orders[idx].fgoFactura) {
+          const fgo = await fgoEmitFactura(orders[idx], 'Factura');
+          if (fgo) orders[idx].fgoFactura = fgo;
+        }
         writeOrders(orders);
         console.log('Order', orderId, 'marked as paid via Stripe');
+        sendClientEmail(orders[idx], 'payment-confirmed').catch(() => {});
       }
     }
   }

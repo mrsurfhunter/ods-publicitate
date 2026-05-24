@@ -1,48 +1,88 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
+import { sendOTP, verifyOTP } from "../../utils/otp";
 
 const COPY = {
   consult: {
-    title: "Ca să-ți creăm recomandarea personalizată",
-    sub: "Spune-ne cum te găsim și primești instant pachetul potrivit pentru afacerea ta",
-    btn: "Continuă",
+    title: "Aproape gata — verifică-ți telefonul",
+    sub: "Îți trimitem un cod prin SMS ca să-ți pregătim recomandarea personalizată.",
   },
   catalog: {
-    title: "Creează cont gratuit",
-    sub: "Completează datele pentru a vedea prețurile și a comanda direct",
-    btn: "Vezi pachetele",
+    title: "Verifică-ți telefonul ca să vezi pachetele",
+    sub: "Cont gratuit în 30 secunde. Trimitem un cod prin SMS la numărul tău.",
   },
   default: {
-    title: "Creează cont gratuit",
-    sub: "Completează datele de contact pentru a continua",
-    btn: "Continuă",
+    title: "Cont gratuit prin SMS",
+    sub: "Îți trimitem un cod de verificare la numărul de telefon.",
   },
 };
 
 export default function LeadCaptureStep({ onDone, source }) {
-  const { register, isAuthenticated, user } = useAuth();
-  const [f, sF] = useState({ name: "", email: "", phone: "", company: "" });
+  const { verifyAndLogin, isAuthenticated, user } = useAuth();
+  const [step, setStep] = useState("phone"); // "phone" | "code"
+  const [phone, setPhone] = useState("");
+  const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
-  const set = (k, v) => sF(s => ({ ...s, [k]: v }));
+  const [resendCooldown, setResendCooldown] = useState(0);
+  const codeRef = useRef();
   const copy = COPY[source] || COPY.default;
+
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const t = setTimeout(() => setResendCooldown(c => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [resendCooldown]);
 
   if (isAuthenticated && user) {
     if (onDone) onDone(user);
     return null;
   }
 
-  const canSubmit = f.name.trim() && f.email.trim() && f.phone.trim();
+  const phoneDigits = phone.replace(/\D/g, "");
+  const validPhone = phoneDigits.length >= 9 && phoneDigits.length <= 12;
+  const validCode = /^\d{4,8}$/.test(code);
 
-  const handleSubmit = async (e) => {
+  const handleSendOTP = async (e) => {
     e?.preventDefault();
-    if (!canSubmit) return;
-    if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(f.email)) { setErr("Email invalid"); return; }
-    if (f.phone.replace(/\D/g, "").length < 10) { setErr("Telefon invalid"); return; }
+    if (!validPhone) return;
     setLoading(true); setErr("");
-    const u = await register({ ...f, source: source || "consult" });
+    try {
+      await sendOTP(phone);
+      setStep("code");
+      setResendCooldown(45);
+      setTimeout(() => codeRef.current?.focus(), 100);
+    } catch (e) {
+      setErr(e.message);
+    }
     setLoading(false);
-    if (onDone) onDone(u);
+  };
+
+  const handleVerify = async (e) => {
+    e?.preventDefault();
+    if (!validCode) return;
+    setLoading(true); setErr("");
+    try {
+      const u = await verifyOTP(phone, code);
+      const stored = await verifyAndLogin(u);
+      if (onDone) onDone(stored);
+    } catch (e) {
+      setErr(e.message);
+    }
+    setLoading(false);
+  };
+
+  const handleResend = async () => {
+    if (resendCooldown > 0) return;
+    setLoading(true); setErr("");
+    try {
+      await sendOTP(phone);
+      setResendCooldown(45);
+      setCode("");
+    } catch (e) {
+      setErr(e.message);
+    }
+    setLoading(false);
   };
 
   return (
@@ -52,33 +92,75 @@ export default function LeadCaptureStep({ onDone, source }) {
         <p className="text-sm text-slate-500 mt-1">{copy.sub}</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-3">
-        <div>
-          <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Nume *</label>
-          <input className="w-full p-4 bg-slate-50 border-2 border-slate-200 focus:border-slate-900 outline-none text-sm font-medium" value={f.name} onChange={e => set("name", e.target.value)} placeholder="Numele tău" autoFocus />
-        </div>
-        <div>
-          <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Email *</label>
-          <input className="w-full p-4 bg-slate-50 border-2 border-slate-200 focus:border-slate-900 outline-none text-sm font-medium" type="email" value={f.email} onChange={e => set("email", e.target.value)} placeholder="email@firma.ro" />
-        </div>
-        <div>
-          <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Telefon *</label>
-          <input className="w-full p-4 bg-slate-50 border-2 border-slate-200 focus:border-slate-900 outline-none text-sm font-medium" value={f.phone} onChange={e => set("phone", e.target.value)} placeholder="07xx xxx xxx" />
-        </div>
-        <div>
-          <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Firmă <span className="font-normal normal-case tracking-normal">(opțional)</span></label>
-          <input className="w-full p-4 bg-slate-50 border-2 border-slate-200 focus:border-slate-900 outline-none text-sm font-medium" value={f.company} onChange={e => set("company", e.target.value)} placeholder="Numele firmei" />
-        </div>
+      {step === "phone" && (
+        <form onSubmit={handleSendOTP} className="space-y-3">
+          <div>
+            <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Telefon *</label>
+            <input
+              className="w-full p-4 bg-slate-50 border-2 border-slate-200 focus:border-slate-900 outline-none text-sm font-medium"
+              type="tel"
+              inputMode="tel"
+              autoComplete="tel"
+              value={phone}
+              onChange={e => setPhone(e.target.value)}
+              placeholder="07xx xxx xxx"
+              autoFocus
+            />
+            <p className="text-[10px] text-slate-400 mt-1.5">Format: 07xx xxx xxx (10 cifre)</p>
+          </div>
 
-        {err && <p className="text-xs text-[#e30613] font-semibold">{err}</p>}
+          {err && <p className="text-xs text-[#e30613] font-semibold">{err}</p>}
 
-        <button type="submit" disabled={!canSubmit || loading} className="w-full py-4 bg-cta text-white font-black hover:bg-cta-dark transition-all disabled:opacity-50 uppercase text-xs tracking-widest mt-2 border-2 border-cta-dark">
-          {loading ? "Se salvează..." : copy.btn}
-        </button>
-      </form>
+          <button type="submit" disabled={!validPhone || loading} className="w-full py-4 bg-cta text-white font-black hover:bg-cta-dark transition-all disabled:opacity-50 uppercase text-xs tracking-widest mt-2 border-2 border-cta-dark">
+            {loading ? "Se trimite SMS..." : "Trimite cod prin SMS"}
+          </button>
+        </form>
+      )}
+
+      {step === "code" && (
+        <form onSubmit={handleVerify} className="space-y-3">
+          <div className="text-center mb-3">
+            <p className="text-xs text-slate-500">Cod trimis la</p>
+            <p className="text-sm font-bold text-slate-900">{phone}</p>
+            <button type="button" onClick={() => { setStep("phone"); setCode(""); setErr(""); }} className="text-[11px] text-slate-400 hover:text-slate-700 underline mt-1">
+              Schimbă numărul
+            </button>
+          </div>
+
+          <div>
+            <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 text-center">Cod primit prin SMS *</label>
+            <input
+              ref={codeRef}
+              className="w-full p-4 bg-slate-50 border-2 border-slate-200 focus:border-slate-900 outline-none text-2xl font-bold tracking-[8px] text-center"
+              type="text"
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              maxLength={8}
+              value={code}
+              onChange={e => setCode(e.target.value.replace(/\D/g, ""))}
+              placeholder="••••••"
+            />
+          </div>
+
+          {err && <p className="text-xs text-[#e30613] font-semibold text-center">{err}</p>}
+
+          <button type="submit" disabled={!validCode || loading} className="w-full py-4 bg-cta text-white font-black hover:bg-cta-dark transition-all disabled:opacity-50 uppercase text-xs tracking-widest mt-2 border-2 border-cta-dark">
+            {loading ? "Se verifică..." : "Verifică și continuă"}
+          </button>
+
+          <button
+            type="button"
+            onClick={handleResend}
+            disabled={resendCooldown > 0 || loading}
+            className="w-full text-[11px] text-slate-400 hover:text-slate-700 mt-1 disabled:opacity-50"
+          >
+            {resendCooldown > 0 ? `Retrimite cod în ${resendCooldown}s` : "Retrimite codul"}
+          </button>
+        </form>
+      )}
 
       <p className="text-[10px] text-slate-400 text-center mt-4 flex items-center justify-center gap-1.5">
-        <i className="fas fa-lock text-[8px]"></i> Nu trimitem spam. Datele tale sunt în siguranță.
+        <i className="fas fa-lock text-[8px]"></i> Numărul tău rămâne privat. Nu trimitem spam.
       </p>
     </div>
   );

@@ -1,26 +1,62 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { gid } from "../../utils/storage";
 
-export default function ImageUploader({ label, images, onChange, multi }) {
+const MIN_LANDSCAPE_RATIO = 1.2; // width/height — sub asta = portret/patrat
+
+export default function ImageUploader({ label, images, onChange, multi, preferLandscape, hideTextHint }) {
   const ref = useRef();
+  const [warning, setWarning] = useState("");
   const MAX_SIZE = 5 * 1024 * 1024;
 
-  const handleFiles = (files) => {
-    Array.from(files).forEach(file => {
-      if (!file.type.startsWith("image/")) return;
-      if (file.size > MAX_SIZE) { alert(`${file.name} depășește limita de 5MB.`); return; }
-      const reader = new FileReader();
-      reader.onload = e => {
-        const img = { id: gid(), name: file.name, data: e.target.result, file };
-        onChange(multi ? [...images, img] : [img]);
-      };
-      reader.readAsDataURL(file);
-    });
+  const checkOrientation = (dataUrl) => new Promise(resolve => {
+    if (!preferLandscape) return resolve(null);
+    const im = new Image();
+    im.onload = () => {
+      const ratio = im.naturalWidth / im.naturalHeight;
+      if (ratio < MIN_LANDSCAPE_RATIO) {
+        resolve(`Imaginea pare verticală (${im.naturalWidth}×${im.naturalHeight}). Pe site apare pe lat (16:9) — mai ai una orizontală?`);
+      } else resolve(null);
+    };
+    im.onerror = () => resolve(null);
+    im.src = dataUrl;
+  });
+
+  const handleFiles = async (files) => {
+    let newWarning = "";
+    for (const file of Array.from(files)) {
+      if (!file.type.startsWith("image/")) continue;
+      if (file.size > MAX_SIZE) { alert(`${file.name} depășește limita de 5MB.`); continue; }
+      const dataUrl = await new Promise(res => {
+        const r = new FileReader();
+        r.onload = e => res(e.target.result);
+        r.readAsDataURL(file);
+      });
+      const w = await checkOrientation(dataUrl);
+      if (w) newWarning = w;
+      const img = { id: gid(), name: file.name, data: dataUrl, file };
+      images = multi ? [...images, img] : [img];
+      onChange(images);
+    }
+    setWarning(newWarning);
   };
 
   return (
     <div>
-      <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">{label}</label>
+      {label && (
+        <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">{label}</label>
+      )}
+
+      {preferLandscape && !hideTextHint && (
+        <div className="mb-3 p-3 bg-blue-50 border border-blue-200 text-[11px] leading-relaxed text-blue-900">
+          <div className="font-bold mb-1"><i className="fas fa-circle-info mr-1"></i> Cum trebuie să fie imaginea principală</div>
+          <ul className="list-disc list-inside space-y-0.5 text-blue-800">
+            <li><strong>Orizontală (peisaj)</strong>, minim 1200×675 px (raport 16:9)</li>
+            <li><strong>Fără text pe imagine</strong> — adăugăm noi titlu și siglă peste. Textul pus de tine se taie pe mobil și încurcă indexarea Google.</li>
+            <li>Fără sigle Facebook/Instagram suprapuse</li>
+          </ul>
+        </div>
+      )}
+
       <div
         onClick={() => ref.current?.click()}
         className="border-2 border-dashed border-slate-300 cursor-pointer hover:border-slate-900 hover:text-slate-900 transition-all bg-slate-50"
@@ -40,7 +76,7 @@ export default function ImageUploader({ label, images, onChange, multi }) {
               <div key={img.id} className="relative w-18 h-18 overflow-hidden border-2 border-slate-200 group">
                 <img src={img.data} className="w-full h-full object-cover" alt="" />
                 <div
-                  onClick={e => { e.stopPropagation(); onChange(images.filter((_, j) => j !== i)); }}
+                  onClick={e => { e.stopPropagation(); onChange(images.filter((_, j) => j !== i)); setWarning(""); }}
                   className="absolute top-1 right-1 w-5 h-5 bg-black/60 text-white flex items-center justify-center text-xs cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
                 >×</div>
               </div>
@@ -51,6 +87,13 @@ export default function ImageUploader({ label, images, onChange, multi }) {
           </div>
         )}
       </div>
+
+      {warning && (
+        <div className="mt-2 p-2.5 bg-amber-50 border border-amber-200 text-[11px] text-amber-800 leading-snug">
+          <i className="fas fa-triangle-exclamation mr-1"></i> {warning}
+        </div>
+      )}
+
       <input ref={ref} type="file" accept="image/*" multiple={multi} className="hidden" onChange={e => handleFiles(e.target.files)} />
     </div>
   );

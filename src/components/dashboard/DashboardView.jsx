@@ -234,25 +234,21 @@ export default function DashboardView({ initOrder, onBack }) {
               {pkg?.hasArticle && (
                 <div className="bg-white border-2 border-slate-200 p-4 sm:p-6">
                   {!order.contentChoice ? (
-                    /* Content choice */
+                    /* Content choice — doar 2 optiuni */
                     <>
                       <div className="text-[11px] font-bold text-slate-400 uppercase tracking-[2px] mb-4">Cum dorești să fie scris articolul?</div>
                       <div className="space-y-3">
                         {[
-                          { id: "propriu", icon: "fa-upload", title: "Trimit eu materialele", desc: "Am textul și pozele pregătite. Le încarc aici.", color: "slate" },
-                          { id: "marina", icon: "fa-wand-magic-sparkles", title: "Scriu cu Marina, redactor AI", desc: "Completez câteva detalii și Marina scrie articolul.", color: "purple" },
-                          { id: "redactie", icon: "fa-pen-nib", title: "Scrie redacția Ora de Sibiu", desc: "Echipa editorială scrie articolul. Primesc draft pentru aprobare.", color: "brand" },
+                          { id: "propriu", icon: "fa-upload", title: "Am textul gata", desc: "Îl încarc aici împreună cu pozele. Articolul apare după aprobare în 24h.", color: "slate" },
+                          { id: "redactie", icon: "fa-pen-nib", title: "Trimite detalii — vreau să mă sune un redactor", desc: "Completez câteva informații, redacția scrie articolul și mi-l trimite pentru aprobare.", color: "brand" },
                         ].map(opt => (
-                          <button key={opt.id} onClick={() => upd({ contentChoice: opt.id, ...(opt.id === "redactie" ? { status: "review" } : {}) })}
+                          <button key={opt.id} onClick={() => upd({ contentChoice: opt.id })}
                             className={`w-full flex items-center gap-4 p-4 border-2 text-left transition-all ${
                               opt.color === "brand" ? 'border-brand/20 bg-brand/5 hover:bg-brand/10' :
-                              opt.color === "purple" ? 'border-purple-200 bg-purple-50/50 hover:bg-purple-50' :
                               'border-slate-200 hover:border-slate-400'
                             }`}>
                             <div className={`w-10 h-10 flex items-center justify-center flex-shrink-0 ${
-                              opt.color === "brand" ? 'bg-brand text-white' :
-                              opt.color === "purple" ? 'bg-purple-600 text-white' :
-                              'bg-slate-100 text-slate-600'
+                              opt.color === "brand" ? 'bg-brand text-white' : 'bg-slate-100 text-slate-600'
                             }`}>
                               <i className={`fas ${opt.icon}`}></i>
                             </div>
@@ -266,27 +262,86 @@ export default function DashboardView({ initOrder, onBack }) {
                       </div>
                     </>
                   ) : order.contentChoice === "redactie" ? (
-                    /* Editorial timeline */
+                    /* Editorial: details form -> AI draft + redactor review */
                     <div>
                       <div className="text-[11px] font-bold text-slate-400 uppercase tracking-[2px] mb-4">Articol — Redacția Ora de Sibiu</div>
-                      <div className="flex items-center gap-4 p-4 border-2 border-green-200 bg-green-50">
-                        <div className="w-10 h-10 bg-green-500 text-white flex items-center justify-center flex-shrink-0">
-                          <i className="fas fa-check"></i>
+
+                      {!order.briefSubmitted ? (
+                        <div className="space-y-4">
+                          <div className="p-3 bg-blue-50 border-2 border-blue-200 text-xs text-blue-900 leading-relaxed">
+                            <i className="fas fa-info-circle mr-1"></i> Completează detaliile de mai jos. Un redactor le va folosi pentru a-ți pregăti articolul (cu ajutor AI) și ți-l va trimite pentru aprobare în max 24h.
+                          </div>
+                          <div>
+                            <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Subiectul articolului *</label>
+                            <input className="w-full p-4 bg-slate-50 border-2 border-slate-200 focus:border-brand outline-none text-sm font-bold"
+                              value={order.briefSubject || ""} onChange={e => upd({ briefSubject: e.target.value })}
+                              placeholder="Ex: Deschiderea noului restaurant La Cuptor în centrul Sibiului" />
+                          </div>
+                          <div>
+                            <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">3-5 puncte cheie de menționat *</label>
+                            <textarea className="w-full h-32 p-4 bg-slate-50 border-2 border-slate-200 focus:border-brand outline-none text-sm resize-none leading-relaxed"
+                              value={order.briefPoints || ""} onChange={e => upd({ briefPoints: e.target.value })}
+                              placeholder="Ex:&#10;- Adresa: Strada Mitropoliei nr. 5&#10;- Specific: bucătărie tradițională cu twist modern&#10;- Program: zilnic 11-23&#10;- Promoție: 20% reducere prima săptămână" />
+                          </div>
+                          <div>
+                            <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Când să te sunăm?</label>
+                            <select className="w-full p-4 bg-slate-50 border-2 border-slate-200 focus:border-brand outline-none text-sm font-medium"
+                              value={order.briefContactPref || "oricand"} onChange={e => upd({ briefContactPref: e.target.value })}>
+                              <option value="oricand">Oricând în program (9-18)</option>
+                              <option value="dimineata">Dimineața (9-12)</option>
+                              <option value="dupa-pranz">După prânz (12-15)</option>
+                              <option value="dupa-amiaza">După-amiaza (15-18)</option>
+                              <option value="doar-email">Nu mă suna — comunicăm pe email/WhatsApp</option>
+                            </select>
+                          </div>
+
+                          <button
+                            onClick={() => {
+                              if (!(order.briefSubject || "").trim() || !(order.briefPoints || "").trim()) return;
+                              upd({ briefSubmitted: true, briefSubmittedAt: new Date().toISOString(), status: "review" });
+                              fetch("/api/orders/brief", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                  orderId: order.id,
+                                  subject: order.briefSubject,
+                                  points: order.briefPoints,
+                                  contactPref: order.briefContactPref || "oricand",
+                                  customer: { name: order.name, phone: order.phone, email: order.email, company: order.company },
+                                }),
+                              }).catch(() => {});
+                            }}
+                            disabled={!(order.briefSubject || "").trim() || !(order.briefPoints || "").trim()}
+                            className="w-full py-4 bg-brand text-white font-black text-sm uppercase tracking-widest border-2 border-brand hover:bg-brand-dark transition-all disabled:opacity-50"
+                          >
+                            <i className="fas fa-paper-plane mr-2"></i>Trimite detaliile redactorului
+                          </button>
                         </div>
-                        <div>
-                          <div className="text-sm font-bold text-slate-900">Echipa editorială a preluat comanda</div>
-                          <div className="text-xs text-slate-500">Vei fi contactat la <strong>{order.phone}</strong> pentru detalii. Articolul va fi trimis pentru aprobare înainte de publicare.</div>
-                        </div>
-                      </div>
-                      {order.status === "review" && (
-                        <div className="mt-3 p-3 bg-amber-50 border-2 border-amber-200 text-xs text-amber-700 font-semibold flex items-center gap-2">
-                          <i className="fas fa-pen-to-square"></i> Articol în lucru — vei primi un draft pentru aprobare
-                        </div>
-                      )}
-                      {order.wpDraftUrl && (
-                        <div className="mt-3 p-3 bg-blue-50 border-2 border-blue-200 text-xs">
-                          <i className="fas fa-eye mr-1"></i> Preview: <a href={order.wpDraftUrl} target="_blank" rel="noopener" className="text-blue-600 hover:underline font-bold">{order.wpDraftUrl}</a>
-                        </div>
+                      ) : (
+                        <>
+                          <div className="flex items-center gap-4 p-4 border-2 border-green-200 bg-green-50">
+                            <div className="w-10 h-10 bg-green-500 text-white flex items-center justify-center flex-shrink-0">
+                              <i className="fas fa-check"></i>
+                            </div>
+                            <div>
+                              <div className="text-sm font-bold text-slate-900">Detaliile au fost trimise redacției</div>
+                              <div className="text-xs text-slate-500">Vei primi draft pentru aprobare la <strong>{order.email || order.phone}</strong> în max 24h.</div>
+                            </div>
+                          </div>
+                          {order.status === "review" && (
+                            <div className="mt-3 p-3 bg-amber-50 border-2 border-amber-200 text-xs text-amber-700 font-semibold flex items-center gap-2">
+                              <i className="fas fa-pen-to-square"></i> Articol în lucru — vei primi un draft pentru aprobare
+                            </div>
+                          )}
+                          {order.wpDraftUrl && (
+                            <div className="mt-3 p-3 bg-blue-50 border-2 border-blue-200 text-xs">
+                              <i className="fas fa-eye mr-1"></i> Preview: <a href={order.wpDraftUrl} target="_blank" rel="noopener" className="text-blue-600 hover:underline font-bold">{order.wpDraftUrl}</a>
+                            </div>
+                          )}
+                          <button onClick={() => upd({ briefSubmitted: false })} className="mt-3 text-xs text-slate-400 hover:text-slate-700 underline">
+                            Editează detaliile trimise
+                          </button>
+                        </>
                       )}
                     </div>
                   ) : order.contentChoice === "marina" ? (
@@ -390,7 +445,7 @@ export default function DashboardView({ initOrder, onBack }) {
                               <i className="fas fa-redo mr-1"></i>Rescrie cu Marina
                             </button>
                           </div>
-                          <ImageUploader label="Fotografie principală (cover)" images={order.featuredImg || []} onChange={imgs => upd({ featuredImg: imgs })} multi={false} />
+                          <ImageUploader label="Fotografie principală (cover)" images={order.featuredImg || []} onChange={imgs => upd({ featuredImg: imgs })} multi={false} preferLandscape />
                           <ImageUploader label="Galerie foto (opțional)" images={order.gallery || []} onChange={imgs => upd({ gallery: imgs })} multi={true} />
                           <button className="w-full py-4 bg-slate-900 text-white font-black hover:bg-black transition-all uppercase text-xs tracking-widest disabled:opacity-50 border-2 border-slate-900"
                             onClick={submitToWP} disabled={wpLoading}>
@@ -421,7 +476,7 @@ export default function DashboardView({ initOrder, onBack }) {
                             placeholder="Scrieți sau lipiți textul articolului aici." />
                           <span className="text-[10px] text-slate-400 font-medium">{(order.articleText || "").trim().split(/\s+/).filter(Boolean).length} cuvinte</span>
                         </div>
-                        <ImageUploader label="Fotografie principală (cover)" images={order.featuredImg || []} onChange={imgs => upd({ featuredImg: imgs })} multi={false} />
+                        <ImageUploader label="Fotografie principală (cover)" images={order.featuredImg || []} onChange={imgs => upd({ featuredImg: imgs })} multi={false} preferLandscape />
                         <ImageUploader label="Galerie foto (opțional)" images={order.gallery || []} onChange={imgs => upd({ gallery: imgs })} multi={true} />
                         <button className="w-full py-4 bg-slate-900 text-white font-black hover:bg-black transition-all uppercase text-xs tracking-widest disabled:opacity-50 border-2 border-slate-900"
                           onClick={submitToWP} disabled={wpLoading || !order.articleTitle || !order.articleText}>
@@ -598,19 +653,22 @@ export default function DashboardView({ initOrder, onBack }) {
             <div className="bg-white border-2 border-slate-200 p-8 text-center text-slate-400 text-sm">Nu ai facturi.</div>
           ) : allOrders.map(o => {
             const oPkg = packages.find(p => p.id === o.packageId);
-            const oTva = o.tva || Math.round((o.price || 0) * 0.19);
+            const oTva = o.tva || Math.round((o.price || 0) * 0.21);
             const oTotal = o.total || ((o.price || 0) + oTva);
             return (
               <div key={o.id} className="bg-white border-2 border-slate-200">
                 <div className="flex items-center justify-between p-4 border-b-2 border-slate-100">
                   <div>
-                    <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Proformă</div>
+                    <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                      {o.fgoFactura ? 'Factură' : 'Proformă'}
+                      {o.fgoFactura ? ` ${o.fgoFactura.serie}-${o.fgoFactura.numar}` : o.fgoProforma ? ` ${o.fgoProforma.serie}-${o.fgoProforma.numar}` : ''}
+                    </div>
                     <div className="text-sm font-black text-slate-900">#{o.id?.toUpperCase().slice(0, 8)}</div>
                   </div>
                   <div className="text-right">
                     <div className="text-[10px] text-slate-400">{new Date(o.date).toLocaleDateString("ro-RO", { day: "numeric", month: "long", year: "numeric" })}</div>
-                    <div className={`text-[10px] font-bold uppercase ${o.payMethod === "card" ? 'text-green-600' : 'text-blue-600'}`}>
-                      {o.payMethod === "card" ? "Plătit cu cardul" : "Transfer bancar"}
+                    <div className={`text-[10px] font-bold uppercase ${o.status === 'paid' ? 'text-green-600' : 'text-blue-600'}`}>
+                      {o.status === 'paid' ? 'Plătit' : o.payMethod === "card" ? "Plată cu cardul" : "Transfer bancar"}
                     </div>
                   </div>
                 </div>
@@ -622,14 +680,26 @@ export default function DashboardView({ initOrder, onBack }) {
                     </div>
                   ))}
                   <div className="flex justify-between text-xs text-slate-400 pt-2 border-t border-slate-100">
-                    <span>TVA (19%)</span><span>{oTva.toLocaleString("ro")} lei</span>
+                    <span>TVA (21%)</span><span>{oTva.toLocaleString("ro")} lei</span>
                   </div>
                   <div className="flex justify-between font-black text-slate-900 pt-2 border-t-2 border-slate-200">
                     <span>Total</span><span>{oTotal.toLocaleString("ro")} lei</span>
                   </div>
                 </div>
-                <div className="px-4 pb-4">
+                <div className="px-4 pb-4 space-y-2">
                   <div className="text-[10px] text-slate-400">Client: <strong>{o.company || o.name}</strong>{o.cui ? ` · CUI: ${o.cui}` : ""}</div>
+                  <div className="flex gap-2">
+                    {o.fgoProforma?.link && (
+                      <a href={o.fgoProforma.link} target="_blank" rel="noopener" className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 border-2 border-slate-200 text-[10px] font-black text-slate-600 uppercase tracking-wider hover:bg-slate-200 transition-all">
+                        <i className="fas fa-file-pdf"></i> Proformă PDF
+                      </a>
+                    )}
+                    {o.fgoFactura?.link && (
+                      <a href={o.fgoFactura.link} target="_blank" rel="noopener" className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 border-2 border-green-200 text-[10px] font-black text-green-700 uppercase tracking-wider hover:bg-green-100 transition-all">
+                        <i className="fas fa-file-invoice"></i> Factură PDF
+                      </a>
+                    )}
+                  </div>
                 </div>
               </div>
             );

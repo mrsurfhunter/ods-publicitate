@@ -14,6 +14,7 @@ export default function PurchaseForm({ pkg, suggestedAddons = [], onClose, onDon
   const [pay, setPay] = useState("proforma");
   const [submitting, setSubmitting] = useState(false);
   const [selectedAddons, setSelectedAddons] = useState({});
+  const [entityType, setEntityType] = useState(user?.company ? "juridica" : "fizica");
   const [f, sF] = useState({
     name: user?.name || "", company: user?.company || "",
     cui: "", address: "", phone: user?.phone || "", email: user?.email || "",
@@ -40,7 +41,7 @@ export default function PurchaseForm({ pkg, suggestedAddons = [], onClose, onDon
 
   const basePrice = f.sub && pkg.sub ? pkg.sub : pkg.price;
   const subtotal = basePrice + addonTotal;
-  const tva = Math.round(subtotal * 0.19);
+  const tva = Math.round(subtotal * 0.21);
   const total = subtotal + tva;
   const canSubmit = f.name && f.phone && f.email && !submitting;
 
@@ -119,12 +120,43 @@ export default function PurchaseForm({ pkg, suggestedAddons = [], onClose, onDon
 
   return (
     <div className="border-t-2 border-slate-100 p-4 sm:p-6 md:p-8 space-y-4">
-      <CUILookup value={f.cui} onChange={v => set("cui", v)} onData={hCUI} />
-
-      <div>
-        <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Companie</label>
-        <input className="w-full p-4 bg-slate-50 border-2 border-slate-200 focus:border-slate-900 outline-none text-sm font-medium" value={f.company} onChange={e => set("company", e.target.value)} />
+      {/* Toggle fizica / juridica */}
+      <div className="grid grid-cols-2 gap-2">
+        {[
+          { id: "fizica", l: "Persoană fizică", icon: "fa-user" },
+          { id: "juridica", l: "Persoană juridică", icon: "fa-building" },
+        ].map(t => (
+          <button
+            key={t.id}
+            type="button"
+            onClick={() => setEntityType(t.id)}
+            className={`p-3 border-2 text-sm font-bold flex items-center justify-center gap-2 transition-all ${
+              entityType === t.id ? 'border-slate-900 bg-slate-50 text-slate-900' : 'border-slate-200 bg-white text-slate-500 hover:border-slate-400'
+            }`}
+          >
+            <i className={`fas ${t.icon}`}></i> {t.l}
+          </button>
+        ))}
       </div>
+
+      {entityType === "juridica" && (
+        <>
+          <CUILookup value={f.cui} onChange={v => set("cui", v)} onData={hCUI} />
+          {f.company && (
+            <div className="p-3 bg-green-50 border border-green-200 text-xs text-green-800">
+              <div className="font-bold"><i className="fas fa-check mr-1"></i> {f.company}</div>
+              {f.address && <div className="text-[11px] text-green-700 mt-0.5">{f.address}</div>}
+            </div>
+          )}
+        </>
+      )}
+
+      {entityType === "fizica" && (
+        <div>
+          <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Adresă (pentru factură)</label>
+          <input className="w-full p-4 bg-slate-50 border-2 border-slate-200 focus:border-slate-900 outline-none text-sm font-medium" value={f.address} onChange={e => set("address", e.target.value)} placeholder="Strada, număr, oraș" />
+        </div>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
@@ -138,23 +170,39 @@ export default function PurchaseForm({ pkg, suggestedAddons = [], onClose, onDon
       </div>
 
       <div>
-        <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Email *</label>
-        <input className="w-full p-4 bg-slate-50 border-2 border-slate-200 focus:border-slate-900 outline-none text-sm font-medium" value={f.email} onChange={e => set("email", e.target.value)} />
+        <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">
+          Email * {!user?.email && <span className="font-normal normal-case tracking-normal text-slate-400">(pentru factură și confirmări)</span>}
+        </label>
+        <input className="w-full p-4 bg-slate-50 border-2 border-slate-200 focus:border-slate-900 outline-none text-sm font-medium" value={f.email} onChange={e => set("email", e.target.value)} placeholder="email@firma.ro" />
       </div>
 
-      {pkg.sub && pkg.subType === 'annual' ? (
-        <button className={`w-full p-3 text-left text-sm font-bold border-2 transition-all ${f.sub ? 'bg-green-50 border-green-400 text-green-700' : 'bg-white border-slate-200 text-green-600 hover:border-green-400'}`} onClick={() => set("sub", !f.sub)}>
-          {f.sub
-            ? <><i className="fas fa-check-circle mr-1"></i> Abonament anual: {pkg.sub.toLocaleString("ro")} lei/an — max {pkg.subMaxEvents || 5} evenimente</>
-            : <><i className="fas fa-calendar-check mr-1"></i> Abonament anual? {pkg.sub.toLocaleString("ro")} lei/an pentru max {pkg.subMaxEvents || 5} evenimente (economie {(pkg.price * (pkg.subMaxEvents || 5) - pkg.sub).toLocaleString("ro")} lei)</>}
+      {pkg.sub && (
+        <button
+          className={`w-full p-4 text-left border-2 transition-all ${f.sub ? 'bg-green-50 border-green-400' : 'bg-white border-slate-200 hover:border-green-400'}`}
+          onClick={() => set("sub", !f.sub)}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className={`w-5 h-5 border-2 flex items-center justify-center ${f.sub ? 'bg-green-500 border-green-500' : 'border-slate-300'}`}>
+                {f.sub && <i className="fas fa-check text-white text-[9px]"></i>}
+              </div>
+              <span className={`text-sm font-black ${f.sub ? 'text-green-700' : 'text-slate-700'}`}>
+                {pkg.subType === 'annual' ? 'Abonament anual' : 'Abonament lunar'}
+              </span>
+            </div>
+            <div className="text-right">
+              <div className={`text-sm font-black ${f.sub ? 'text-green-700' : 'text-green-600'}`}>
+                {pkg.sub.toLocaleString("ro")} lei{pkg.subType === 'annual' ? '/an' : '/lună'}
+              </div>
+              <div className="text-[10px] text-green-600 font-bold">
+                {pkg.subType === 'annual'
+                  ? `economie ${(pkg.price * (pkg.subMaxEvents || 5) - pkg.sub).toLocaleString("ro")} lei`
+                  : `economie ${(pkg.price - pkg.sub).toLocaleString("ro")} lei/lună`}
+              </div>
+            </div>
+          </div>
         </button>
-      ) : pkg.sub ? (
-        <button className="text-sm font-bold text-green-600 hover:text-green-700 transition-colors" onClick={() => set("sub", !f.sub)}>
-          {f.sub
-            ? `✓ Abonament: ${pkg.sub.toLocaleString("ro")} lei/lună`
-            : `→ Economisești ${((pkg.price - pkg.sub) * 3).toLocaleString("ro")} lei la abonament`}
-        </button>
-      ) : null}
+      )}
 
       {/* ADD-ONS SECTION */}
       {activeAddons.length > 0 && (
@@ -220,8 +268,14 @@ export default function PurchaseForm({ pkg, suggestedAddons = [], onClose, onDon
       <div className="bg-slate-900 p-4 sm:p-5 mt-4 border-2 border-slate-900">
         <div className="space-y-1.5 mb-3">
           <div className="flex justify-between text-xs text-slate-400">
-            <span>Pachet: {pkg.name}</span>
-            <span>{basePrice.toLocaleString("ro")} lei</span>
+            <span>Pachet: {pkg.name}{f.sub ? ' (abonament)' : ''}</span>
+            <span>
+              {f.sub && pkg.sub ? (
+                <><span className="line-through text-slate-500 mr-1.5">{pkg.price.toLocaleString("ro")}</span><span className="text-green-400 font-bold">{pkg.sub.toLocaleString("ro")} lei</span></>
+              ) : (
+                <>{basePrice.toLocaleString("ro")} lei</>
+              )}
+            </span>
           </div>
           {Object.entries(selectedAddons).filter(([, q]) => q > 0).map(([id, qty]) => {
             const addon = activeAddons.find(a => a.id === id);
@@ -235,7 +289,7 @@ export default function PurchaseForm({ pkg, suggestedAddons = [], onClose, onDon
             );
           })}
           <div className="flex justify-between text-xs text-slate-500 pt-1 border-t border-slate-700">
-            <span>TVA (19%)</span>
+            <span>TVA (21%)</span>
             <span>{tva.toLocaleString("ro")} lei</span>
           </div>
         </div>

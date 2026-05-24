@@ -4,8 +4,8 @@ import { callConsult } from "../../utils/ai";
 import { useAuth } from "../../context/AuthContext";
 import LeadCaptureStep from "../auth/LeadCaptureStep";
 
-const TOTAL_DOTS = 6; // 5 questions + 1 lead capture
-const LEAD_STEP = 2;
+const TOTAL_DOTS = 4; // 3 questions + 1 lead capture
+const LEAD_STEP = 2;  // dupa businessType + budget, inainte de timeline
 
 export default function ConsultView({ onResult, onBack }) {
   const { isAuthenticated, updateUser } = useAuth();

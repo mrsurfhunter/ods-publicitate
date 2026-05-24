@@ -1,25 +1,50 @@
-import { useState } from "react";
-import { AD_CAT } from "../../data/packages";
+import { useState, useEffect } from "react";
+import { AD_CAT, AD_IMAGE_PRICE } from "../../data/packages";
 import { callAI } from "../../utils/ai";
 import { calcAd } from "../../utils/pricing";
+import ImageUploader from "../shared/ImageUploader";
 import AdCheckout from "./AdCheckout";
 
+function readCatFromHash() {
+  const h = window.location.hash || "";
+  const q = h.indexOf("?");
+  if (q < 0) return "";
+  const params = new URLSearchParams(h.slice(q + 1));
+  return params.get("cat") || "";
+}
+
 export default function AnunturiView({ onBack, onConsult, onPurchased }) {
-  const [cat, setCat] = useState("");
+  const [cat, setCat] = useState(() => {
+    const fromHash = readCatFromHash();
+    return AD_CAT.find(c => c.id === fromHash) ? fromHash : "";
+  });
   const [text, setText] = useState("");
   const [days, setDays] = useState(1);
+  const [images, setImages] = useState([]);
   const [ai, setAi] = useState(false);
   const [aiOk, setAiOk] = useState(null);
   const [adCheckout, setAdCheckout] = useState(null);
 
+  const catObj = AD_CAT.find(c => c.id === cat);
+  const allowImages = !!catObj?.allowImages;
+  const maxImages = catObj?.maxImages || 0;
+  const freeImages = catObj?.freeImages || 0;
+
+  useEffect(() => {
+    if (!allowImages && images.length > 0) setImages([]);
+  }, [cat, allowImages]);
+
   const words = text.trim() ? text.trim().split(/\s+/).length : 0;
   const pr = calcAd(words, days);
+  const paidImages = Math.max(0, images.length - freeImages);
+  const imagesCost = paidImages * AD_IMAGE_PRICE;
+  const totalWithImages = pr.total + imagesCost;
   const canOrd = cat && words >= 3 && words <= 1200;
 
   const enhance = async () => {
     if (!text.trim()) return;
     setAi(true); setAiOk(null);
-    const catLabel = AD_CAT.find(c => c.id === cat)?.label || "";
+    const catLabel = catObj?.label || "";
     const r = await callAI(
       "Ești redactor la oradesibiu.ro. Redactează anunțul de mică publicitate: corectează greșelile, îmbunătățește formularea, păstrează sensul. NU inventa informații noi. Returnează DOAR textul redactat, fără explicații. Limba română.",
       (catLabel ? "Categorie: " + catLabel + "\n\n" : "") + text
@@ -86,9 +111,35 @@ export default function AnunturiView({ onBack, onConsult, onPurchased }) {
             </div>
           </div>
 
+          {/* Images (conditional) */}
+          {allowImages && (
+            <div className="bg-white border-2 border-slate-200 p-4 sm:p-6">
+              <div className="flex justify-between items-end mb-4">
+                <div className="text-[11px] font-bold text-slate-400 uppercase tracking-[2px]">3 · Fotografii (opțional)</div>
+                <span className="text-[11px] font-bold px-3 py-1 bg-slate-50 text-slate-600">{images.length} / {maxImages}</span>
+              </div>
+              {catObj?.hint && (
+                <p className="text-xs text-slate-500 mb-3 leading-relaxed">{catObj.hint}</p>
+              )}
+              <ImageUploader
+                label=""
+                images={images}
+                onChange={imgs => setImages(imgs.slice(0, maxImages))}
+                multi={maxImages > 1}
+                preferLandscape={cat === "imobiliare"}
+                hideTextHint={cat === "imobiliare"}
+              />
+              {paidImages > 0 && (
+                <div className="mt-3 text-xs text-amber-700 bg-amber-50 px-3 py-2 border border-amber-200">
+                  <i className="fas fa-info-circle mr-1"></i> {paidImages} {paidImages === 1 ? "imagine suplimentară" : "imagini suplimentare"} × {AD_IMAGE_PRICE} lei = <strong>{imagesCost} lei</strong>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Duration */}
           <div className="bg-white border-2 border-slate-200 p-4 sm:p-6">
-            <div className="text-[11px] font-bold text-slate-400 uppercase tracking-[2px] mb-4">3 · Durata</div>
+            <div className="text-[11px] font-bold text-slate-400 uppercase tracking-[2px] mb-4">{allowImages ? '4' : '3'} · Durata</div>
             <div className="flex gap-2 flex-wrap">
               {[1, 3, 5, 7, 14, 30].map(d => (
                 <button key={d} className={`px-5 py-2.5 text-sm font-bold border-2 transition-all ${
@@ -117,7 +168,7 @@ export default function AnunturiView({ onBack, onConsult, onPurchased }) {
               {cat && (
                 <div className="flex justify-between text-sm">
                   <span className="text-white/70">Categorie</span>
-                  <span className="font-bold">{AD_CAT.find(c => c.id === cat)?.label}</span>
+                  <span className="font-bold text-right">{catObj?.label}</span>
                 </div>
               )}
               <div className="flex justify-between text-sm">
@@ -134,18 +185,24 @@ export default function AnunturiView({ onBack, onConsult, onPurchased }) {
                   <span className="font-bold text-green-400">-{Math.round(pr.disc * 100)}%</span>
                 </div>
               )}
+              {imagesCost > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-white/70">Imagini suplimentare ({paidImages})</span>
+                  <span className="font-bold">+{imagesCost} lei</span>
+                </div>
+              )}
             </div>
 
             <div className="flex justify-between items-baseline mb-5">
               <span className="text-[11px] font-bold text-white/50 uppercase tracking-[2px]">Total</span>
-              <span className="text-3xl font-black">{pr.total.toLocaleString("ro")} <span className="text-sm">lei</span></span>
+              <span className="text-3xl font-black">{totalWithImages.toLocaleString("ro")} <span className="text-sm">lei</span></span>
             </div>
-            <div className="text-[10px] text-white/40 mb-4">= {Math.round(pr.total * 1.19).toLocaleString("ro")} lei cu TVA</div>
+            <div className="text-[10px] text-white/40 mb-4">= {Math.round(totalWithImages * 1.19).toLocaleString("ro")} lei cu TVA</div>
 
             <button
               className="w-full py-4 bg-brand hover:bg-brand-dark text-white font-black border-2 border-brand transition-all flex items-center justify-center gap-3 disabled:opacity-50 text-sm uppercase tracking-wider"
               disabled={!canOrd}
-              onClick={() => setAdCheckout({ cat: AD_CAT.find(c => c.id === cat), text, words, days, pr })}
+              onClick={() => setAdCheckout({ cat: catObj, text, words, days, pr, images, imagesCost, totalWithImages })}
             >
               Plasează anunțul <i className="fas fa-arrow-right ml-1"></i>
             </button>

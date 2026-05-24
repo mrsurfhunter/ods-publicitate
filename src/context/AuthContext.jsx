@@ -20,6 +20,21 @@ export function AuthProvider({ children }) {
     return u;
   }, []);
 
+  const verifyAndLogin = useCallback(async (verifiedUser) => {
+    const u = {
+      id: verifiedUser.id || gid(),
+      name: verifiedUser.name || "",
+      email: verifiedUser.email || "",
+      phone: verifiedUser.phone || "",
+      company: verifiedUser.company || "",
+      phoneVerified: true,
+      createdAt: new Date().toISOString(),
+    };
+    setUser(u);
+    await ssv("ods-user", u);
+    return u;
+  }, []);
+
   const updateUser = useCallback(async (changes) => {
     const updated = { ...user, ...changes };
     setUser(updated);
@@ -42,7 +57,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthCtx.Provider value={{ user, isAuthenticated: !!user, ready, register, updateUser, login, logout }}>
+    <AuthCtx.Provider value={{ user, isAuthenticated: !!user, ready, register, verifyAndLogin, updateUser, login, logout }}>
       {children}
     </AuthCtx.Provider>
   );
