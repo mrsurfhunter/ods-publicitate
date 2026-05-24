@@ -5,8 +5,6 @@ import { wpUploadImage, wpCreateDraft } from "../../utils/wordpress";
 import { useAuth } from "../../context/AuthContext";
 import { useConfig } from "../../context/ConfigContext";
 import ImageUploader from "../shared/ImageUploader";
-import BannerGenerator from "./BannerGenerator";
-import AdCopyWriter from "./AdCopyWriter";
 
 const MARINA_TONES = [
   { id: "professional", l: "Profesional", icon: "fa-briefcase" },
@@ -572,10 +570,6 @@ export default function DashboardView({ initOrder, onBack }) {
                   )}
                 </div>
               )}
-
-              {/* AI TOOLS */}
-              <AdCopyWriter businessName={order.company || order.name} />
-              <BannerGenerator orderId={order.id} businessName={order.company || order.name} />
 
               {/* ANALYTICS */}
               {order.status === "published" && (

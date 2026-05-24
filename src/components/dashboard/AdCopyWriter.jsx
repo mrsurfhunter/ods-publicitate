@@ -4,7 +4,6 @@ const AD_TYPES = [
   { id: "facebook", l: "Postare Facebook", icon: "fa-thumbs-up", desc: "2-4 propoziții + CTA" },
   { id: "instagram", l: "Caption Instagram", icon: "fa-camera-retro", desc: "Text + 15-20 hashtag-uri" },
   { id: "story", l: "Text Story", icon: "fa-mobile-screen", desc: "Max 2 rânduri, impact" },
-  { id: "promo-sms", l: "SMS Promo", icon: "fa-comment-sms", desc: "Max 160 caractere" },
 ];
 
 const TONES = [
