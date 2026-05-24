@@ -29,6 +29,12 @@ services:
       - SMTP_FROM=${SMTP_FROM}
       - NOTIFY_EMAIL=${NOTIFY_EMAIL}
       - NOTIFY_WEBHOOK=${NOTIFY_WEBHOOK}
+      - BANK_IBAN=${BANK_IBAN}
+      - BANK_NAME=${BANK_NAME}
+      - FGO_CUI=${FGO_CUI}
+      - FGO_PRIVATE_KEY=${FGO_PRIVATE_KEY}
+      - FGO_SERIE=${FGO_SERIE:-OSB}
+      - FGO_API_URL=${FGO_API_URL:-https://api.fgo.ro/v1}
     volumes:
       - ods-data:/app/data
     healthcheck:

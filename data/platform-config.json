@@ -680,5 +680,12 @@
     }
   ],
   "promotions": [],
-  "updatedAt": "2026-04-27T19:48:54.935Z"
+  "updatedAt": "2026-04-27T19:48:54.935Z",
+  "fgo": {
+    "cui": "39899930",
+    "privateKey": "770A3F705A4C0471E82B768ED3E780F8",
+    "serie": "OSB",
+    "testMode": true,
+    "enabled": true
+  }
 }

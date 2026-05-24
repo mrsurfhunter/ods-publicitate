@@ -21,11 +21,14 @@ function CatalogCard({ pkg, onPurchased }) {
         <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mb-1">{pkg.name}</h3>
         <p className="text-sm text-slate-500 mb-5">{pkg.headline}</p>
         <div className="flex items-baseline gap-2 mb-1">
-          {pkg.sub && pkg.subType !== 'annual' && <span className="text-base text-slate-400 line-through font-bold">{pkg.price.toLocaleString("ro")}</span>}
-          <span className="text-3xl font-black text-slate-900">{(pkg.sub && pkg.subType !== 'annual' ? pkg.sub : pkg.price).toLocaleString("ro")} lei</span>
+          <span className="text-3xl font-black text-slate-900">{pkg.price.toLocaleString("ro")} lei</span>
           <span className="text-sm font-bold text-slate-500">{pkg.cat === 'monthly' ? '/lună' : ''}</span>
         </div>
-        {pkg.sub && pkg.subType !== 'annual' && <div className="text-[10px] font-black text-brand uppercase tracking-wider mb-4">Reducere abonament</div>}
+        {pkg.sub && pkg.subType !== 'annual' && (
+          <div className="text-sm font-bold text-green-600 mb-1">
+            <i className="fas fa-tag mr-1 text-xs"></i>{pkg.sub.toLocaleString("ro")} lei/lună la abonament
+          </div>
+        )}
         {pkg.sub && pkg.subType === 'annual' && (
           <div className="mb-4 mt-2 p-3 bg-green-50 border-2 border-green-200">
             <div className="text-xs font-black text-green-700">

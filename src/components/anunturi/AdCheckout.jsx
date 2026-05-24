@@ -17,7 +17,7 @@ export default function AdCheckout({ ad, onClose, onDone }) {
   });
   const [v, sV] = useState({ terms: false, accurate: false, sent: false, code: "", real: "", ok: false });
   const set = (k, val) => sF(s => ({ ...s, [k]: val }));
-  const tva = Math.round(ad.pr.total * 0.19), total = ad.pr.total + tva;
+  const tva = Math.round(ad.pr.total * 0.21), total = ad.pr.total + tva;
   const hCUI = d => sF(s => ({ ...s, company: d.company || s.company }));
   const sendCode = () => { const c = String(Math.floor(1000 + Math.random() * 9000)); sV(x => ({ ...x, sent: true, real: c })); alert("DEMO: Codul SMS este " + c); };
   const canGo = v.terms && v.accurate && v.ok && f.name && f.phone;

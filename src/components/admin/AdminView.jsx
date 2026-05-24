@@ -741,6 +741,198 @@ function PromoEditor({ promotions, adminKey, onSave }) {
   );
 }
 
+function FgoSettings({ adminKey }) {
+  const [fgo, setFgo] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [testing, setTesting] = useState(false);
+  const [testResult, setTestResult] = useState(null);
+  const [form, setForm] = useState({ cui: "", serie: "", privateKey: "", testMode: true, enabled: false });
+
+  const fetchFgo = useCallback(async () => {
+    try {
+      const r = await fetch("/api/admin/fgo", { headers: { "x-admin-key": adminKey } });
+      if (r.ok) {
+        const data = await r.json();
+        setFgo(data);
+        setForm({ cui: data.cui, serie: data.serie, privateKey: "", testMode: data.testMode, enabled: data.enabled });
+      }
+    } catch {}
+    setLoading(false);
+  }, [adminKey]);
+
+  useEffect(() => { fetchFgo(); }, [fetchFgo]);
+
+  const save = async (patch) => {
+    setSaving(true);
+    try {
+      const body = { ...patch };
+      if (!body.privateKey) delete body.privateKey;
+      await fetch("/api/admin/fgo", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
+        body: JSON.stringify(body),
+      });
+      await fetchFgo();
+    } catch {}
+    setSaving(false);
+  };
+
+  const testConnection = async () => {
+    setTesting(true);
+    setTestResult(null);
+    try {
+      const r = await fetch("/api/admin/fgo/test", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
+      });
+      const data = await r.json();
+      setTestResult(data);
+    } catch (e) {
+      setTestResult({ ok: false, error: e.message });
+    }
+    setTesting(false);
+  };
+
+  if (loading) return <div className="text-center text-slate-400 py-12"><i className="fas fa-spinner animate-spin mr-2"></i>Se încarcă...</div>;
+
+  return (
+    <div className="space-y-6">
+      <div className="bg-white border-2 border-slate-200 p-6">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-lg font-black text-slate-900">FGO Facturare</h2>
+            <p className="text-xs text-slate-500 mt-0.5">Emitere automată facturi proformă și fiscale prin FGO.ro</p>
+          </div>
+          <button
+            onClick={() => save({ enabled: !form.enabled })}
+            className={`relative w-14 h-7 border-2 transition-all ${form.enabled ? 'bg-green-500 border-green-500' : 'bg-slate-200 border-slate-300'}`}
+          >
+            <div className={`absolute top-0.5 w-5 h-5 bg-white border border-slate-200 transition-all ${form.enabled ? 'left-7' : 'left-0.5'}`}></div>
+          </button>
+        </div>
+
+        {!form.enabled && (
+          <div className="bg-amber-50 border-2 border-amber-200 p-4 text-sm text-amber-700">
+            <i className="fas fa-exclamation-triangle mr-1"></i> Facturarea automată este dezactivată. Activează toggle-ul de mai sus pentru a emite facturi automat la fiecare comandă.
+          </div>
+        )}
+
+        {form.enabled && (
+          <div className="space-y-5">
+            {/* Test / Live toggle */}
+            <div className="flex items-center gap-4 p-4 bg-slate-50 border-2 border-slate-200">
+              <div className="flex-1">
+                <div className="text-sm font-black text-slate-900">Mod curent</div>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {form.testMode
+                    ? "TEST — facturile se emit pe serverul de test FGO, nu apar în contabilitate"
+                    : "LIVE — facturile se emit real și se trimit la ANAF"}
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  const next = !form.testMode;
+                  setForm(f => ({ ...f, testMode: next }));
+                  save({ testMode: next });
+                }}
+                className={`px-5 py-2.5 font-black text-xs uppercase tracking-wider border-2 transition-all ${
+                  form.testMode
+                    ? 'bg-amber-400 text-amber-900 border-amber-400 hover:bg-amber-500'
+                    : 'bg-green-600 text-white border-green-600 hover:bg-green-700'
+                }`}
+              >
+                {form.testMode ? (
+                  <><i className="fas fa-flask mr-1.5"></i>TEST</>
+                ) : (
+                  <><i className="fas fa-check-circle mr-1.5"></i>LIVE</>
+                )}
+              </button>
+            </div>
+
+            {/* CUI + Serie */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">CUI Companie</label>
+                <input
+                  className="w-full p-3 bg-slate-50 border-2 border-slate-200 focus:border-slate-900 outline-none text-sm font-mono font-bold"
+                  value={form.cui}
+                  onChange={e => setForm(f => ({ ...f, cui: e.target.value }))}
+                  placeholder="39899930"
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Serie Facturi</label>
+                <input
+                  className="w-full p-3 bg-slate-50 border-2 border-slate-200 focus:border-slate-900 outline-none text-sm font-mono font-bold"
+                  value={form.serie}
+                  onChange={e => setForm(f => ({ ...f, serie: e.target.value }))}
+                  placeholder="OSB"
+                />
+              </div>
+            </div>
+
+            {/* Private Key */}
+            <div>
+              <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">
+                Cheie privată API
+                {fgo?.hasKey && <span className="ml-2 text-green-600 normal-case tracking-normal"><i className="fas fa-check-circle"></i> configurată</span>}
+              </label>
+              <input
+                type="password"
+                className="w-full p-3 bg-slate-50 border-2 border-slate-200 focus:border-slate-900 outline-none text-sm font-mono"
+                value={form.privateKey}
+                onChange={e => setForm(f => ({ ...f, privateKey: e.target.value }))}
+                placeholder={fgo?.hasKey ? "••••••••••••••••" : "Cheie privată din Setări FGO"}
+              />
+              <p className="text-[10px] text-slate-400 mt-1">Din FGO: Setări → Utilizatori → Generează utilizator API</p>
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-3 pt-2">
+              <button
+                onClick={() => save({ cui: form.cui, serie: form.serie, privateKey: form.privateKey || undefined })}
+                disabled={saving}
+                className="px-6 py-2.5 bg-slate-900 text-white font-black text-xs uppercase tracking-wider border-2 border-slate-900 hover:bg-black disabled:opacity-50"
+              >
+                {saving ? <i className="fas fa-spinner animate-spin"></i> : <><i className="fas fa-save mr-1.5"></i>Salvează</>}
+              </button>
+              <button
+                onClick={testConnection}
+                disabled={testing}
+                className="px-6 py-2.5 bg-white text-slate-700 font-black text-xs uppercase tracking-wider border-2 border-slate-200 hover:border-slate-900 disabled:opacity-50"
+              >
+                {testing ? <i className="fas fa-spinner animate-spin"></i> : <><i className="fas fa-plug mr-1.5"></i>Testează conexiunea</>}
+              </button>
+            </div>
+
+            {/* Test result */}
+            {testResult && (
+              <div className={`p-4 border-2 text-sm font-bold ${testResult.ok ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'}`}>
+                {testResult.ok ? (
+                  <><i className="fas fa-check-circle mr-1.5"></i>Conexiune reușită — mod {testResult.mode} ({testResult.types} tipuri de factură disponibile)</>
+                ) : (
+                  <><i className="fas fa-times-circle mr-1.5"></i>Eroare: {testResult.error}</>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Info box */}
+      <div className="bg-blue-50 border-2 border-blue-200 p-5">
+        <div className="text-[10px] font-black text-blue-700 uppercase tracking-widest mb-2">Cum funcționează</div>
+        <div className="space-y-2 text-xs text-blue-800 leading-relaxed">
+          <p><strong>Transfer bancar:</strong> La plasarea comenzii se emite automat o <strong>Proformă</strong> în FGO. Clientul primește link PDF pe email.</p>
+          <p><strong>Plata confirmată:</strong> Când adminul marchează comanda ca plătită (sau Stripe confirmă plata), se emite automat <strong>Factura fiscală</strong> în FGO.</p>
+          <p><strong>e-Factura:</strong> Dacă ai activat e-Factura în FGO, facturile se trimit automat la ANAF SPV.</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function AdminView({ onBack }) {
   const [adminKey, setAdminKey] = useState(localStorage.getItem("ods-admin-key") || "");
   const [authed, setAuthed] = useState(false);
@@ -791,6 +983,7 @@ export default function AdminView({ onBack }) {
     { id: "packages", l: "Pachete", icon: "fa-box", count: config?.packages?.length },
     { id: "addons", l: "Add-ons", icon: "fa-puzzle-piece", count: config?.addons?.length },
     { id: "promos", l: "Promoții", icon: "fa-tag", count: config?.promotions?.length },
+    { id: "fgo", l: "Facturare", icon: "fa-file-invoice" },
   ];
 
   return (
@@ -909,6 +1102,9 @@ export default function AdminView({ onBack }) {
         )}
         {config && tab === "promos" && (
           <PromoEditor promotions={config.promotions} adminKey={adminKey} onSave={fetchConfig} />
+        )}
+        {tab === "fgo" && (
+          <FgoSettings adminKey={adminKey} />
         )}
       </div>
     </div>
