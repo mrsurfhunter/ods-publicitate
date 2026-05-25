@@ -228,8 +228,34 @@ export default function DashboardView({ initOrder, onBack }) {
                 </div>
               </div>
 
-              {/* CONTENT SECTION — only for article packages */}
-              {pkg?.hasArticle && (
+              {/* PUBLISHED — celebration + link */}
+              {order.status === "published" && order.wpDraftUrl && (
+                <div className="bg-gradient-to-br from-green-500 to-green-700 text-white p-5 sm:p-7 border-2 border-green-700">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-12 bg-white/20 flex items-center justify-center">
+                      <i className="fas fa-check text-2xl"></i>
+                    </div>
+                    <div>
+                      <div className="text-[11px] font-bold text-white/70 uppercase tracking-[2px]">Articolul tău</div>
+                      <div className="text-xl sm:text-2xl font-black tracking-tight">E LIVE pe oradesibiu.ro</div>
+                    </div>
+                  </div>
+                  <a href={order.wpDraftUrl} target="_blank" rel="noopener" className="inline-flex items-center gap-2 px-5 py-3 bg-white text-green-700 font-black text-sm uppercase tracking-widest border-2 border-white hover:bg-green-50 transition-all">
+                    <i className="fas fa-external-link-alt"></i> Vezi articolul publicat
+                  </a>
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(order.wpDraftUrl)}`} target="_blank" rel="noopener" className="inline-flex items-center gap-2 px-3 py-2 bg-white/10 text-white text-xs font-bold border border-white/30 hover:bg-white/20">
+                      <i className="fab fa-facebook"></i> Share Facebook
+                    </a>
+                    <a href={`https://wa.me/?text=${encodeURIComponent("Vezi articolul: " + order.wpDraftUrl)}`} target="_blank" rel="noopener" className="inline-flex items-center gap-2 px-3 py-2 bg-white/10 text-white text-xs font-bold border border-white/30 hover:bg-white/20">
+                      <i className="fab fa-whatsapp"></i> WhatsApp
+                    </a>
+                  </div>
+                </div>
+              )}
+
+              {/* CONTENT SECTION — only for article packages and only before publish */}
+              {pkg?.hasArticle && order.status !== "published" && (
                 <div className="bg-white border-2 border-slate-200 p-4 sm:p-6">
                   {!order.contentChoice ? (
                     /* Content choice — doar 2 optiuni */
@@ -313,6 +339,12 @@ export default function DashboardView({ initOrder, onBack }) {
                             className="w-full py-4 bg-brand text-white font-black text-sm uppercase tracking-widest border-2 border-brand hover:bg-brand-dark transition-all disabled:opacity-50"
                           >
                             <i className="fas fa-paper-plane mr-2"></i>Trimite detaliile redactorului
+                          </button>
+                          <button
+                            onClick={() => { if (window.confirm('Schimbă pe "Am textul gata"? Detaliile completate rămân salvate dacă te răzgândești.')) upd({ contentChoice: null }); }}
+                            className="w-full text-xs text-slate-400 hover:text-slate-700 underline"
+                          >
+                            Ai între timp textul gata? Îl încarci tu →
                           </button>
                         </div>
                       ) : (
@@ -484,6 +516,12 @@ export default function DashboardView({ initOrder, onBack }) {
                         {wpMsg === "config" && <div className="p-3 bg-blue-50 border-2 border-blue-200 text-sm text-blue-700">Salvat local. WP se configurează de echipă.</div>}
                         {wpMsg && wpMsg !== "ok" && wpMsg !== "config" && <div className="p-3 bg-red-50 border-2 border-red-200 text-sm text-red-600">{wpMsg}</div>}
                         {order.wpDraftUrl && <div className="p-3 bg-green-50 border-2 border-green-200 text-sm">Draft: <a href={order.wpDraftUrl} target="_blank" rel="noopener" className="text-blue-600 hover:underline">{order.wpDraftUrl}</a></div>}
+                        <button
+                          onClick={() => { if (window.confirm('Schimbă pe "Trimite detalii — vreau să mă sune un redactor"? Textul și pozele rămân salvate dacă te răzgândești.')) upd({ contentChoice: null }); }}
+                          className="w-full text-xs text-slate-400 hover:text-slate-700 underline pt-2"
+                        >
+                          Te-ai răzgândit? Lasă-ne să scriem noi articolul →
+                        </button>
                       </div>
                     </div>
                   )}
@@ -575,10 +613,11 @@ export default function DashboardView({ initOrder, onBack }) {
               {order.status === "published" && (
                 <div className="bg-slate-900 text-white p-4 sm:p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <div className="text-[11px] font-bold text-brand uppercase tracking-[2px]">Statistici live</div>
-                    <div className="flex items-center gap-2 text-[11px] font-bold text-white/40 uppercase tracking-[2px]">
-                      <span className="w-2 h-2 bg-green-500 animate-pulse"></span> Live Sync
-                    </div>
+                    <div className="text-[11px] font-bold text-brand uppercase tracking-[2px]">Statistici</div>
+                    <div className="text-[10px] font-bold text-white/40 uppercase tracking-[2px]">Actualizate zilnic</div>
+                  </div>
+                  <div className="p-3 bg-white/5 border border-white/10 text-[11px] text-white/60 mb-4">
+                    <i className="fas fa-clock mr-1"></i> Primele date apar după <strong className="text-white">48h</strong> de la publicare, apoi se actualizează zilnic.
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-white/10">
                     {[
@@ -595,6 +634,47 @@ export default function DashboardView({ initOrder, onBack }) {
                   </div>
                 </div>
               )}
+
+              {/* REPEAT CUSTOMER ACTIONS */}
+              <div className="bg-white border-2 border-slate-200 p-4 sm:p-6">
+                <div className="text-[11px] font-bold text-slate-400 uppercase tracking-[2px] mb-4">Vrei să continui promovarea?</div>
+                <div className="grid sm:grid-cols-3 gap-2 sm:gap-3">
+                  <button
+                    onClick={() => { window.location.hash = "catalog"; }}
+                    className="p-4 border-2 border-slate-200 hover:border-brand hover:bg-brand/5 transition-all text-left group"
+                  >
+                    <div className="w-9 h-9 bg-brand/10 text-brand flex items-center justify-center mb-2 group-hover:bg-brand group-hover:text-white transition-all">
+                      <i className="fas fa-plus"></i>
+                    </div>
+                    <div className="text-sm font-black text-slate-900">Comandă o nouă promovare</div>
+                    <div className="text-[11px] text-slate-500 mt-0.5">Alegi alt pachet din catalog</div>
+                  </button>
+                  {pkg?.cat === "monthly" && (
+                    <button
+                      onClick={() => { sessionStorage.setItem("ods-extend-from", order.id); window.location.hash = "catalog"; }}
+                      className="p-4 border-2 border-slate-200 hover:border-blue-500 hover:bg-blue-50 transition-all text-left group"
+                    >
+                      <div className="w-9 h-9 bg-blue-50 text-blue-600 flex items-center justify-center mb-2 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                        <i className="fas fa-arrows-rotate"></i>
+                      </div>
+                      <div className="text-sm font-black text-slate-900">Extinde {pkg.name}</div>
+                      <div className="text-[11px] text-slate-500 mt-0.5">Încă o lună la același pachet</div>
+                    </button>
+                  )}
+                  <a
+                    href="https://wa.me/40746752240?text=Salut,+vreau+sa+adaug+ceva+extra+la+comanda+mea"
+                    target="_blank"
+                    rel="noopener"
+                    className="p-4 border-2 border-slate-200 hover:border-green-500 hover:bg-green-50 transition-all text-left group block"
+                  >
+                    <div className="w-9 h-9 bg-green-50 text-green-600 flex items-center justify-center mb-2 group-hover:bg-green-600 group-hover:text-white transition-all">
+                      <i className="fas fa-puzzle-piece"></i>
+                    </div>
+                    <div className="text-sm font-black text-slate-900">Adaugă extra</div>
+                    <div className="text-[11px] text-slate-500 mt-0.5">Boost, banner, postare în plus</div>
+                  </a>
+                </div>
+              </div>
             </>
           )}
 

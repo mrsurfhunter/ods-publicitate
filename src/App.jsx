@@ -56,7 +56,13 @@ function AppInner() {
       if (order) setDashOrder(order);
       else setViewRaw("landing");
     }
-  }, [myOrders]);
+    // Returning customer: redirect to dashboard on landing if logged in with orders
+    if (view === "landing" && isAuthenticated && myOrders.length > 0 && !window.location.hash) {
+      const lastId = sessionStorage.getItem("ods-dash-order");
+      const order = lastId ? myOrders.find(o => o.id === lastId) : myOrders[0];
+      if (order) { setDashOrder(order); setView("dashboard"); }
+    }
+  }, [myOrders, isAuthenticated]);
 
   useEffect(() => {
     const onHashChange = () => {
