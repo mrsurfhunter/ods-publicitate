@@ -18,6 +18,7 @@ export default function PurchaseForm({ pkg, suggestedAddons = [], onClose, onDon
   const [f, sF] = useState({
     name: user?.name || "", company: user?.company || "",
     cui: "", address: "", phone: user?.phone || "", email: user?.email || "",
+    cnp: "",
     sub: false,
   });
   const set = (k, v) => sF(s => ({ ...s, [k]: v }));
@@ -43,7 +44,7 @@ export default function PurchaseForm({ pkg, suggestedAddons = [], onClose, onDon
   const subtotal = basePrice + addonTotal;
   const tva = Math.round(subtotal * 0.21);
   const total = subtotal + tva;
-  const canSubmit = f.name && f.phone && f.email && !submitting;
+  const canSubmit = f.name && f.phone && (entityType === "juridica" ? f.cui : f.cnp) && !submitting;
 
   const hCUI = d => sF(s => ({ ...s, company: d.company || s.company, address: d.address || s.address }));
 
@@ -152,10 +153,23 @@ export default function PurchaseForm({ pkg, suggestedAddons = [], onClose, onDon
       )}
 
       {entityType === "fizica" && (
-        <div>
-          <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Adresă (pentru factură)</label>
-          <input className="w-full p-4 bg-slate-50 border-2 border-slate-200 focus:border-slate-900 outline-none text-sm font-medium" value={f.address} onChange={e => set("address", e.target.value)} placeholder="Strada, număr, oraș" />
-        </div>
+        <>
+          <div>
+            <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">CNP * <span className="font-normal normal-case tracking-normal text-slate-400">(necesar pe factură)</span></label>
+            <input
+              className="w-full p-4 bg-slate-50 border-2 border-slate-200 focus:border-slate-900 outline-none text-sm font-medium"
+              value={f.cnp}
+              onChange={e => set("cnp", e.target.value.replace(/\D/g, "").slice(0, 13))}
+              inputMode="numeric"
+              maxLength={13}
+              placeholder="1234567890123"
+            />
+          </div>
+          <div>
+            <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Adresă <span className="font-normal normal-case tracking-normal text-slate-400">(opțional, pentru factură)</span></label>
+            <input className="w-full p-4 bg-slate-50 border-2 border-slate-200 focus:border-slate-900 outline-none text-sm font-medium" value={f.address} onChange={e => set("address", e.target.value)} placeholder="Strada, număr, oraș" />
+          </div>
+        </>
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -167,13 +181,6 @@ export default function PurchaseForm({ pkg, suggestedAddons = [], onClose, onDon
           <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Telefon *</label>
           <input className="w-full p-4 bg-slate-50 border-2 border-slate-200 focus:border-slate-900 outline-none text-sm font-medium" value={f.phone} onChange={e => set("phone", e.target.value)} />
         </div>
-      </div>
-
-      <div>
-        <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">
-          Email * {!user?.email && <span className="font-normal normal-case tracking-normal text-slate-400">(pentru factură și confirmări)</span>}
-        </label>
-        <input className="w-full p-4 bg-slate-50 border-2 border-slate-200 focus:border-slate-900 outline-none text-sm font-medium" value={f.email} onChange={e => set("email", e.target.value)} placeholder="email@firma.ro" />
       </div>
 
       {pkg.sub && (

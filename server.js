@@ -346,89 +346,56 @@ app.post('/api/ai', async (req, res) => {
   }
 });
 
-// ── /api/consult — AI package recommendation (4-tier) ──
+// ── /api/consult — AI package recommendation (filter by useCase) ──
 
-function buildConsultSystem() {
+const USECASE_LABELS = {
+  event: 'eveniment / lansare / festival',
+  monthly: 'prezență constantă pentru afacere',
+  quickPromo: 'ofertă scurtă / test rapid',
+  enterprise: 'acoperire premium completă',
+};
+
+function buildConsultSystem(useCase) {
   const cfg = readConfig();
-  const pkgs = cfg.packages.filter(p => p.active !== false);
+  const pkgs = cfg.packages.filter(p => p.active !== false && (p.useCase === useCase || (useCase === 'enterprise' && p.useCase === 'enterprise')));
   const adds = cfg.addons.filter(a => a.active !== false);
 
   const pkgList = pkgs.map((p, i) =>
     `${i + 1}. ${p.id}: ${p.name}, ${p.price} lei${p.sub ? ` (${p.sub} lei abonament)` : ''}, ${p.cat === 'monthly' ? 'lunar' : 'o dată'}. ${p.headline}`
   ).join('\n');
 
-  const addonList = adds.map(a =>
-    `- ${a.id}: ${a.name}, ${a.price} lei${a.unit}. ${a.desc}`
+  const addonList = adds.slice(0, 8).map(a =>
+    `- ${a.id}: ${a.name}, ${a.price} lei${a.unit}`
   ).join('\n');
 
-  return `Ești consultant de publicitate pentru Ora de Sibiu (oradesibiu.ro), cea mai citită publicație online din Sibiu cu 400.000+ vizitatori/lună, 220.000 urmăritori Facebook, 18.600 Instagram, 25.000 TikTok. Traficul este auditat BRAT.
+  return `Ești consultant de publicitate pentru Ora de Sibiu (oradesibiu.ro), cea mai citită publicație din Sibiu (1.5M afișări/lună, 220.000 FB, 18.600 IG, 25.000 TikTok, trafic auditat BRAT).
 
-Pachete disponibile:
+Clientul a ales categoria: "${USECASE_LABELS[useCase] || useCase}"
+
+Pachete disponibile DIN ACEASTĂ CATEGORIE (folosește doar acestea):
 ${pkgList}
 
-Add-ons disponibile (se adaugă la orice pachet):
+Add-ons sugerabile:
 ${addonList}
 
-Postările suplimentare (addon-post) au preț degresiv: 250 lei/1, 200 lei/buc la 2+, 150 lei/buc la 3+.
-
-RĂSPUNDE EXCLUSIV în format JSON valid, fără markdown, fără backticks:
+RĂSPUNDE EXCLUSIV cu JSON valid (fără markdown, fără backticks):
 {
   "tiers": [
-    {
-      "id": "package-id",
-      "tier": "start",
-      "label": "Bun pentru start",
-      "reasoning": "1-2 propoziții în română, la persoana a 2-a singular",
-      "benefits": ["beneficiu1", "beneficiu2", "beneficiu3"],
-      "addons": ["addon-id-sugerat"]
-    },
-    { "id": "...", "tier": "recommended", "label": "Recomandat pentru tine", ... },
-    { "id": "...", "tier": "popular", "label": "Cel mai ales de afaceri ca tine", ... },
-    { "id": "...", "tier": "max", "label": "Maximum impact", ... }
+    { "id": "package-id", "tier": "recommended", "label": "Recomandat pentru tine", "reasoning": "...", "benefits": ["..."], "addons": ["..."] },
+    { "id": "...", "tier": "alternative", "label": "...", "reasoning": "...", "benefits": ["..."], "addons": [] }
   ],
-  "summary": "2-3 propoziții rezumat general al recomandării"
+  "summary": "1-2 propoziții generale"
 }
 
-Reguli per tier:
-- start: sub bugetul clientului, entry-level. Ideal pentru testare.
-- recommended: pe buget, cel mai potrivit. HIGHLIGHTED.
-- popular: ușor peste buget, efect de ancorare. Menționează "ales de 67% din afacerile similare".
-- max: premium/aspirațional. Arată ce e posibil.
-
-Reguli per tip afacere:
-- Restaurante/HoReCa → accent pe visual: Reels, Stories, poze meniu. Sugerează addon-video.
-- Servicii/Imobiliare → accent pe SEO: articole, prezență Google. Recomandă pachete cu articol.
-- Evenimente → OBLIGATORIU recomandă pachetele de eveniment (eveniment-start, eveniment-plus, eveniment-premium). Include evidențierea în recomandările de weekend. Sugerează addon-echipa și addon-livestream.
-- Lansări/Conferințe → eveniment-plus sau eveniment-premium + addon-echipa + addon-livestream.
-- Sănătate → conținut de încredere: articole profesionale, reputație.
-
-Reguli per obiectiv:
-- Mai mulți clienți → reach maxim: boost, postări multe, Meta Ads.
-- Brand/reputație → articol persistent pe site + social constant.
-- SEO → articol indexat Google, prima pagină cât mai mult.
-- Lansare → boost-express sau addon-boost pentru impact rapid.
-
-Reguli per materiale (hasContent):
-- have-nothing → recomandă pachete managed (business+), menționează că echipa redactează.
-- have-photos → pachete cu articol, menționează că redacția scrie textul.
-- have-all → orice pachet, menționează upload ușor în dashboard.
-
-Reguli per timeline:
-- urgent/once → one-time packages (social-single, boost-express, sau pachete eveniment dacă e eveniment). NU recomanda abonamente.
-- few-months → abonamente lunare, menționează prețul abonament.
-- ongoing → abonamente pe termen lung, accent pe economie la abonament.
-
-Addon-uri speciale:
-- addon-echipa: prezență reporter+fotograf la eveniment, 500 lei (+20% weekend/după 17:00).
-- addon-livestream: transmisie live pe FB+YT Ora de Sibiu, 1000 lei/30 min, degresiv la 800 lei la 2+ blocuri (+20% weekend/după 17:00).
-- addon-eveniment-recap: articol recap post-eveniment cu galerie, 600 lei.
-
-Reguli importante:
-- EXACT 4 tiere, fiecare cu ID de pachet VALID.
-- Beneficiile trebuie personalizate pentru tipul afacerii, nu generice.
-- Addons: sugerează maxim 2 per tier, relevante pentru client.
-- Nu inventa pachete sau prețuri. Folosește doar ID-urile de mai sus.
-- Tonul: profesional dar prietenos, fără exagerări.`;
+Reguli:
+- Returnează exact ${pkgs.length === 1 ? '1' : pkgs.length === 2 ? '2' : 'între 2 și 3'} pachete (toate din lista de mai sus).
+- Primul tier este "recommended" — alege pe baza bugetului și tipului afacerii.
+- Restul tier-urilor "alternative" cu label specific (ex: "Pentru buget mai mic", "Pentru impact maxim", "Cu boost extra").
+- reasoning: 1-2 propoziții, persoana a 2-a, personalizat pe tipul afacerii (ex: "Pentru un restaurant care vrea să atragă clienți noi în weekend..."). NU repeta numele pachetului.
+- benefits: 3-4 puncte scurte, concrete (nu generic).
+- addons: max 2, doar dacă chiar adaugă valoare pentru cazul lui.
+- Nu inventa pachete sau ID-uri. Folosește exclusiv ID-urile din listă.
+- Ton profesional dar prietenos. Fără exagerări sau marketing forțat.`;
 }
 
 function getValidIds() {
@@ -438,95 +405,83 @@ function getValidIds() {
   return { pkgIds, addonIds };
 }
 
-function fallbackRecommendation({ businessType, goal, budget, timeline, hasContent }) {
-  const cfg = readConfig();
-  const pkgs = cfg.packages.filter(p => p.active !== false);
-  const isEvent = businessType === 'eveniment';
+function pickByBudget(pkgs, budget) {
+  const budgetMax = {
+    'nu-stiu': Infinity,
+    '500-1000': 1000,
+    '1000-2000': 2000,
+    '2000-3500': 3500,
+    'peste-3500': Infinity,
+  }[budget] || Infinity;
+  const sorted = [...pkgs].sort((a, b) => a.price - b.price);
+  // Find the most expensive package within budget, fallback to cheapest
+  let best = sorted[0];
+  for (const p of sorted) {
+    if (p.price <= budgetMax) best = p;
+  }
+  return best;
+}
 
-  // For events, use only event packages
-  const eventPkgs = pkgs.filter(p => p.id.startsWith('eveniment-')).sort((a, b) => a.price - b.price);
-  if (isEvent && eventPkgs.length >= 2) {
-    const genericBenefits = (pkg) => pkg.inc.slice(0, 3).map(x => x.w + (x.d ? ' — ' + x.d : ''));
-    const s = eventPkgs[0];
-    const r = eventPkgs[Math.min(1, eventPkgs.length - 1)];
-    const p = eventPkgs[Math.min(2, eventPkgs.length - 1)];
-    const m = eventPkgs[eventPkgs.length - 1];
+function fallbackRecommendation({ businessType, useCase, budget }) {
+  const cfg = readConfig();
+  const pkgs = cfg.packages.filter(p => p.active !== false && p.useCase === useCase);
+  if (pkgs.length === 0) {
+    // Fallback: any package
+    const any = cfg.packages.filter(p => p.active !== false).slice(0, 2);
     return {
-      tiers: [
-        { id: s.id, tier: 'start', label: 'Bun pentru start', reasoning: `${s.name} oferă promovare de bază cu postări și evidențiere weekend.`, benefits: genericBenefits(s), addons: [] },
-        { id: r.id, tier: 'recommended', label: 'Recomandat pentru evenimentul tău', reasoning: `${r.name} include articol dedicat + campanie social completă + push notification.`, benefits: genericBenefits(r), addons: ['addon-echipa'] },
-        { id: p.id, tier: 'popular', label: 'Ales de 67% din organizatori', reasoning: `${p.name} asigură acoperire completă a evenimentului pe toate canalele.`, benefits: genericBenefits(p), addons: ['addon-echipa', 'addon-livestream'] },
-        { id: m.id, tier: 'max', label: 'Maximum impact', reasoning: `${m.name} include tot: articole, banner, push, newsletter + recap post-eveniment.`, benefits: genericBenefits(m), addons: ['addon-echipa', 'addon-livestream'] },
-      ],
-      summary: 'Pentru promovarea evenimentului, recomandăm pachete dedicate care includ evidențiere în recomandările de weekend și campanii pre/post eveniment.',
+      tiers: any.map((p, i) => ({
+        id: p.id, tier: i === 0 ? 'recommended' : 'alternative',
+        label: i === 0 ? 'Recomandat pentru tine' : 'Alternativă',
+        reasoning: `${p.headline}`,
+        benefits: p.inc.slice(0, 3).map(x => x.w + (x.d ? ' — ' + x.d : '')),
+        addons: [],
+      })),
+      summary: 'Am pregătit câteva opțiuni pentru tine.',
     };
   }
 
-  const ladder = pkgs.filter(p => !p.id.startsWith('eveniment-')).sort((a, b) => a.price - b.price);
+  const sorted = [...pkgs].sort((a, b) => a.price - b.price);
+  const recommended = pickByBudget(pkgs, budget);
+  const benefits = (p) => p.inc.slice(0, 3).map(x => x.w + (x.d ? ' — ' + x.d : ''));
 
-  const isOnce = timeline === 'once' || timeline === 'urgent';
+  const tiers = [{
+    id: recommended.id, tier: 'recommended', label: 'Recomandat pentru tine',
+    reasoning: `Pe baza bugetului și tipului tău de afacere, această opțiune e cea mai potrivită.`,
+    benefits: benefits(recommended), addons: [],
+  }];
 
-  let centerIdx;
-  if (budget === 'sub-500') centerIdx = 0;
-  else if (budget === '500-1000') centerIdx = Math.min(2, ladder.length - 1);
-  else if (budget === '1000-2000') centerIdx = Math.min(3, ladder.length - 1);
-  else if (budget === '2000-3500') centerIdx = Math.min(5, ladder.length - 1);
-  else if (budget === 'peste-3500') centerIdx = Math.min(6, ladder.length - 1);
-  else centerIdx = Math.min(4, ladder.length - 1);
-
-  if (isOnce && centerIdx > 1) centerIdx = 1;
-
-  const pick = (offset) => ladder[Math.max(0, Math.min(ladder.length - 1, centerIdx + offset))];
-  const startPkg = pick(-1);
-  const recPkg = pick(0);
-  const popPkg = pick(1);
-  const maxPkg = pick(2);
-
-  const genericBenefits = (pkg) => {
-    const b = pkg.inc.slice(0, 3).map(x => x.w + (x.d ? ' — ' + x.d : ''));
-    return b;
-  };
-
-  const suggestAddons = () => {
-    const adds = [];
-    if (hasContent === 'have-nothing') adds.push('addon-video');
-    if (goal === 'more-clients' || goal === 'launch') adds.push('addon-boost');
-    return adds.slice(0, 2);
-  };
-
-  const addons = suggestAddons();
+  // Add 1-2 alternatives (cheaper or more expensive)
+  const cheaper = sorted.find(p => p.id !== recommended.id && p.price < recommended.price);
+  const more = sorted.find(p => p.id !== recommended.id && p.price > recommended.price);
+  if (cheaper) tiers.push({
+    id: cheaper.id, tier: 'alternative', label: 'Pentru buget mai mic',
+    reasoning: `Versiunea entry-level din această categorie.`,
+    benefits: benefits(cheaper), addons: [],
+  });
+  if (more) tiers.push({
+    id: more.id, tier: 'alternative', label: 'Pentru impact mai mare',
+    reasoning: `Mai mult conținut și acoperire, dacă bugetul permite.`,
+    benefits: benefits(more), addons: [],
+  });
 
   return {
-    tiers: [
-      { id: startPkg.id, tier: 'start', label: 'Bun pentru start',
-        reasoning: `${startPkg.name} este o opțiune accesibilă pentru a testa promovarea pe Ora de Sibiu.`,
-        benefits: genericBenefits(startPkg), addons: [] },
-      { id: recPkg.id, tier: 'recommended', label: 'Recomandat pentru tine',
-        reasoning: `Pe baza bugetului și obiectivelor tale, ${recPkg.name} oferă cel mai bun raport calitate-preț.`,
-        benefits: genericBenefits(recPkg), addons },
-      { id: popPkg.id, tier: 'popular', label: 'Ales de 67% din afaceri similare',
-        reasoning: `${popPkg.name} este ales de majoritatea afacerilor din Sibiu pentru promovare eficientă.`,
-        benefits: genericBenefits(popPkg), addons: [] },
-      { id: maxPkg.id, tier: 'max', label: 'Maximum impact',
-        reasoning: `Pentru rezultate maxime, ${maxPkg.name} acoperă toate canalele și formatele disponibile.`,
-        benefits: genericBenefits(maxPkg), addons: [] },
-    ],
-    summary: 'Pe baza preferințelor tale, am pregătit 4 opțiuni ordonate de la cea mai accesibilă la cea cu impact maxim.',
+    tiers: tiers.slice(0, 3),
+    summary: `Pe baza preferințelor tale, am ales pachetele potrivite din categoria selectată.`,
   };
 }
 
 app.post('/api/consult', async (req, res) => {
-  const { businessType, goal, budget, timeline, hasContent } = req.body || {};
-  if (!businessType || !goal || !budget || !timeline) {
-    return res.status(400).json({ error: 'Missing required fields' });
+  const { businessType, useCase, budget } = req.body || {};
+  if (!useCase || !budget) {
+    return res.status(400).json({ error: 'Missing useCase or budget' });
   }
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
-    return res.json(fallbackRecommendation({ businessType, goal, budget, timeline, hasContent }));
+    return res.json(fallbackRecommendation({ businessType, useCase, budget }));
   }
 
-  const userMsg = `Tipul afacerii: ${businessType}\nObiectiv: ${goal}\nBuget: ${budget}\nMateriale: ${hasContent || 'not-sure'}\nFrecvență: ${timeline}`;
+  const userMsg = `Tipul afacerii: ${businessType || 'nespecificat'}\nBuget: ${budget}`;
 
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
@@ -535,7 +490,7 @@ app.post('/api/consult', async (req, res) => {
         model: 'claude-sonnet-4-20250514',
         max_tokens: 800,
         temperature: 0.4,
-        system: buildConsultSystem(),
+        system: buildConsultSystem(useCase),
         messages: [{ role: 'user', content: userMsg }],
       });
 
@@ -558,14 +513,11 @@ app.post('/api/consult', async (req, res) => {
 
       if (validTiers.length < 1) throw new Error('No valid tiers after filtering');
 
-      return res.json({
-        tiers: validTiers,
-        summary: data.summary || '',
-      });
+      return res.json({ tiers: validTiers, summary: data.summary || '' });
     } catch (e) {
       console.error(`Consult attempt ${attempt + 1} failed:`, e.message);
       if (attempt === 1) {
-        return res.json(fallbackRecommendation({ businessType, goal, budget, timeline, hasContent }));
+        return res.json(fallbackRecommendation({ businessType, useCase, budget }));
       }
     }
   }

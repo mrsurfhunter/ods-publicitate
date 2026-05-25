@@ -3,30 +3,22 @@ import { useConfig } from "../../context/ConfigContext";
 import PurchaseForm from "../purchase/PurchaseForm";
 
 const TIER_STYLE = {
-  start: {
-    border: "border-slate-200",
-    badge: "bg-slate-100 text-slate-600",
-    btn: "bg-slate-900 hover:bg-black border-2 border-slate-900",
-    accent: "text-slate-600",
-  },
   recommended: {
     border: "border-brand",
     badge: "bg-brand text-white",
     btn: "bg-brand hover:bg-brand-dark border-2 border-brand",
     accent: "text-brand",
   },
-  popular: {
-    border: "border-amber-400",
-    badge: "bg-amber-400 text-amber-900",
-    btn: "bg-amber-500 hover:bg-amber-600 border-2 border-amber-500 text-white",
-    accent: "text-amber-600",
-  },
-  max: {
-    border: "border-slate-900",
-    badge: "bg-slate-900 text-white",
+  alternative: {
+    border: "border-slate-200",
+    badge: "bg-slate-100 text-slate-600",
     btn: "bg-slate-900 hover:bg-black border-2 border-slate-900",
-    accent: "text-slate-900",
+    accent: "text-slate-600",
   },
+  // Legacy tiers (kept for backward compatibility with old orders/AI responses)
+  start: { border: "border-slate-200", badge: "bg-slate-100 text-slate-600", btn: "bg-slate-900 hover:bg-black border-2 border-slate-900", accent: "text-slate-600" },
+  popular: { border: "border-amber-400", badge: "bg-amber-400 text-amber-900", btn: "bg-amber-500 hover:bg-amber-600 border-2 border-amber-500 text-white", accent: "text-amber-600" },
+  max: { border: "border-slate-900", badge: "bg-slate-900 text-white", btn: "bg-slate-900 hover:bg-black border-2 border-slate-900", accent: "text-slate-900" },
 };
 
 function TierCard({ tier, pkg, addons, isBuying, onBuy, onPurchased }) {
@@ -168,6 +160,32 @@ export default function RecommendView({ recommendation, onCatalog, onPurchased, 
             />
           );
         })}
+      </div>
+
+      {/* VS FACEBOOK ADS comparison */}
+      <div className="mt-10 bg-slate-900 text-white p-5 sm:p-7 border-2 border-slate-900">
+        <div className="text-[11px] font-bold text-brand uppercase tracking-[2px] mb-2">De ce articol pe oradesibiu.ro</div>
+        <h3 className="text-xl sm:text-2xl font-black tracking-tight mb-4">Articol pe site vs. doar Facebook Ads</h3>
+        <div className="grid sm:grid-cols-2 gap-3 sm:gap-px sm:bg-white/10">
+          <div className="bg-slate-900 p-4 sm:p-5 border-l-4 border-green-500">
+            <div className="text-[10px] font-black text-green-400 uppercase tracking-wider mb-3">Cu noi (articol + social)</div>
+            <ul className="space-y-2 text-sm">
+              <li className="flex gap-2"><i className="fas fa-check text-green-500 mt-1 text-xs"></i><span>Articol indexat pe Google luni întregi — vine trafic și după ce campania s-a încheiat</span></li>
+              <li className="flex gap-2"><i className="fas fa-check text-green-500 mt-1 text-xs"></i><span>Apare lângă știri reale, are autoritate editorială</span></li>
+              <li className="flex gap-2"><i className="fas fa-check text-green-500 mt-1 text-xs"></i><span>Cititori locali pre-calificați (audiență Sibiu)</span></li>
+              <li className="flex gap-2"><i className="fas fa-check text-green-500 mt-1 text-xs"></i><span>SEO + backlink autoritar permanent</span></li>
+            </ul>
+          </div>
+          <div className="bg-slate-900 p-4 sm:p-5 border-l-4 border-red-500/60">
+            <div className="text-[10px] font-black text-red-400 uppercase tracking-wider mb-3">Doar Facebook Ads</div>
+            <ul className="space-y-2 text-sm text-white/70">
+              <li className="flex gap-2"><i className="fas fa-xmark text-red-400 mt-1 text-xs"></i><span>Postarea dispare din feed în 24h</span></li>
+              <li className="flex gap-2"><i className="fas fa-xmark text-red-400 mt-1 text-xs"></i><span>Concurează cu sute de reclame, fără context editorial</span></li>
+              <li className="flex gap-2"><i className="fas fa-xmark text-red-400 mt-1 text-xs"></i><span>Reach plătit, fără filtru de intent local</span></li>
+              <li className="flex gap-2"><i className="fas fa-xmark text-red-400 mt-1 text-xs"></i><span>Traficul se oprește când termini bugetul</span></li>
+            </ul>
+          </div>
+        </div>
       </div>
 
       <div className="text-center mt-10 border-t-2 border-slate-200 pt-8">

@@ -283,17 +283,13 @@ export const AD_IMAGE_PRICE = 20;
 
 export const CONSULT_STEPS = [
   {
-    id: "businessType",
-    question: "Ce tip de afacere ai?",
+    id: "useCase",
+    question: "Ce vrei să promovezi?",
     options: [
-      { id: "restaurant", label: "Restaurant / Cafe / Bar", icon: "fa-utensils" },
-      { id: "magazin", label: "Magazin / Retail", icon: "fa-bag-shopping" },
-      { id: "servicii", label: "Servicii", icon: "fa-briefcase" },
-      { id: "eveniment", label: "Eveniment / Festival", icon: "fa-calendar-days" },
-      { id: "imobiliare", label: "Imobiliare", icon: "fa-building" },
-      { id: "sanatate", label: "Sănătate / Wellness", icon: "fa-heart-pulse" },
-      { id: "horeca", label: "Hotel / Pensiune / Turism", icon: "fa-bed" },
-      { id: "altceva", label: "Altceva", icon: "fa-pen", freeText: true },
+      { id: "event", label: "Un eveniment, lansare sau festival", icon: "fa-calendar-days" },
+      { id: "monthly", label: "Afacerea mea — prezență constantă", icon: "fa-store" },
+      { id: "quickPromo", label: "O ofertă scurtă — vreau să testez rapid", icon: "fa-bolt" },
+      { id: "enterprise", label: "Acoperire premium completă", icon: "fa-crown" },
     ],
   },
   {
@@ -301,7 +297,6 @@ export const CONSULT_STEPS = [
     question: "Ce buget ai în minte?",
     options: [
       { id: "nu-stiu", label: "Nu știu — recomandă-mi", icon: "fa-handshake" },
-      { id: "sub-500", label: "Sub 500 lei", icon: "fa-coins" },
       { id: "500-1000", label: "500 – 1.000 lei", icon: "fa-credit-card" },
       { id: "1000-2000", label: "1.000 – 2.000 lei", icon: "fa-chart-bar" },
       { id: "2000-3500", label: "2.000 – 3.500 lei", icon: "fa-gem" },
@@ -309,13 +304,17 @@ export const CONSULT_STEPS = [
     ],
   },
   {
-    id: "timeline",
-    question: "Cât de des vrei să te promovezi?",
+    id: "businessType",
+    question: "Ce tip de afacere ai?",
     options: [
-      { id: "urgent", label: "Urgent — săptămâna asta", icon: "fa-bolt" },
-      { id: "once", label: "O singură dată", icon: "fa-calendar-check" },
-      { id: "few-months", label: "Câteva luni", icon: "fa-calendar" },
-      { id: "ongoing", label: "Pe termen lung", icon: "fa-infinity" },
+      { id: "restaurant", label: "Restaurant / Cafe / Bar", icon: "fa-utensils" },
+      { id: "magazin", label: "Magazin / Retail", icon: "fa-bag-shopping" },
+      { id: "servicii", label: "Servicii", icon: "fa-briefcase" },
+      { id: "eveniment", label: "Organizator eveniment / Festival", icon: "fa-calendar-days" },
+      { id: "imobiliare", label: "Imobiliare", icon: "fa-building" },
+      { id: "sanatate", label: "Sănătate / Wellness", icon: "fa-heart-pulse" },
+      { id: "horeca", label: "Hotel / Pensiune / Turism", icon: "fa-bed" },
+      { id: "altceva", label: "Altceva", icon: "fa-pen", freeText: true },
     ],
   },
 ];

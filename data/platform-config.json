@@ -1,13 +1,14 @@
 {
   "packages": [
     {
-      "id": "social-single",
-      "name": "Postare Singulară",
+      "id": "postare-mention",
+      "name": "Postare + Mențiune",
       "cat": "oneTime",
-      "price": 300,
+      "useCase": "quickPromo",
+      "price": 500,
       "sub": null,
       "color": "#F59E0B",
-      "headline": "O postare profesională pe Facebook și Instagram",
+      "headline": "1 postare Facebook + Instagram + mențiune în articolul săptămânal de promoții locale",
       "inc": [
         {
           "w": "1 postare Facebook",
@@ -18,8 +19,12 @@
           "d": "18.000+ urmăritori"
         },
         {
-          "w": "1 story Facebook + Instagram",
+          "w": "1 story FB + IG",
           "d": "Format vertical"
+        },
+        {
+          "w": "Mențiune în articol roundup",
+          "d": "„Promoții și oferte locale\" — 7 zile pe site"
         },
         {
           "w": "Link direct",
@@ -27,24 +32,24 @@
         }
       ],
       "delivery": "Publicare în maxim 24h",
-      "hasArticle": false,
+      "hasArticle": true,
       "active": true
     },
     {
       "id": "boost-express",
-      "name": "Boost Express",
+      "name": "Boost + Mențiune",
       "cat": "oneTime",
-      "price": 450,
+      "price": 650,
       "sub": null,
       "color": "#F97316",
-      "headline": "Postare + boost Meta Ads cu reach garantat 5.000+",
+      "headline": "Postare cu boost Meta Ads reach garantat + mențiune în articolul săptămânal de promoții",
       "inc": [
         {
           "w": "1 postare Facebook + Instagram",
           "d": "Design profesional"
         },
         {
-          "w": "1 story pe ambele platforme",
+          "w": "1 story FB + IG",
           "d": "Format vertical"
         },
         {
@@ -52,23 +57,32 @@
           "d": "50 lei buget publicitar, reach 5.000+"
         },
         {
+          "w": "Mențiune în articol roundup",
+          "d": "„Promoții și oferte locale\" — 7 zile pe site"
+        },
+        {
           "w": "Raport performanță",
           "d": "Reach, click-uri, engagement"
         }
       ],
       "delivery": "Activ în 24-48h",
-      "hasArticle": false,
-      "active": true
+      "hasArticle": true,
+      "active": true,
+      "useCase": "quickPromo"
     },
     {
       "id": "eveniment-start",
       "name": "Eveniment Start",
       "cat": "oneTime",
-      "price": 1000,
+      "price": 1300,
       "sub": null,
       "color": "#E11D48",
-      "headline": "Promovare eveniment cu postări social media + evidențiere în recomandările de weekend",
+      "headline": "Articol scurt pe site + promovare social media + evidențiere în recomandările de weekend",
       "inc": [
+        {
+          "w": "1 articol scurt pe site",
+          "d": "Prima pagină 5 zile, ~300-400 cuvinte"
+        },
         {
           "w": "2 postări Facebook + Instagram",
           "d": "Anunț + reminder eveniment"
@@ -87,8 +101,9 @@
         }
       ],
       "delivery": "Publicare în 24-48h",
-      "hasArticle": false,
-      "active": true
+      "hasArticle": true,
+      "active": true,
+      "useCase": "event"
     },
     {
       "id": "eveniment-plus",
@@ -129,7 +144,8 @@
       "active": true,
       "subType": "annual",
       "subNote": "Abonament anual — maxim 5 evenimente/an",
-      "subMaxEvents": 5
+      "subMaxEvents": 5,
+      "useCase": "event"
     },
     {
       "id": "eveniment-premium",
@@ -171,41 +187,8 @@
       ],
       "delivery": "Campanie activă 14 zile",
       "hasArticle": true,
-      "active": true
-    },
-    {
-      "id": "social-monthly",
-      "name": "Social Lunar",
-      "cat": "monthly",
-      "price": 700,
-      "sub": 600,
-      "color": "#3B82F6",
-      "headline": "Prezență constantă pe rețelele Ora de Sibiu",
-      "inc": [
-        {
-          "w": "4 postări/lună Facebook",
-          "d": "Reach organic garantat"
-        },
-        {
-          "w": "4 postări/lună Instagram",
-          "d": "Feed + Stories"
-        },
-        {
-          "w": "2 story-uri/lună",
-          "d": "Format vertical, swipe-up"
-        },
-        {
-          "w": "1 Reel/TikTok pe lună",
-          "d": "Video scurt vertical"
-        },
-        {
-          "w": "Raport lunar",
-          "d": "Reach, engagement, click-uri"
-        }
-      ],
-      "delivery": "Prima postare în max 24h",
-      "hasArticle": false,
-      "active": true
+      "active": true,
+      "useCase": "event"
     },
     {
       "id": "articol-start",
@@ -235,7 +218,8 @@
       ],
       "delivery": "Publicat în max 5 zile lucrătoare",
       "hasArticle": true,
-      "active": true
+      "active": true,
+      "useCase": "monthly"
     },
     {
       "id": "business",
@@ -278,7 +262,8 @@
       ],
       "delivery": "Gata în 3-5 zile. Tu alegi data.",
       "hasArticle": true,
-      "active": true
+      "active": true,
+      "useCase": "monthly"
     },
     {
       "id": "business-plus",
@@ -316,7 +301,8 @@
       ],
       "delivery": "Setup complet în 5 zile",
       "hasArticle": true,
-      "active": true
+      "active": true,
+      "useCase": "monthly"
     },
     {
       "id": "premium",
@@ -358,7 +344,8 @@
       ],
       "delivery": "Setup complet în 5 zile",
       "hasArticle": true,
-      "active": true
+      "active": true,
+      "useCase": "monthly"
     },
     {
       "id": "enterprise",
@@ -396,7 +383,8 @@
       ],
       "delivery": "Setup complet în 7 zile",
       "hasArticle": true,
-      "active": true
+      "active": true,
+      "useCase": "enterprise"
     }
   ],
   "addons": [
@@ -680,7 +668,7 @@
     }
   ],
   "promotions": [],
-  "updatedAt": "2026-04-27T19:48:54.935Z",
+  "updatedAt": "2026-05-25T00:00:00.000Z",
   "fgo": {
     "cui": "39899930",
     "privateKey": "770A3F705A4C0471E82B768ED3E780F8",
