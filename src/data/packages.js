@@ -283,12 +283,28 @@ export const AD_IMAGE_PRICE = 20;
 
 export const CONSULT_STEPS = [
   {
-    id: "useCase",
-    question: "Ce vrei să promovezi?",
+    id: "businessType",
+    question: "Cine ești tu?",
     options: [
-      { id: "event", label: "Un eveniment, lansare sau festival", icon: "fa-calendar-days" },
-      { id: "monthly", label: "Afacerea mea — prezență constantă", icon: "fa-store" },
-      { id: "quickPromo", label: "O ofertă scurtă — vreau să testez rapid", icon: "fa-bolt" },
+      { id: "restaurant", label: "Restaurant / Cafe / Bar", icon: "fa-utensils" },
+      { id: "magazin", label: "Magazin / Retail", icon: "fa-bag-shopping" },
+      { id: "servicii", label: "Servicii (avocat, contabil, freelancer, IT)", icon: "fa-briefcase" },
+      { id: "eveniment", label: "Organizator evenimente / Festival", icon: "fa-calendar-days" },
+      { id: "imobiliare", label: "Imobiliare", icon: "fa-building" },
+      { id: "sanatate", label: "Sănătate / Wellness / Stomatologie", icon: "fa-heart-pulse" },
+      { id: "horeca", label: "Hotel / Pensiune / Turism", icon: "fa-bed" },
+      { id: "ong", label: "Asociație / ONG / Fundație", icon: "fa-hand-holding-heart" },
+      { id: "institutie", label: "Instituție publică / Primărie", icon: "fa-landmark" },
+      { id: "altceva", label: "Altceva", icon: "fa-pen", freeText: true },
+    ],
+  },
+  {
+    id: "useCase",
+    question: "Ce vrei să faci acum?",
+    options: [
+      { id: "quickPromo", label: "O promovare rapidă — test ofertă scurtă", icon: "fa-bolt" },
+      { id: "monthly", label: "Prezență constantă lună de lună", icon: "fa-store" },
+      { id: "event", label: "Promovez un eveniment, lansare sau festival", icon: "fa-calendar-days" },
       { id: "enterprise", label: "Acoperire premium completă", icon: "fa-crown" },
     ],
   },
@@ -301,20 +317,6 @@ export const CONSULT_STEPS = [
       { id: "1000-2000", label: "1.000 – 2.000 lei", icon: "fa-chart-bar" },
       { id: "2000-3500", label: "2.000 – 3.500 lei", icon: "fa-gem" },
       { id: "peste-3500", label: "Peste 3.500 lei", icon: "fa-crown" },
-    ],
-  },
-  {
-    id: "businessType",
-    question: "Ce tip de afacere ai?",
-    options: [
-      { id: "restaurant", label: "Restaurant / Cafe / Bar", icon: "fa-utensils" },
-      { id: "magazin", label: "Magazin / Retail", icon: "fa-bag-shopping" },
-      { id: "servicii", label: "Servicii", icon: "fa-briefcase" },
-      { id: "eveniment", label: "Organizator eveniment / Festival", icon: "fa-calendar-days" },
-      { id: "imobiliare", label: "Imobiliare", icon: "fa-building" },
-      { id: "sanatate", label: "Sănătate / Wellness", icon: "fa-heart-pulse" },
-      { id: "horeca", label: "Hotel / Pensiune / Turism", icon: "fa-bed" },
-      { id: "altceva", label: "Altceva", icon: "fa-pen", freeText: true },
     ],
   },
 ];
