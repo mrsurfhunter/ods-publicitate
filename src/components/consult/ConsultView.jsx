@@ -8,9 +8,10 @@ const TOTAL_DOTS = 4; // 3 questions + 1 lead capture
 const LEAD_STEP = 2;  // dupa businessType + budget, inainte de timeline
 
 export default function ConsultView({ onResult, onBack }) {
-  const { isAuthenticated, updateUser } = useAuth();
-  const [step, setStep] = useState(0);
-  const [answers, setAnswers] = useState({});
+  const { isAuthenticated, user, updateUser } = useAuth();
+  const skipsBusinessType = isAuthenticated && !!user?.consultAnswers?.businessType;
+  const [step, setStep] = useState(skipsBusinessType ? 1 : 0);
+  const [answers, setAnswers] = useState(skipsBusinessType ? { businessType: user.consultAnswers.businessType } : {});
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(false);
   const [freeText, setFreeText] = useState("");
@@ -27,8 +28,9 @@ export default function ConsultView({ onResult, onBack }) {
   const current = dataIdx !== null ? CONSULT_STEPS[dataIdx] : null;
   const isLeadStep = step === LEAD_STEP && !isAuthenticated;
 
-  const visibleTotal = isAuthenticated ? TOTAL_DOTS - 1 : TOTAL_DOTS;
-  const visibleCurrent = isAuthenticated && step > LEAD_STEP ? step - 1 : step;
+  const hiddenSteps = (isAuthenticated ? 1 : 0) + (skipsBusinessType ? 1 : 0);
+  const visibleTotal = TOTAL_DOTS - hiddenSteps;
+  const visibleCurrent = (isAuthenticated && step > LEAD_STEP ? step - 1 : step) - (skipsBusinessType ? 1 : 0);
 
   const advance = async (updated) => {
     const nextStep = step + 1;
@@ -81,9 +83,11 @@ export default function ConsultView({ onResult, onBack }) {
   };
 
   const handleBack = () => {
-    if (step > 0) {
+    const minStep = skipsBusinessType ? 1 : 0;
+    if (step > minStep) {
       let prev = step - 1;
       if (prev === LEAD_STEP && isAuthenticated) prev--;
+      if (prev < minStep) { onBack(); return; }
       setAnimKey(k => k + 1);
       setStep(prev);
       setFreeText("");

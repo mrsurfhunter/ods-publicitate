@@ -85,7 +85,16 @@ function AppInner() {
     return () => window.removeEventListener("hashchange", onHashChange);
   }, []);
 
-  const goHome = () => { setView("landing"); setDashOrder(null); setRecommendation(null); };
+  const goHome = () => {
+    if (isAuthenticated && myOrders.length > 0) {
+      const lastId = sessionStorage.getItem("ods-dash-order");
+      const order = lastId ? myOrders.find(o => o.id === lastId) : myOrders[0];
+      if (order) { setDashOrder(order); setView("dashboard"); return; }
+    }
+    setView("landing");
+    setDashOrder(null);
+    setRecommendation(null);
+  };
 
   const handleConsultResult = (result) => {
     if (result?.tiers) {
