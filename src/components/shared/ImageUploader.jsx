@@ -51,8 +51,7 @@ export default function ImageUploader({ label, images, onChange, multi, preferLa
           <div className="font-bold mb-1"><i className="fas fa-circle-info mr-1"></i> Cum trebuie să fie imaginea principală</div>
           <ul className="list-disc list-inside space-y-0.5 text-blue-800">
             <li><strong>Orizontală (peisaj)</strong>, minim 1200×675 px (raport 16:9)</li>
-            <li><strong>Fără text pe imagine</strong> — adăugăm noi titlu și siglă peste. Textul pus de tine se taie pe mobil și încurcă indexarea Google.</li>
-            <li>Fără sigle Facebook/Instagram suprapuse</li>
+            <li><strong>Fără text pe imagine</strong> — Facebook și Instagram reduc reach-ul pentru imagini cu text suprapus. Punem noi titlu peste.</li>
           </ul>
         </div>
       )}
